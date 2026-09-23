@@ -16,8 +16,8 @@ from cryptobot.data.instruments import load_instrument_registry
 from cryptobot.data.materialize import materialize_research_dataset
 from cryptobot.data.normalization_pipeline import (
     BINANCE_SOURCE_ID,
-    HL_SOURCE_ID,
     FrameOutcome,
+    HL_SOURCE_ID,
     build_pipeline_report,
     normalize_frames,
 )

@@ -1,6 +1,6 @@
 {
   "task": "TASK-013",
-  "status": "IMPLEMENTED_CI_PENDING",
+  "status": "PASS",
   "reference_decision": {
     "venue": "Binance USD-M Futures",
     "instruments": [
@@ -99,7 +99,15 @@
     "QCR1 deterministic replay/raw provenance"
   ],
   "validation": {
-    "github_ci": "PENDING"
+    "github_ci": "PASS",
+    "workflow_run": 35923067510,
+    "head_sha": "702e9e9294e20b5d30d9589c67d0049adfcca61a",
+    "ruff": "PASS",
+    "ruff_format": "PASS_70_FILES",
+    "mypy_strict": "PASS_52_SOURCE_FILES",
+    "pytest_python_3_12": "PASS_271",
+    "pytest_python_3_13": "PASS_271",
+    "default_ci_network_dependency": false
   },
   "final_adapter_probe": {
     "status": "PASS",

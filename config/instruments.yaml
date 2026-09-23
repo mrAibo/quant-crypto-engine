@@ -30,6 +30,36 @@
       "price_decimals": null,
       "size_decimals": null,
       "native_asset_id": null
+    },
+    {
+      "instrument_id": "binance_usdm.reference.perpetual.btcusdt",
+      "venue": "binance_usdm",
+      "environment": "REFERENCE",
+      "native_symbol": "BTCUSDT",
+      "base_asset": "BTC",
+      "quote_asset": "USDT",
+      "settlement_asset": "USDT",
+      "margin_asset": "USDT",
+      "product_type": "PERPETUAL",
+      "role": "REFERENCE",
+      "price_decimals": null,
+      "size_decimals": null,
+      "native_asset_id": null
+    },
+    {
+      "instrument_id": "binance_usdm.reference.perpetual.ethusdt",
+      "venue": "binance_usdm",
+      "environment": "REFERENCE",
+      "native_symbol": "ETHUSDT",
+      "base_asset": "ETH",
+      "quote_asset": "USDT",
+      "settlement_asset": "USDT",
+      "margin_asset": "USDT",
+      "product_type": "PERPETUAL",
+      "role": "REFERENCE",
+      "price_decimals": null,
+      "size_decimals": null,
+      "native_asset_id": null
     }
   ]
 }

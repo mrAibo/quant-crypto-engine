@@ -1,6 +1,6 @@
 {
   "task": "TASK-015",
-  "status": "IMPLEMENTED_CI_PENDING",
+  "status": "PASS",
   "materializer_version": "parquet-materializer-v1",
   "dataset_schema_version": 1,
   "dependency": {
@@ -103,7 +103,16 @@
     "QCR1 -> normalization pipeline -> Parquet -> readback integration"
   ],
   "ci": {
-    "github_ci": "PENDING"
+    "github_ci": "PASS",
+    "workflow_run": 35927351683,
+    "head_sha": "d12fb38fcc89cec6974031f553277bece35f1abb",
+    "lock_verification": "PASS",
+    "ruff": "PASS",
+    "ruff_format": "PASS_76_FILES",
+    "mypy_strict": "PASS_58_SOURCE_FILES",
+    "pytest_python_3_12": "PASS_299",
+    "pytest_python_3_13": "PASS_299",
+    "default_ci_network_dependency": false
   },
   "limitations": [
     "Parquet is not authoritative; rebuild from QCR1 when needed",

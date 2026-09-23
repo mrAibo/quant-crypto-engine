@@ -1,18 +1,81 @@
 {
   "task": "TASK-009",
-  "status": "IMPLEMENTED_OFFLINE_VALIDATION_PENDING",
+  "status": "PASS",
   "offline_validation": {
-    "status": "PENDING"
+    "status": "PASS",
+    "github_ci_run": 35912396692,
+    "head_sha": "57d3ea26447be90ac591bf90cdf908ac7ef6f84a",
+    "uv_lock_python_3_12": "PASS",
+    "ruff": "PASS",
+    "ruff_format": "PASS",
+    "mypy_strict": "PASS",
+    "pytest_python_3_12": "PASS_173",
+    "pytest_python_3_13": "PASS_173",
+    "network_dependency": false
   },
   "live_observation": {
-    "status": "NOT_RUN",
-    "note": "Must be populated only from an Internet-enabled real Hyperliquid public WebSocket smoke."
+    "status": "PASS",
+    "harness": "GitHub Actions isolated one-shot public-only runner",
+    "workflow_run": 35912388990,
+    "head_sha": "57d3ea26447be90ac591bf90cdf908ac7ef6f84a",
+    "summary_sha256": "6c47bbdd12c78eb35f8748f318e4cc99f34e3e0de674bf244ff886231eecedc6",
+    "public_endpoint": "wss://api.hyperliquid.xyz/ws",
+    "credentials_used": false,
+    "run_id": "run-1790193259451503104-6bad111ad4234413ba9b",
+    "host_id": "host-4d7193c17275652c",
+    "boot_id": "boot-f7b7dd405fe3d16a",
+    "duration_seconds": 30.158069475,
+    "observed_frames": 559,
+    "messages_per_second": 18.53566921660525,
+    "channel_counts": {
+      "activeAssetCtx": 60,
+      "bbo": 416,
+      "l2Book": 14,
+      "subscriptionResponse": 8,
+      "trades": 61
+    },
+    "channel_messages_per_second": {
+      "activeAssetCtx": 1.9895172683297229,
+      "bbo": 13.793986393752744,
+      "l2Book": 0.464220695943602,
+      "subscriptionResponse": 0.2652689691106297,
+      "trades": 2.0226758894685517
+    },
+    "kind_counts": {
+      "MARKET_DATA": 551,
+      "SUBSCRIPTION_ACK": 8
+    },
+    "malformed_frames": 0,
+    "unknown_frames": 0,
+    "subscription_ack_count": 8,
+    "expected_subscription_ack_count": 8,
+    "all_subscription_acks_observed": true,
+    "connection_count": 1,
+    "reconnect_count": 0,
+    "durable_frames": 559,
+    "durable_bytes": 364893,
+    "queue_high_watermark": 1,
+    "shutdown_outcome": "CLEAN_DURABLE",
+    "recorder_state": "COMPLETE",
+    "storage_audit": {
+      "clean": true,
+      "state": "VALID",
+      "detail": "manifest and sealed file match",
+      "relative_path": "raw/segment-hyperliquid-mainnet-public-1790193259995146461-b43f1b2613f4fbda.raw",
+      "segment_id": "hyperliquid-mainnet-public-1790193259995146461-b43f1b2613f4fbda"
+    },
+    "limitations": [
+      "This is one short smoke run and does not establish feed completeness.",
+      "No reconnect occurred naturally during this run.",
+      "Observed message rates are descriptive for this run only, not capacity assumptions.",
+      "Raw smoke bytes lived on the ephemeral harness; the committed evidence is the summary and successful audit result."
+    ]
   },
   "constraints": {
     "public_only": true,
     "credentials_required": false,
     "trading_code": false,
     "normalization_code": false,
-    "ci_network_dependency": false
+    "default_ci_network_dependency": false
   }
 }

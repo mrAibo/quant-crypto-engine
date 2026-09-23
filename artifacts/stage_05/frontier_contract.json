@@ -1,0 +1,51 @@
+{
+  "task": "TASK-017",
+  "stage": "0.5",
+  "status": "IMPLEMENTED_PRIMITIVES_CI_PENDING",
+  "objective": "Model-free economic-frontier measurement before predictive modeling.",
+  "source_authority": "TASK-015 deterministic Parquet derived from QCR1",
+  "binding_distinctions": [
+    "market movement is not predictability",
+    "predictability is not executable net edge"
+  ],
+  "numeric_policy": "Decimal for price/size/fee/friction/movement arithmetic; binary float market inputs rejected",
+  "horizon_policy": {
+    "grid": "deterministic 1-2-5 logarithmic grid",
+    "lower_upper_bounds": "explicit inputs derived by later dataset audit",
+    "support": "actual non-overlapping window count is reported; unsupported cells remain visible"
+  },
+  "execution_cost_policy": {
+    "taker_only": true,
+    "maker": false,
+    "bbo": "strict uncrossed BBO only",
+    "fee": "per-side scenario, counted exactly once in exact directional cash-flow friction",
+    "depth": "displayed L2 only; partial fill and unfilled remainder explicit; no queue/fill invention",
+    "funding": "exact boundary alignment remains unsupported until separately evidenced",
+    "latency": "explicit scenario/UNKNOWN; market-data lag is not treated as execution latency"
+  },
+  "implemented_primitives": [
+    "exact BBO mid",
+    "spread bps",
+    "signed and absolute movement bps",
+    "round-trip fee bps",
+    "directional top-of-book round-trip friction",
+    "required capture fraction",
+    "L2 buy/sell book walk",
+    "crossed/locked book rejection",
+    "1-2-5 horizon grid",
+    "non-overlapping window count",
+    "horizon support classification",
+    "nearest-rank empirical quantile",
+    "deterministic digest-bound frontier report"
+  ],
+  "gate_decision": "NOT_YET_EVALUATED",
+  "next_evidence": "CI, then real prospective pilot dataset audit/frontier run",
+  "deliberately_not_claimed": [
+    "predictive alpha",
+    "positive expectancy",
+    "live slippage",
+    "actual account fee tier",
+    "maker fill economics",
+    "production readiness"
+  ]
+}

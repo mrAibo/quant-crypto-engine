@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`IN REVIEW — IMPLEMENTED, GITHUB CI PENDING`
 
 ## Objective
 
@@ -173,3 +173,28 @@ Write raw frames through QCR1 and prove:
 - Parquet/materialized research tables;
 - features/labels/models/backtest;
 - strategy/OMS/signing/trading.
+
+
+## Implementation status
+
+Implemented:
+
+- current official `activeAssetCtx` / funding / mark / oracle evidence;
+- mainnet wire-shape probe confirming string values and no native timestamp;
+- explicit schema conflict resolution via additive `FundingObservationKind.CURRENT`;
+- schema artifact amendment and enum validation;
+- exact-Decimal activeAssetCtx parser;
+- deterministic FundingRateObservation + MarkPrice + OraclePrice derivation;
+- no fabricated exchange timestamp;
+- `MISSING_EXCHANGE_TIME` quality signaling;
+- strict BTC/ETH mapping;
+- complete raw provenance;
+- deterministic serialization;
+- QCR1 replay tests;
+- `artifacts/stage_0/hyperliquid_context_normalization.json`.
+
+No user/account funding payments, reference feed, Parquet, feature/model/backtest, or execution code is present.
+
+## Validation status
+
+GitHub CI: **PENDING**.

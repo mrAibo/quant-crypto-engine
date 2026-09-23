@@ -98,9 +98,7 @@ class ReconnectPolicy:
         base = min(self.max_delay_seconds, self.base_delay_seconds * (2**exponent))
         jitter_span = base * self.jitter_fraction
         jitter = (2 * random_unit - 1) * jitter_span
-        return float(
-            max(MIN_RECONNECT_DELAY_SECONDS, min(self.max_delay_seconds, base + jitter))
-        )
+        return float(max(MIN_RECONNECT_DELAY_SECONDS, min(self.max_delay_seconds, base + jitter)))
 
 
 @dataclass(frozen=True, slots=True)

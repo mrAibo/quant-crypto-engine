@@ -4,7 +4,7 @@ import asyncio
 import json
 import random
 import uuid
-from collections.abc import AsyncIterator, Awaitable, Callable
+from collections.abc import AsyncGenerator, AsyncIterator, Awaitable, Callable
 from dataclasses import dataclass
 from enum import StrEnum
 from typing import cast
@@ -98,17 +98,25 @@ class BinanceTransportSettings:
     close_timeout_seconds: float
 
     def __post_init__(self) -> None:
-        for field, value in (
+        for field, int_value in (
             ("max_message_bytes", self.max_message_bytes),
             ("receive_queue_high_water", self.receive_queue_high_water),
         ):
-            if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+            if (
+                isinstance(int_value, bool)
+                or not isinstance(int_value, int)
+                or int_value <= 0
+            ):
                 raise BinanceReferenceError(f"{field} must be a positive integer")
-        for field, value in (
+        for field, number_value in (
             ("open_timeout_seconds", self.open_timeout_seconds),
             ("close_timeout_seconds", self.close_timeout_seconds),
         ):
-            if isinstance(value, bool) or not isinstance(value, int | float) or value <= 0:
+            if (
+                isinstance(number_value, bool)
+                or not isinstance(number_value, int | float)
+                or number_value <= 0
+            ):
                 raise BinanceReferenceError(f"{field} must be a positive number")
 
 
@@ -158,7 +166,7 @@ class BinanceReferenceAdapter:
         self._sleep = sleep
         self._random_unit = random_unit
 
-    async def session_frames(self) -> AsyncIterator[BinanceCapturedFrame]:
+    async def session_frames(self) -> AsyncGenerator[BinanceCapturedFrame, None]:
         queue: asyncio.Queue[BinanceCapturedFrame | _RouteFailure] = asyncio.Queue(
             maxsize=self._transport.receive_queue_high_water * 2
         )

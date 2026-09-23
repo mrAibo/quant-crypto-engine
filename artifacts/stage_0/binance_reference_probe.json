@@ -1,0 +1,99 @@
+{
+  "task": "TASK-013",
+  "status": "IMPLEMENTED_CI_PENDING",
+  "reference_decision": {
+    "venue": "Binance USD-M Futures",
+    "instruments": [
+      "BTCUSDT",
+      "ETHUSDT"
+    ],
+    "streams": [
+      "bookTicker",
+      "aggTrade"
+    ],
+    "execution_allowed": false
+  },
+  "transport": {
+    "base_host": "wss://fstream.binance.com",
+    "public_endpoint": "wss://fstream.binance.com/public/stream",
+    "market_endpoint": "wss://fstream.binance.com/market/stream",
+    "separate_connections": true,
+    "server_connection_lifetime_hours": 24,
+    "server_ping_minutes": 3,
+    "pong_timeout_minutes": 10,
+    "max_inbound_messages_per_second": 10,
+    "max_streams_per_connection": 1024
+  },
+  "normalization": {
+    "bookTicker": {
+      "event": "ReferenceBBO",
+      "timestamp_field": "E",
+      "timestamp_semantics": "EVENT_TIME",
+      "native_update_id": "u",
+      "sampling_mode": "REALTIME_BOOK_TICKER",
+      "require_st": 1
+    },
+    "aggTrade": {
+      "event": "ReferenceTrade",
+      "timestamp_field": "T",
+      "timestamp_semantics": "TRADE_TIME",
+      "trade_id": "<symbol>:<aggregate trade id a>",
+      "quantity_field": "q",
+      "maker_mapping": {
+        "m=true": "BUYER_MAKER -> SELL aggressor",
+        "m=false": "BUYER_TAKER -> BUY aggressor"
+      },
+      "require_st": 1
+    },
+    "cross_venue_availability_axis": "recv_wall_ns on shared recorder host"
+  },
+  "live_probe": {
+    "status": "PASS",
+    "workflow_run": 35919551313,
+    "duration_seconds": 6.295362349000001,
+    "subscription_acks": [
+      "task013-market",
+      "task013-public"
+    ],
+    "market_frames_observed": 60,
+    "observed_streams": [
+      "btcusdt@bookTicker",
+      "ethusdt@bookTicker",
+      "btcusdt@aggTrade",
+      "ethusdt@aggTrade"
+    ],
+    "symbol_type_values": [
+      1
+    ],
+    "price_qty_wire_types": "string",
+    "maker_wire_type": "boolean on aggTrade",
+    "apparent_event_lag_ms_sample": 79,
+    "apparent_trade_lag_ms_sample_range": [
+      79,
+      229
+    ],
+    "credentials_used": false,
+    "limitations": [
+      "Short connectivity/schema probe only.",
+      "Apparent lag is receive wall time minus exchange timestamp, not one-way network latency.",
+      "No reconnect replay guarantee was inferred."
+    ]
+  },
+  "tests": [
+    "frozen stream set and credential-free subscription",
+    "payload classification",
+    "bounded reconnect policy",
+    "two-route fake-server capture",
+    "BTC/ETH ReferenceBBO",
+    "crossed BBO SUSPECT preservation",
+    "BTC/ETH ReferenceTrade",
+    "documented maker-flag aggressor mapping",
+    "UM st validation and wrapper/symbol routing",
+    "exact decimal serialization",
+    "structured parse errors",
+    "QCR1 deterministic replay/raw provenance"
+  ],
+  "validation": {
+    "github_ci": "PENDING"
+  }
+}

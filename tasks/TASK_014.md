@@ -2,7 +2,7 @@
 
 ## Status
 
-`IN REVIEW — IMPLEMENTED, GITHUB CI PENDING`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
@@ -235,4 +235,17 @@ No Parquet/features/labels/backtest/deduplication/execution code is present.
 
 ## Validation status
 
-GitHub CI: **PENDING**.
+GitHub CI: **PASS** — run `35924328402`; 288 tests passed on Python 3.12 and Python 3.13; Ruff, formatter, and strict mypy passed.
+
+
+## Validation result
+
+GitHub CI run `35924328402` on head `16e524d08a37db9e08f8e523c8365b094719a55c`:
+
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS — 55 source files;
+- pytest Python 3.12: **288 PASS**;
+- pytest Python 3.13: **288 PASS**.
+
+Default CI remains network-independent.

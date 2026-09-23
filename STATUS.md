@@ -7,7 +7,7 @@
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `task-003-recorder-config`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-003 / S0-WP03 — Strict recorder configuration and instrument registry (implemented; CI pending)**
+- Current work package: **TASK-003 / S0-WP03 — Strict recorder configuration and instrument registry (validated; merge pending)**
 - Completed: **TASK-001, TASK-002**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -136,13 +136,18 @@ TASK-003 implementation now exists on the feature branch:
 
 No network or trading code has been added.
 
+### Validation
+
+TASK-003 passed GitHub Actions run `35890454291`:
+Ruff, Ruff-format, strict mypy, pytest Python 3.12, and pytest Python 3.13 are all green.
+
 ### Exact next action
 
-Open TASK-003 PR and require full GitHub CI green.
+Run one closeout CI after documentation/artifact changes, then merge PR #3.
 
-After merge, move to **TASK-004 — immutable market-event envelope, exact numeric rules, and clock abstraction**.
+After merge, begin **[TASK-004 — immutable event envelope, exact numeric rules, and clock abstraction](tasks/TASK_004.md)**.
 
-Do not implement a Hyperliquid WebSocket client until TASK-004 defines the event/time/numeric contracts.
+Do not implement a Hyperliquid WebSocket client until TASK-004 passes.
 
 ## User actions currently required
 

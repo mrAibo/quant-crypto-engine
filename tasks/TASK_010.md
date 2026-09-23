@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`IN REVIEW — IMPLEMENTED, GITHUB CI PENDING`
 
 ## Objective
 
@@ -168,3 +168,28 @@ Prove:
 - features/signals/models;
 - backtest;
 - trading/OMS/signing.
+
+
+## Implementation status
+
+Implemented:
+
+- official/current L2/BBO schema re-verification;
+- explicit UNKNOWN timestamp semantic plus measured Unix-millisecond wire unit;
+- deterministic raw-frame normalizer;
+- exact Decimal price/size parsing;
+- strict BTC/ETH canonical instrument mapping;
+- raw segment/offset/SHA provenance in normalized envelopes;
+- deterministic event IDs;
+- explicit additive-field compatibility policy;
+- structured parse errors and NOT_APPLICABLE results;
+- crossed/unsorted source preservation with SUSPECT quality flag;
+- canonical normalized serialization;
+- QCR1 replay tests;
+- `artifacts/stage_0/hyperliquid_book_normalization.json`.
+
+No trade/funding/reference/Parquet/feature/strategy/execution code is present.
+
+## Validation status
+
+GitHub CI: **PENDING**.

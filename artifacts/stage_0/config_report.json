@@ -1,0 +1,72 @@
+{
+  "task": "TASK-003",
+  "status": "PASS",
+  "schema_versions": {
+    "recorder_config": 1,
+    "instrument_registry": 1
+  },
+  "configured_sources": [
+    {
+      "source_id": "hyperliquid-mainnet-public",
+      "venue": "hyperliquid",
+      "environment": "MAINNET",
+      "channels": [
+        "l2Book",
+        "bbo",
+        "trades",
+        "activeAssetCtx"
+      ]
+    }
+  ],
+  "configured_instruments": [
+    {
+      "instrument_id": "hyperliquid.mainnet.perpetual.btc",
+      "role": "PRIMARY"
+    },
+    {
+      "instrument_id": "hyperliquid.mainnet.perpetual.eth",
+      "role": "REPLICATION"
+    }
+  ],
+  "reference_feed": {
+    "required": true,
+    "selected_source_id": null,
+    "status": "UNRESOLVED_BY_DESIGN"
+  },
+  "unresolved_metadata_fields": [
+    "hyperliquid.mainnet.perpetual.btc.quote_asset",
+    "hyperliquid.mainnet.perpetual.btc.settlement_asset",
+    "hyperliquid.mainnet.perpetual.btc.margin_asset",
+    "hyperliquid.mainnet.perpetual.btc.price_decimals",
+    "hyperliquid.mainnet.perpetual.btc.size_decimals",
+    "hyperliquid.mainnet.perpetual.btc.native_asset_id",
+    "hyperliquid.mainnet.perpetual.eth.quote_asset",
+    "hyperliquid.mainnet.perpetual.eth.settlement_asset",
+    "hyperliquid.mainnet.perpetual.eth.margin_asset",
+    "hyperliquid.mainnet.perpetual.eth.price_decimals",
+    "hyperliquid.mainnet.perpetual.eth.size_decimals",
+    "hyperliquid.mainnet.perpetual.eth.native_asset_id",
+    "recorder.buffering.queue_capacity",
+    "recorder.buffering.high_watermark_fraction",
+    "recorder.rollover.max_segment_bytes",
+    "recorder.rollover.max_segment_age_seconds",
+    "recorder.reconnect.base_delay_seconds",
+    "recorder.reconnect.max_delay_seconds",
+    "recorder.reconnect.jitter_fraction"
+  ],
+  "validation": {
+    "github_ci_run": 35890454291,
+    "github_ruff_check": "PASS",
+    "github_ruff_format_check": "PASS",
+    "github_mypy_strict": "PASS",
+    "github_pytest_python_3_12": "PASS",
+    "github_pytest_python_3_13": "PASS",
+    "tests_total": 33
+  },
+  "notes": [
+    "Canonical IDs exclude still-unverified metadata so later enrichment does not rename instruments.",
+    "Reference feed remains required but unselected.",
+    "Operational thresholds remain explicit nulls until derived.",
+    "No network or trading logic was introduced."
+  ]
+}

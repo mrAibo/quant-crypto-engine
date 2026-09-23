@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "source_id": "hyperliquid-mainnet-public",
+      "venue": "hyperliquid",
+      "environment": "MAINNET",
+      "enabled": true,
+      "instrument_ids": [
+        "hyperliquid.mainnet.perpetual.btc",
+        "hyperliquid.mainnet.perpetual.eth"
+      ],
+      "channels": [
+        "l2Book",
+        "bbo",
+        "trades",
+        "activeAssetCtx"
+      ]
+    }
+  ],
+  "reference_feed": {
+    "required": true,
+    "selected_source_id": null
+  },
+  "storage": {
+    "root": "data",
+    "raw_path": "raw",
+    "normalized_path": "normalized",
+    "artifact_path": "artifacts/stage_0"
+  },
+  "buffering": {
+    "queue_capacity": null,
+    "high_watermark_fraction": null
+  },
+  "rollover": {
+    "max_segment_bytes": null,
+    "max_segment_age_seconds": null
+  },
+  "reconnect": {
+    "base_delay_seconds": null,
+    "max_delay_seconds": null,
+    "jitter_fraction": null
+  },
+  "clock_health": {
+    "record": true
+  }
+}

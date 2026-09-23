@@ -1,6 +1,6 @@
 {
   "task": "TASK-008",
-  "status": "IMPLEMENTED_CI_PENDING",
+  "status": "PASS",
   "supervisor_contract_version": 1,
   "pipeline": [
     "async frame source",
@@ -55,7 +55,15 @@
     "network-free runtime validation CLI"
   ],
   "validation": {
-    "github_ci": "PENDING"
+    "github_ci_run": 35905174696,
+    "uv_lock_python_3_12": "PASS",
+    "uv_sync_locked_python_3_12": "PASS",
+    "github_ruff_check": "PASS",
+    "github_ruff_format_check": "PASS",
+    "github_mypy_strict": "PASS_33_FILES",
+    "github_pytest_python_3_12": "PASS_161",
+    "uv_lock_python_3_13": "PASS",
+    "github_pytest_python_3_13": "PASS_161"
   },
   "known_limitations": [
     "Automatic size/time segment rollover is intentionally disabled.",

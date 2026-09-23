@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`IN REVIEW — IMPLEMENTED, GITHUB CI PENDING`
 
 ## Objective
 
@@ -218,3 +218,28 @@ Create `artifacts/stage_0/binance_reference_probe.json` containing:
 - liquidation feeds;
 - Parquet materialization (TASK-015);
 - features/signals/models/backtest.
+
+
+## Implementation status
+
+Implemented:
+
+- Binance USD-M frozen as the single Stage-0 external reference feed;
+- BTCUSDT/ETHUSDT REFERENCE perpetual instruments;
+- official 2026 routed-endpoint / connection / bookTicker / aggTrade evidence;
+- two public-only WebSocket routes: /public for bookTicker and /market for aggTrade;
+- bounded reconnect and deterministic raw capture metadata;
+- subscription ACK/control classification;
+- deterministic ReferenceBBO and ReferenceTrade normalization;
+- exact Decimal values;
+- explicit st=1 USD-M boundary;
+- documented maker-flag → aggressor-side mapping;
+- QCR1 replay and fake-server integration tests;
+- successful mainnet public-only live probe run `35919551313`;
+- `artifacts/stage_0/binance_reference_probe.json`.
+
+No Binance private/account/execution/depth reconstruction code is present.
+
+## Validation status
+
+GitHub CI: **PENDING**.

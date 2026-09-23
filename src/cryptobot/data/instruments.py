@@ -143,6 +143,23 @@ def _parse_instrument(raw: Any, index: int) -> Instrument:
         raise InstrumentValidationError(f"instruments[{index}].venue must be lowercase")
 
     native_symbol = _required_string(raw, "native_symbol", index)
+    environment = _parse_enum(
+        Environment, raw["environment"], f"instruments[{index}].environment"
+    )
+    product_type = _parse_enum(
+        ProductType, raw["product_type"], f"instruments[{index}].product_type"
+    )
+    expected_instrument_id = canonical_instrument_id(
+        venue=venue,
+        environment=environment,
+        product_type=product_type,
+        native_symbol=native_symbol,
+    )
+    if instrument_id != expected_instrument_id:
+        raise InstrumentValidationError(
+            f"instruments[{index}].instrument_id must be {expected_instrument_id}"
+        )
+
     base_asset = _parse_asset(raw["base_asset"], f"instruments[{index}].base_asset")
     quote_asset = _parse_optional_asset(raw["quote_asset"], f"instruments[{index}].quote_asset")
     settlement_asset = _parse_optional_asset(
@@ -153,17 +170,13 @@ def _parse_instrument(raw: Any, index: int) -> Instrument:
     return Instrument(
         instrument_id=instrument_id,
         venue=venue,
-        environment=_parse_enum(
-            Environment, raw["environment"], f"instruments[{index}].environment"
-        ),
+        environment=environment,
         native_symbol=native_symbol,
         base_asset=base_asset,
         quote_asset=quote_asset,
         settlement_asset=settlement_asset,
         margin_asset=margin_asset,
-        product_type=_parse_enum(
-            ProductType, raw["product_type"], f"instruments[{index}].product_type"
-        ),
+        product_type=product_type,
         role=_parse_enum(InstrumentRole, raw["role"], f"instruments[{index}].role"),
         price_decimals=_parse_optional_nonnegative_int(
             raw["price_decimals"], f"instruments[{index}].price_decimals"
@@ -201,6 +214,36 @@ def _validate_roles(instruments: tuple[Instrument, ...]) -> None:
     primaries = [instrument for instrument in instruments if instrument.role is InstrumentRole.PRIMARY]
     if len(primaries) != 1:
         raise InstrumentValidationError("registry must contain exactly one PRIMARY instrument")
+
+    for instrument in instruments:
+        is_reference_environment = instrument.environment is Environment.REFERENCE
+        is_reference_role = instrument.role is InstrumentRole.REFERENCE
+        if is_reference_environment != is_reference_role:
+            raise InstrumentValidationError(
+                f"{instrument.instrument_id} must use REFERENCE role exactly when "
+                "environment is REFERENCE"
+            )
+
+
+def canonical_instrument_id(
+    *,
+    venue: str,
+    environment: Environment,
+    product_type: ProductType,
+    native_symbol: str,
+) -> str:
+    venue_slug = _slug_component(venue)
+    symbol_slug = _slug_component(native_symbol)
+    return (
+        f"{venue_slug}.{environment.value.lower()}.{product_type.value.lower()}.{symbol_slug}"
+    )
+
+
+def _slug_component(value: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "_", value.lower()).strip("_")
+    if not slug:
+        raise InstrumentValidationError("canonical instrument component cannot be empty")
+    return slug
 
 
 def _load_json_yaml_object(path: str | Path, label: str) -> dict[str, Any]:

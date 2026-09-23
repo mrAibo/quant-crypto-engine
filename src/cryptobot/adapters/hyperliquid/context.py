@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass
+from decimal import Decimal
 from enum import StrEnum
 from typing import cast
 
@@ -210,15 +211,12 @@ def normalize_context_frame(
             "capture_flags do not identify a supported availability kind",
         )
 
-    common = {
-        "frame": frame,
-        "instrument": instrument,
-        "availability": availability,
-    }
     funding_event = FundingRateObservation(
         envelope=_envelope(
+            frame=frame,
+            instrument=instrument,
+            availability=availability,
             event_type=EventType.FUNDING_RATE_OBSERVATION,
-            **common,
         ),
         rate=funding,
         rate_period_seconds=_FUNDING_PERIOD_SECONDS,
@@ -227,16 +225,20 @@ def normalize_context_frame(
     )
     mark_event = MarkPrice(
         envelope=_envelope(
+            frame=frame,
+            instrument=instrument,
+            availability=availability,
             event_type=EventType.MARK_PRICE,
-            **common,
         ),
         price=mark,
         method=None,
     )
     oracle_event = OraclePrice(
         envelope=_envelope(
+            frame=frame,
+            instrument=instrument,
+            availability=availability,
             event_type=EventType.ORACLE_PRICE,
-            **common,
         ),
         price=oracle,
         oracle_id=None,
@@ -294,7 +296,7 @@ def _required_exact_decimal(
     field: str,
     code: ContextParseErrorCode,
     strictly_positive: bool,
-):
+) -> Decimal | ContextNormalizationResult:
     raw = ctx.get(field)
     if not isinstance(raw, str):
         return _error_result(

@@ -11,7 +11,9 @@
     "mypy_strict": "PASS",
     "pytest_python_3_12": "PASS_173",
     "pytest_python_3_13": "PASS_173",
-    "network_dependency": false
+    "network_dependency": false,
+    "final_closeout_ci_run": 35912786539,
+    "final_closeout_head_sha": "32fe5f1ee33d77f6c85919ccdc4407b03d8b7d77"
   },
   "live_observation": {
     "status": "PASS",
@@ -77,5 +79,7 @@
     "trading_code": false,
     "normalization_code": false,
     "default_ci_network_dependency": false
-  }
+  },
+  "merged_pr": 9,
+  "merge_commit": "4470202c8030ab07acbf031d14968ff72bda2969"
 }

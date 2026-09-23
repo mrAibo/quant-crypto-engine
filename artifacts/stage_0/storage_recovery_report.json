@@ -1,6 +1,6 @@
 {
   "task": "TASK-006",
-  "status": "IMPLEMENTED_CI_PENDING",
+  "status": "PASS",
   "manifest_schema_version": 1,
   "publication_model": [
     "OPEN",
@@ -47,7 +47,13 @@
     "after_manifest_dir_fsync"
   ],
   "validation": {
-    "github_ci": "PENDING"
+    "github_ci_run": 35893691800,
+    "github_ruff_check": "PASS",
+    "github_ruff_format_check": "PASS",
+    "github_mypy_strict": "PASS",
+    "github_pytest_python_3_12": "PASS",
+    "github_pytest_python_3_13": "PASS",
+    "tests_total": 116
   },
   "known_limitations": [
     "Power-loss durability is modeled through ordered fsync/rename operations and injected process-failure phases; CI cannot emulate sudden physical power loss.",

@@ -268,3 +268,14 @@ Schema conflict found:
 
 The repository's v1 `FundingObservationKind` currently contains only `PREDICTED` and `REALIZED`. The source is explicitly described as **current funding**. Mapping it to either existing enum would distort the source semantics. TASK-012 therefore treats this as an explicit additive contract correction and will add `CURRENT` before emitting `FundingRateObservation`.
 
+Measured mainnet context probe:
+
+- One-shot public-only run: <https://github.com/mrAibo/quant-crypto-engine/actions/runs/35917667508>
+- BTC top-level payload keys: `coin`, `ctx`.
+- `ctx` keys observed: `dayBaseVlm`, `dayNtlVlm`, `funding`, `impactPxs`, `markPx`, `midPx`, `openInterest`, `oraclePx`, `premium`, `prevDayPx`.
+- No `time` field was present at the top level or inside `ctx`.
+- `funding`, `markPx`, `oraclePx`, and the other sampled scalar context values were JSON strings.
+- Observed sample values: funding `0.0000118657`, mark `84384.0`, oracle `84419.0`.
+
+Decision: TASK-012 parses these values as exact Decimal strings and leaves exchange timestamp absent.
+

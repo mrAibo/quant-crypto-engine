@@ -380,52 +380,67 @@ def _normalize_hyperliquid(
         )
 
     if channel in {"l2Book", "bbo"}:
-        result = normalize_book_frame(frame, registry)
-        if result.status is BookNormalizationStatus.EVENT:
-            assert result.event is not None
-            return _frame_events(frame, HL_BOOK_PARSE_VERSION, channel, (result.event,))
-        if result.status is BookNormalizationStatus.ERROR:
-            assert result.error is not None
+        book_result = normalize_book_frame(frame, registry)
+        if book_result.status is BookNormalizationStatus.EVENT:
+            assert book_result.event is not None
+            return _frame_events(
+                frame,
+                HL_BOOK_PARSE_VERSION,
+                channel,
+                (book_result.event,),
+            )
+        if book_result.status is BookNormalizationStatus.ERROR:
+            assert book_result.error is not None
             return _parser_error(
                 frame,
                 HL_BOOK_PARSE_VERSION,
                 channel,
-                result.error.code.value,
-                result.error.detail,
+                book_result.error.code.value,
+                book_result.error.detail,
             )
         return _frame_not_applicable(frame, HL_BOOK_PARSE_VERSION, channel)
 
     if channel == "trades":
-        result = normalize_trade_frame(frame, registry)
-        if result.status is TradeNormalizationStatus.EVENTS:
-            if result.events:
-                return _frame_events(frame, HL_TRADE_PARSE_VERSION, channel, result.events)
+        trade_result = normalize_trade_frame(frame, registry)
+        if trade_result.status is TradeNormalizationStatus.EVENTS:
+            if trade_result.events:
+                return _frame_events(
+                    frame,
+                    HL_TRADE_PARSE_VERSION,
+                    channel,
+                    trade_result.events,
+                )
             return _frame_empty(frame, HL_TRADE_PARSE_VERSION, channel)
-        if result.status is TradeNormalizationStatus.ERROR:
-            assert result.error is not None
+        if trade_result.status is TradeNormalizationStatus.ERROR:
+            assert trade_result.error is not None
             return _parser_error(
                 frame,
                 HL_TRADE_PARSE_VERSION,
                 channel,
-                result.error.code.value,
-                result.error.detail,
+                trade_result.error.code.value,
+                trade_result.error.detail,
             )
         return _frame_not_applicable(frame, HL_TRADE_PARSE_VERSION, channel)
 
     if channel == "activeAssetCtx":
-        result = normalize_context_frame(frame, registry)
-        if result.status is ContextNormalizationStatus.EVENTS:
-            if result.events:
-                return _frame_events(frame, HL_CONTEXT_PARSE_VERSION, channel, result.events)
+        context_result = normalize_context_frame(frame, registry)
+        if context_result.status is ContextNormalizationStatus.EVENTS:
+            if context_result.events:
+                return _frame_events(
+                    frame,
+                    HL_CONTEXT_PARSE_VERSION,
+                    channel,
+                    context_result.events,
+                )
             return _frame_empty(frame, HL_CONTEXT_PARSE_VERSION, channel)
-        if result.status is ContextNormalizationStatus.ERROR:
-            assert result.error is not None
+        if context_result.status is ContextNormalizationStatus.ERROR:
+            assert context_result.error is not None
             return _parser_error(
                 frame,
                 HL_CONTEXT_PARSE_VERSION,
                 channel,
-                result.error.code.value,
-                result.error.detail,
+                context_result.error.code.value,
+                context_result.error.detail,
             )
         return _frame_not_applicable(frame, HL_CONTEXT_PARSE_VERSION, channel)
 

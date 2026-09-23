@@ -2,7 +2,7 @@
 
 ## Status
 
-`IN REVIEW — IMPLEMENTED, GITHUB CI PENDING`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
@@ -247,7 +247,7 @@ No Binance private/account/execution/depth reconstruction code is present.
 
 ## Validation status
 
-GitHub CI: **PENDING**.
+GitHub CI: **PASS** — run `35923067510`; 271 tests passed on Python 3.12 and Python 3.13; Ruff, formatter, and strict mypy passed.
 
 
 ## 2026 routing resolution
@@ -275,3 +275,16 @@ After aligning JSON `SUBSCRIBE` IDs with the documented unsigned-integer contrac
 - no credentials used.
 
 The temporary network workflow was removed afterward. Default project CI remains network-independent.
+
+
+## Validation result
+
+GitHub CI run `35923067510` on head `702e9e9294e20b5d30d9589c67d0049adfcca61a`:
+
+- Ruff: PASS;
+- Ruff format: PASS — 70 files;
+- strict mypy: PASS — 52 source files;
+- pytest Python 3.12: **271 PASS**;
+- pytest Python 3.13: **271 PASS**.
+
+Default CI is network-independent. Final live adapter verification was separately completed in public-only workflow `35922113843` and its temporary workflow was removed before this CI run.

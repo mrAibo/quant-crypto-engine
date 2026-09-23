@@ -17,8 +17,17 @@ from cryptobot.data.events import (
     ReferenceTrade,
     TradeSide,
 )
-from cryptobot.data.instruments import Environment, Instrument, InstrumentRegistry, ProductType
-from cryptobot.data.numeric import NumericValidationError, parse_exact_decimal, serialize_exact_decimal
+from cryptobot.data.instruments import (
+    Environment,
+    Instrument,
+    InstrumentRegistry,
+    ProductType,
+)
+from cryptobot.data.numeric import (
+    NumericValidationError,
+    parse_exact_decimal,
+    serialize_exact_decimal,
+)
 from cryptobot.data.rawlog import RawFrame
 
 PARSE_VERSION = "binance-usdm-reference-v1"
@@ -83,7 +92,12 @@ def normalize_binance_reference_frame(
 ) -> BinanceReferenceNormalizationResult:
     provenance_error = _validate_raw_provenance(frame)
     if provenance_error is not None:
-        return _error(frame, None, BinanceReferenceParseErrorCode.INVALID_PROVENANCE, provenance_error)
+        return _error(
+            frame,
+            None,
+            BinanceReferenceParseErrorCode.INVALID_PROVENANCE,
+            provenance_error,
+        )
     availability = _availability(frame)
     if availability is None:
         return _error(
@@ -96,7 +110,10 @@ def normalize_binance_reference_frame(
         decoded = json.loads(frame.payload)
     except (UnicodeDecodeError, json.JSONDecodeError):
         return _error(
-            frame, None, BinanceReferenceParseErrorCode.INVALID_JSON, "payload is not valid UTF-8 JSON"
+            frame,
+            None,
+            BinanceReferenceParseErrorCode.INVALID_JSON,
+            "payload is not valid UTF-8 JSON",
         )
     if not isinstance(decoded, dict) or not all(isinstance(k, str) for k in decoded):
         return _error(
@@ -179,19 +196,39 @@ def _normalize_book_ticker(
             "bookTicker ps must match the USD-M symbol",
         )
     if not _is_int(payload.get("E")):
-        return _error(frame, stream, BinanceReferenceParseErrorCode.INVALID_EVENT_TIMESTAMP, "E must be non-negative integer milliseconds")
+        return _error(
+            frame,
+            stream,
+            BinanceReferenceParseErrorCode.INVALID_EVENT_TIMESTAMP,
+            "E must be non-negative integer milliseconds",
+        )
     if not _is_int(payload.get("T")):
-        return _error(frame, stream, BinanceReferenceParseErrorCode.INVALID_EVENT_TIMESTAMP, "T must be non-negative integer milliseconds")
+        return _error(
+            frame,
+            stream,
+            BinanceReferenceParseErrorCode.INVALID_EVENT_TIMESTAMP,
+            "T must be non-negative integer milliseconds",
+        )
     update_id = payload.get("u")
     if not _is_int(update_id):
-        return _error(frame, stream, BinanceReferenceParseErrorCode.INVALID_NATIVE_ID, "u must be a non-negative integer")
+        return _error(
+            frame,
+            stream,
+            BinanceReferenceParseErrorCode.INVALID_NATIVE_ID,
+            "u must be a non-negative integer",
+        )
     try:
         bid_price = _positive_decimal(payload.get("b"), "b")
         bid_size = _positive_decimal(payload.get("B"), "B")
         ask_price = _positive_decimal(payload.get("a"), "a")
         ask_size = _positive_decimal(payload.get("A"), "A")
     except (TypeError, NumericValidationError) as exc:
-        return _error(frame, stream, BinanceReferenceParseErrorCode.INVALID_NUMERIC, str(exc))
+        return _error(
+            frame,
+            stream,
+            BinanceReferenceParseErrorCode.INVALID_NUMERIC,
+            str(exc),
+        )
     quality = QualityFlag.SUSPECT if bid_price >= ask_price else QualityFlag.NONE
     event = ReferenceBBO(
         envelope=_envelope(
@@ -234,13 +271,28 @@ def _normalize_agg_trade(
             f"aggTrade wrapper stream must be {expected_stream}",
         )
     if not _is_int(payload.get("E")):
-        return _error(frame, stream, BinanceReferenceParseErrorCode.INVALID_EVENT_TIMESTAMP, "E must be non-negative integer milliseconds")
+        return _error(
+            frame,
+            stream,
+            BinanceReferenceParseErrorCode.INVALID_EVENT_TIMESTAMP,
+            "E must be non-negative integer milliseconds",
+        )
     trade_time = payload.get("T")
     if not _is_int(trade_time):
-        return _error(frame, stream, BinanceReferenceParseErrorCode.INVALID_TRADE_TIMESTAMP, "T must be non-negative integer milliseconds")
+        return _error(
+            frame,
+            stream,
+            BinanceReferenceParseErrorCode.INVALID_TRADE_TIMESTAMP,
+            "T must be non-negative integer milliseconds",
+        )
     aggregate_id = payload.get("a")
     if not _is_int(aggregate_id):
-        return _error(frame, stream, BinanceReferenceParseErrorCode.INVALID_NATIVE_ID, "a must be a non-negative integer")
+        return _error(
+            frame,
+            stream,
+            BinanceReferenceParseErrorCode.INVALID_NATIVE_ID,
+            "a must be a non-negative integer",
+        )
     first_id = payload.get("f")
     last_id = payload.get("l")
     if not _is_int(first_id) or not _is_int(last_id) or cast(int, first_id) > cast(int, last_id):
@@ -253,15 +305,30 @@ def _normalize_agg_trade(
     try:
         _nonnegative_decimal(payload.get("nq"), "nq")
     except (TypeError, NumericValidationError) as exc:
-        return _error(frame, stream, BinanceReferenceParseErrorCode.INVALID_NUMERIC, str(exc))
+        return _error(
+            frame,
+            stream,
+            BinanceReferenceParseErrorCode.INVALID_NUMERIC,
+            str(exc),
+        )
     maker = payload.get("m")
     if not isinstance(maker, bool):
-        return _error(frame, stream, BinanceReferenceParseErrorCode.INVALID_MAKER_FLAG, "m must be boolean")
+        return _error(
+            frame,
+            stream,
+            BinanceReferenceParseErrorCode.INVALID_MAKER_FLAG,
+            "m must be boolean",
+        )
     try:
         price = _positive_decimal(payload.get("p"), "p")
         size = _positive_decimal(payload.get("q"), "q")
     except (TypeError, NumericValidationError) as exc:
-        return _error(frame, stream, BinanceReferenceParseErrorCode.INVALID_NUMERIC, str(exc))
+        return _error(
+            frame,
+            stream,
+            BinanceReferenceParseErrorCode.INVALID_NUMERIC,
+            str(exc),
+        )
     native_side = "BUYER_MAKER" if maker else "BUYER_TAKER"
     aggressor = TradeSide.SELL if maker else TradeSide.BUY
     trade_id = f"{instrument.native_symbol}:{aggregate_id}"
@@ -295,10 +362,20 @@ def _instrument(
 ) -> Instrument | BinanceReferenceNormalizationResult:
     symbol = payload.get("s")
     if not isinstance(symbol, str):
-        return _error(frame, stream, BinanceReferenceParseErrorCode.UNSUPPORTED_SYMBOL, "s must be string")
+        return _error(
+            frame,
+            stream,
+            BinanceReferenceParseErrorCode.UNSUPPORTED_SYMBOL,
+            "s must be string",
+        )
     st = payload.get("st")
     if isinstance(st, bool) or not isinstance(st, int) or st != 1:
-        return _error(frame, stream, BinanceReferenceParseErrorCode.WRONG_SYMBOL_TYPE, "st must be 1 for USD-M")
+        return _error(
+            frame,
+            stream,
+            BinanceReferenceParseErrorCode.WRONG_SYMBOL_TYPE,
+            "st must be 1 for USD-M",
+        )
     matches = [
         item
         for item in registry.instruments
@@ -309,8 +386,10 @@ def _instrument(
     ]
     if len(matches) != 1:
         return _error(
-            frame, stream, BinanceReferenceParseErrorCode.UNSUPPORTED_SYMBOL,
-            f"unsupported Binance USD-M reference symbol: {symbol}"
+            frame,
+            stream,
+            BinanceReferenceParseErrorCode.UNSUPPORTED_SYMBOL,
+            f"unsupported Binance USD-M reference symbol: {symbol}",
         )
     return matches[0]
 

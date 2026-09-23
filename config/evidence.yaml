@@ -1,0 +1,448 @@
+{
+  "schema_version": 1,
+  "facts": [
+    {
+      "fact_id": "hyperliquid.fees.perps.base_tier",
+      "subject": "Hyperliquid perpetual fee schedule",
+      "claim": "The documented base perpetual fee tier is 0.045% taker and 0.015% maker.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/trading/fees",
+      "source_retrieved_at": "2026-09-23T00:00:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-fees",
+      "limitations": "Actual account rates can differ because of volume tier, staking, referrals, aligned quote assets, HIP-3 settings, or builder fees. Query account-specific fees before any economic run.",
+      "reverify_trigger": [
+        "BEFORE_STAGE_05",
+        "FEE_DOC_CHANGE",
+        "ACCOUNT_FEE_TIER_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.fees.maker_rebate_threshold",
+      "subject": "Hyperliquid maker rebate eligibility",
+      "claim": "The documented first maker rebate tier begins above 0.5% of 14-day weighted maker volume and has a negative maker fee of 0.001%.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/trading/fees",
+      "source_retrieved_at": "2026-09-23T00:00:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-fees",
+      "limitations": "This does not establish that the project account qualifies. No maker rebate may be assumed without account-specific evidence.",
+      "reverify_trigger": [
+        "BEFORE_MAKER_EXPERIMENT",
+        "FEE_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.funding.payment_interval",
+      "subject": "Hyperliquid perpetual funding interval",
+      "claim": "Hyperliquid perpetual funding is paid every hour at one eighth of the computed 8-hour funding rate for that hour.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/trading/funding",
+      "source_retrieved_at": "2026-09-23T00:00:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-funding",
+      "limitations": "The future funding rate itself is not known in advance; predicted and realized funding observations must remain distinct.",
+      "reverify_trigger": [
+        "BEFORE_STAGE_05",
+        "FUNDING_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.funding.payment_formula",
+      "subject": "Hyperliquid funding payment basis",
+      "claim": "The documented funding payment is position_size * oracle_price * funding_rate, using oracle price rather than mark price for notional conversion.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/trading/funding",
+      "source_retrieved_at": "2026-09-23T00:00:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-funding",
+      "limitations": "Sign conventions and exact account-ledger observations still require testnet/mainnet verification before production accounting is considered complete.",
+      "reverify_trigger": [
+        "BEFORE_STAGE_1_LEDGER",
+        "FUNDING_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.public_channels",
+      "subject": "Hyperliquid public WebSocket subscriptions",
+      "claim": "The documented public WebSocket API includes l2Book, trades, bbo, and activeAssetCtx subscriptions.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/subscriptions",
+      "source_retrieved_at": "2026-09-23T00:00:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-websocket",
+      "limitations": "Availability of a channel does not establish completeness, latency, cadence, or suitability for a specific strategy horizon.",
+      "reverify_trigger": [
+        "BEFORE_RECORDER_IMPLEMENTATION",
+        "WEBSOCKET_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.l2book.snapshot_semantics",
+      "subject": "Hyperliquid l2Book message semantics",
+      "claim": "WsBook is documented as a snapshot feed pushed on a block when at least about 0.5 seconds have elapsed since the previous push.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/subscriptions",
+      "source_retrieved_at": "2026-09-23T00:00:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-websocket",
+      "limitations": "This is not permission to hard-code a precise live cadence. The recorder must measure observed cadence, gaps, and depth on the actual connection.",
+      "reverify_trigger": [
+        "BEFORE_RECORDER_IMPLEMENTATION",
+        "WEBSOCKET_DOC_CHANGE",
+        "OBSERVED_CADENCE_DRIFT"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.bbo_semantics",
+      "subject": "Hyperliquid BBO update semantics",
+      "claim": "WsBbo updates are documented as being sent only when the BBO changes on a block.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/subscriptions",
+      "source_retrieved_at": "2026-09-23T00:00:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-websocket",
+      "limitations": "Absence of a BBO update is not itself proof of a feed gap because unchanged BBO state can legitimately produce no update.",
+      "reverify_trigger": [
+        "BEFORE_RECORDER_IMPLEMENTATION",
+        "WEBSOCKET_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.orders.cloid_format",
+      "subject": "Hyperliquid client order identifier",
+      "claim": "Client Order ID (cloid) is documented as an optional 128-bit hexadecimal string.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/exchange-endpoint",
+      "source_retrieved_at": "2026-09-23T00:00:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-orders",
+      "limitations": "This documents correlation format only. It does not prove exactly-once execution or safe automatic retry semantics.",
+      "reverify_trigger": [
+        "BEFORE_STAGE_5",
+        "EXCHANGE_API_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.orders.tif_semantics",
+      "subject": "Hyperliquid limit-order time in force",
+      "claim": "ALO is add-liquidity-only/post-only, IOC cancels any unfilled remainder instead of resting, and GTC rests until canceled or filled.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/exchange-endpoint",
+      "source_retrieved_at": "2026-09-23T00:00:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-orders",
+      "limitations": "Actual rejection reasons, partial-fill behavior, and race timing must be observed separately before live deployment.",
+      "reverify_trigger": [
+        "BEFORE_STAGE_1",
+        "BEFORE_STAGE_5",
+        "EXCHANGE_API_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.safety.schedule_cancel",
+      "subject": "Hyperliquid scheduleCancel dead-man switch",
+      "claim": "scheduleCancel can schedule cancellation of all open orders at least 5 seconds in the future; a trigger increments a daily count with a documented maximum of 10 triggers per day, reset at 00:00 UTC.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/exchange-endpoint",
+      "source_retrieved_at": "2026-09-23T00:00:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-schedule-cancel",
+      "limitations": "The mechanism cancels open orders; it is not a position-flattening mechanism and cannot replace an independent watchdog/reconciliation design.",
+      "reverify_trigger": [
+        "BEFORE_STAGE_6",
+        "EXCHANGE_API_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.api_wallets.signing_identity",
+      "subject": "Hyperliquid API/agent wallet account identity",
+      "claim": "API wallets are documented as signing on behalf of a master account or sub-account; account data queries must use the actual master/sub-account address rather than the agent address.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/nonces-and-api-wallets",
+      "source_retrieved_at": "2026-09-23T00:00:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-api-wallets",
+      "limitations": "This does not establish fine-grained permission scoping such as exchange-enforced reduce-only rights for a watchdog key.",
+      "reverify_trigger": [
+        "BEFORE_STAGE_5",
+        "API_WALLET_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.nonces.per_signer",
+      "subject": "Hyperliquid nonce ownership",
+      "claim": "Hyperliquid nonces are documented as tracked per signer, and separate API wallets are recommended for separate trading processes/subaccounts to avoid nonce collisions.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/nonces-and-api-wallets",
+      "source_retrieved_at": "2026-09-23T00:00:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-api-wallets",
+      "limitations": "Production nonce allocation and restart behavior still require controlled implementation tests.",
+      "reverify_trigger": [
+        "BEFORE_STAGE_5",
+        "API_WALLET_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.historical.archive_limits",
+      "subject": "Hyperliquid historical archive guarantees",
+      "claim": "The official historical-data documentation says archive uploads occur approximately monthly, timeliness is not guaranteed, data may be missing, and S3 asset data includes L2 book snapshots and asset contexts rather than every live data set.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/historical-data",
+      "source_retrieved_at": "2026-09-23T00:00:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-historical-data",
+      "limitations": "Historical archive data cannot automatically substitute for native point-in-time capture; completeness for any candidate period must be measured.",
+      "reverify_trigger": [
+        "BEFORE_HISTORICAL_IMPORT",
+        "HISTORICAL_DATA_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.account.actual_fee_rates",
+      "subject": "Project account effective fee rates",
+      "claim": "The actual taker/maker rates that would apply to the project account at execution time are not yet known.",
+      "status": "UNKNOWN",
+      "verification_scope": "UNVERIFIED",
+      "source_url": null,
+      "source_retrieved_at": null,
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": null,
+      "limitations": "Base documented rates are insufficient because account-specific tier/discount state can change. Query userFees before economic experiments and again before live deployment.",
+      "reverify_trigger": [
+        "BEFORE_STAGE_05",
+        "BEFORE_STAGE_7",
+        "ACCOUNT_FEE_TIER_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.execution.submit_ack_latency",
+      "subject": "Mainnet order submission-to-ack latency",
+      "claim": "The project does not yet have an observed mainnet distribution for submit-to-ack latency.",
+      "status": "UNKNOWN",
+      "verification_scope": "UNVERIFIED",
+      "source_url": null,
+      "source_retrieved_at": null,
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": null,
+      "limitations": "Do not substitute HTTP ping, vendor claims, or market-data timestamp lag. Measure with later approved probes.",
+      "reverify_trigger": [
+        "BEFORE_LATENCY_DEPENDENT_STRATEGY",
+        "BEFORE_STAGE_7"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.execution.ioc_fill_distribution",
+      "subject": "Mainnet IOC partial-fill/rejection distribution",
+      "claim": "The project does not yet have empirical production distributions for IOC fill ratio, partial fills, rejections, or response timing.",
+      "status": "UNKNOWN",
+      "verification_scope": "UNVERIFIED",
+      "source_url": null,
+      "source_retrieved_at": null,
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": null,
+      "limitations": "Backtest assumptions must remain explicit scenarios until testnet/mainnet measurements replace them.",
+      "reverify_trigger": [
+        "BEFORE_STAGE_7"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.execution.real_slippage",
+      "subject": "Mainnet realized taker slippage",
+      "claim": "The project does not yet have its own realized mainnet slippage-versus-size distribution.",
+      "status": "UNKNOWN",
+      "verification_scope": "UNVERIFIED",
+      "source_url": null,
+      "source_retrieved_at": null,
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": null,
+      "limitations": "Stage 0.5 may model executable depth conservatively, but actual own-order impact and realized slippage require micro-live evidence.",
+      "reverify_trigger": [
+        "BEFORE_STAGE_7",
+        "SIZE_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.credentials.api_wallet_withdrawal_scope",
+      "subject": "API-wallet ability to move or withdraw funds",
+      "claim": "The project has not yet verified by controlled test and current documentation whether the chosen runtime API-wallet setup is unable to withdraw or transfer funds.",
+      "status": "UNKNOWN",
+      "verification_scope": "UNVERIFIED",
+      "source_url": null,
+      "source_retrieved_at": null,
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": null,
+      "limitations": "Do not call an API wallet 'trading-only' until its relevant capabilities and revocation path are verified for the exact account mode used.",
+      "reverify_trigger": [
+        "BEFORE_STAGE_5",
+        "BEFORE_CREDENTIAL_PROVISIONING"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "reference_feed.selection",
+      "subject": "External price-discovery reference feed",
+      "claim": "The project has not yet frozen the external reference venue/feed.",
+      "status": "UNKNOWN",
+      "verification_scope": "UNVERIFIED",
+      "source_url": null,
+      "source_retrieved_at": null,
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "REFERENCE",
+      "verification_artifact": null,
+      "limitations": "Selection must be based on legal/access constraints, timestamp semantics, observed cadence, completeness, and fit for the Stage 0.5 horizon domain—not popularity alone.",
+      "reverify_trigger": [
+        "BEFORE_REFERENCE_ADAPTER_IMPLEMENTATION"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "reference_feed.timestamp_semantics",
+      "subject": "Reference-feed timestamp and completeness semantics",
+      "claim": "The timestamp meaning, sequencing, gap-detection guarantees, and BBO/trade completeness of the eventual external reference feed are not yet verified.",
+      "status": "UNKNOWN",
+      "verification_scope": "UNVERIFIED",
+      "source_url": null,
+      "source_retrieved_at": null,
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "REFERENCE",
+      "verification_artifact": null,
+      "limitations": "These facts become source-specific once the reference venue is selected.",
+      "reverify_trigger": [
+        "AFTER_REFERENCE_FEED_SELECTION",
+        "BEFORE_STAGE_05"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.historical.period_completeness",
+      "subject": "Historical completeness for the eventual research period",
+      "claim": "Completeness of any imported Hyperliquid historical period used by the project is not yet established.",
+      "status": "UNKNOWN",
+      "verification_scope": "UNVERIFIED",
+      "source_url": null,
+      "source_retrieved_at": null,
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": null,
+      "limitations": "Official documentation explicitly allows missing or delayed archive data. Every imported period needs a manifest and quality report.",
+      "reverify_trigger": [
+        "BEFORE_HISTORICAL_IMPORT",
+        "BEFORE_CONFIRMATION_FREEZE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    }
+  ]
+}

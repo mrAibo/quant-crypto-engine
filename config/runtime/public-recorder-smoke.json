@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "parameters": {
+    "source_id": {
+      "value": "hyperliquid-mainnet-public",
+      "basis": "DOCUMENTED_CONSTRAINT"
+    },
+    "endpoint": {
+      "value": "wss://api.hyperliquid.xyz/ws",
+      "basis": "DOCUMENTED_CONSTRAINT"
+    },
+    "coins": {
+      "value": [
+        "BTC",
+        "ETH"
+      ],
+      "basis": "EXPERIMENTAL"
+    },
+    "channels": {
+      "value": [
+        "l2Book",
+        "bbo",
+        "trades",
+        "activeAssetCtx"
+      ],
+      "basis": "DOCUMENTED_CONSTRAINT"
+    },
+    "queue_capacity": {
+      "value": 4096,
+      "basis": "SAFETY_DEFAULT"
+    },
+    "sync_every_frames": {
+      "value": 128,
+      "basis": "EXPERIMENTAL"
+    },
+    "shutdown_drain_timeout_seconds": {
+      "value": 15,
+      "basis": "SAFETY_DEFAULT"
+    },
+    "seal_on_shutdown": {
+      "value": true,
+      "basis": "SAFETY_DEFAULT"
+    },
+    "reconnect_base_seconds": {
+      "value": 2,
+      "basis": "DOCUMENTED_CONSTRAINT"
+    },
+    "reconnect_max_seconds": {
+      "value": 30,
+      "basis": "SAFETY_DEFAULT"
+    },
+    "reconnect_jitter_fraction": {
+      "value": 0.2,
+      "basis": "SAFETY_DEFAULT"
+    },
+    "heartbeat_idle_seconds": {
+      "value": 45,
+      "basis": "SAFETY_DEFAULT"
+    },
+    "max_message_bytes": {
+      "value": 4194304,
+      "basis": "SAFETY_DEFAULT"
+    },
+    "receive_queue_high_water": {
+      "value": 64,
+      "basis": "SAFETY_DEFAULT"
+    },
+    "open_timeout_seconds": {
+      "value": 10,
+      "basis": "SAFETY_DEFAULT"
+    },
+    "close_timeout_seconds": {
+      "value": 5,
+      "basis": "SAFETY_DEFAULT"
+    },
+    "storage_root": {
+      "value": "data/live-smoke",
+      "basis": "EXPERIMENTAL"
+    },
+    "manifest_path": {
+      "value": "data/live-smoke/raw-manifest.json",
+      "basis": "EXPERIMENTAL"
+    },
+    "run_duration_seconds": {
+      "value": 30,
+      "basis": "EXPERIMENTAL"
+    }
+  }
+}

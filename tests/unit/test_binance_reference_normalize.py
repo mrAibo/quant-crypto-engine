@@ -48,7 +48,7 @@ def _raw(payload: bytes, *, offset: int = 0) -> RawFrame:
             connection_id="public-conn",
             ingest_seq=3,
             channel_hint="btcusdt@bookTicker",
-            capture_flags=("LIVE_CAPTURE", "WS_PUBLIC", "BINANCE_PUBLIC"),
+            capture_flags=("BINANCE_PUBLIC", "LIVE_CAPTURE", "WS_PUBLIC"),
         ),
         payload=payload,
     )

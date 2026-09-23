@@ -72,12 +72,8 @@ def test_top_of_book_friction_is_directional_and_includes_fee_once() -> None:
         direction=TradeDirection.LONG,
     )
 
-    assert long_zero_fee == (Decimal(1) - (Decimal("99") / Decimal("101"))) * Decimal(
-        "10000"
-    )
-    assert short_zero_fee == ((Decimal("101") / Decimal("99")) - Decimal(1)) * Decimal(
-        "10000"
-    )
+    assert long_zero_fee == (Decimal(1) - (Decimal("99") / Decimal("101"))) * Decimal("10000")
+    assert short_zero_fee == ((Decimal("101") / Decimal("99")) - Decimal(1)) * Decimal("10000")
     assert long_with_fee > long_zero_fee
     assert long_with_fee < long_zero_fee + Decimal("10")
 
@@ -186,8 +182,7 @@ def test_horizon_support_exposes_insufficient_cells_instead_of_hiding_them() -> 
     )
 
     observed = [
-        (item.horizon_seconds, item.non_overlapping_windows, item.included)
-        for item in result
+        (item.horizon_seconds, item.non_overlapping_windows, item.included) for item in result
     ]
     assert observed == [
         (10, 10, True),

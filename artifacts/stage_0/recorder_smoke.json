@@ -63,11 +63,14 @@
     "github_mypy_strict": "PASS_33_FILES",
     "github_pytest_python_3_12": "PASS_161",
     "uv_lock_python_3_13": "PASS",
-    "github_pytest_python_3_13": "PASS_161"
+    "github_pytest_python_3_13": "PASS_161",
+    "final_github_ci_run": 35910694098
   },
   "known_limitations": [
     "Automatic size/time segment rollover is intentionally disabled.",
     "Deployment values are not frozen until TASK-009 smoke measurement.",
     "No normalization, Parquet, reference venue, strategy, or trading code."
-  ]
+  ],
+  "merged_pr": 8,
+  "merge_commit": "069bddf1f8ef9aed1fc210bb46e690bc564cbb22"
 }

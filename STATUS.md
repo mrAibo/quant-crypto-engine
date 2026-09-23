@@ -5,10 +5,10 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `task-016-dual-source-data-gate`
-- Current phase: **Stage 0 — Data Gate passed; final TASK-016 CI pending**
-- Current work package: **TASK-016 / Stage-0 Data Gate — PASS from real dual-source mainnet evidence; final CI pending**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015**
+- Current branch: `main`
+- Current phase: **Stage 0.5 — Profitability / Economic Frontier**
+- Current work package: **TASK-017 — model-free profitability-frontier measurement contract**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
@@ -347,32 +347,35 @@ Delivered:
 - **299 tests PASS** on Python 3.12 and 3.13;
 - final PR-head CI `35927498144` PASS.
 
-## Current task
+## Completed — TASK-016 / Stage-0 Data Gate
 
-Read **[`tasks/TASK_016.md`](tasks/TASK_016.md)**.
+PR #16, merge commit `ed13f9054b290e04151bc1d9de15eddbe4434b5f`.
 
-TASK-016 has passed its real-mainnet evidence gate:
+Real dual-source public mainnet evidence:
 
-- pre-smoke network-independent CI `35930329166`: **306 PASS** on Python 3.12 and 3.13; Ruff/format/strict mypy PASS;
-- dual-source public mainnet smoke `35930416414`: **PASS**;
+- workflow `35930416414`: **PASS**;
 - **24,106** raw frames / **14,949,703** durable bytes;
 - Hyperliquid: **464** raw frames, **8/8** ACKs;
 - Binance: **23,642** raw frames, ACK IDs **1301/1302**;
 - one host/boot causal domain;
 - **24,345** normalized events;
 - **0** normalization errors;
-- Parquet counts reconcile exactly;
-- temporary network workflow removed.
-
-### Gate decision
+- deterministic Parquet counts reconciled exactly;
+- final network-independent CI `35930608146`: **306 PASS** on Python 3.12 and 3.13; Ruff/format/strict mypy PASS.
 
 **Stage-0 Data Gate: PASS.**
 
-This proves the prospective dual-source evidence pipeline works end to end. It does not prove alpha or profitability.
+This validates the data/evidence pipeline only. Economic edge remains UNPROVEN.
+
+## Current task
+
+Read **[`tasks/TASK_017.md`](tasks/TASK_017.md)**.
+
+TASK-017 begins Stage 0.5. It builds model-free movement/cost/frontier measurements before any predictive model is fitted.
 
 ### Exact next action
 
-Run the final network-independent PR CI after removal of the temporary network workflow. If green, merge PR #16, mark TASK-016 complete, and advance `STATUS.md` to Stage 0.5 / TASK-017 profitability-frontier design.
+Create a dedicated TASK-017 branch and implement exact frontier primitives with synthetic tests first: BBO mid/spread, bps movement, 1-2-5 horizon grid, L2 book walking, fee accounting, coverage/sample support, and deterministic report contracts.
 
 ## User actions currently required
 

@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
@@ -282,3 +282,43 @@ Each must end in a deterministic status and leave bytes/audit state truthful.
 - Parquet;
 - strategy/features/backtest;
 - OMS/signing/trading.
+
+
+## Implementation status
+
+Implemented:
+
+- bounded async recorder supervisor;
+- explicit immutable runtime settings;
+- network-source-independent capture-frame protocol;
+- exact metadata/payload mapping into QCR1;
+- explicit sync/durable accounting;
+- deterministic safe segment IDs;
+- clean seal/manifest handoff;
+- graceful stop and bounded drain;
+- producer/writer/storage failure classification;
+- network-free runtime validation CLI;
+- end-to-end, backpressure, and fault tests;
+- `artifacts/stage_0/recorder_smoke.json`.
+
+No normalization, Parquet, reference venue, strategy, execution, or trading code is present.
+
+## Validation status
+
+GitHub CI run `35905174696`: **PASS** — 161 tests on Python 3.12 and 161 tests on Python 3.13; Ruff, format, strict mypy, `uv --locked` all PASS.
+
+
+## Validation result
+
+GitHub Actions run `35905174696`:
+
+- `uv lock --check` Python 3.12: **PASS**
+- `uv sync --locked` Python 3.12: **PASS**
+- Ruff lint: **PASS**
+- Ruff format: **PASS**
+- strict mypy: **PASS — 33 source files**
+- pytest Python 3.12: **PASS — 161 tests**
+- `uv lock --check` Python 3.13: **PASS**
+- pytest Python 3.13: **PASS — 161 tests**
+
+TASK-008 is ready for closeout CI and merge.

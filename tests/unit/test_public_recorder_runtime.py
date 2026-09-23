@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import replace
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import pytest
 
@@ -67,7 +67,7 @@ def test_config_requires_manifest_inside_storage_root() -> None:
     base = load_public_recorder_config(_repo_config())
 
     with pytest.raises(RuntimeConfigError, match="inside storage_root"):
-        replace(base, manifest_path=Path("other/manifest.json"))  # type: ignore[arg-type]
+        replace(base, manifest_path=PurePosixPath("other/manifest.json"))
 
 
 def test_identity_derivation_is_stable_with_explicit_sources(tmp_path: Path) -> None:
@@ -119,8 +119,8 @@ def test_programmatic_config_keeps_validation_after_replace(tmp_path: Path) -> N
     base = load_public_recorder_config(_repo_config())
     config: PublicRecorderConfig = replace(
         base,
-        storage_root=Path(tmp_path.as_posix()),  # type: ignore[arg-type]
-        manifest_path=Path((tmp_path / "manifest.json").as_posix()),  # type: ignore[arg-type]
+        storage_root=PurePosixPath(tmp_path.as_posix()),
+        manifest_path=PurePosixPath((tmp_path / "manifest.json").as_posix()),
         run_duration_seconds=0.1,
     )
 

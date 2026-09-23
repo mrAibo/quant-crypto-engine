@@ -5,9 +5,10 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `task-001-bootstrap` until TASK-001 is merged
+- Current PR: **#1 — TASK-001: bootstrap repository and quality gate**
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-001 / S0-WP01 — repository bootstrap and quality gate**
+- Current work package: **TASK-001 / S0-WP01 — final read-only CI and merge**
+- Exact next work package after merge: **TASK-002 — Evidence Contract**
 - Economic status: **UNPROVEN**
 - Live-trading status: **FORBIDDEN**
 - Production execution work before Gate 1: **FORBIDDEN**
@@ -70,7 +71,7 @@ A win rate above 50% is desirable only as a descriptive characteristic; it is no
 
 ## Important conclusions from external adversarial reviews
 
-Independent reviews from multiple frontier LLMs converged on the following:
+Independent reviews from Google, Qwen, GLM, DeepSeek, Claude/Fable and GPT Astra converged on the following:
 
 - The biggest risk is building infrastructure before proving executable edge.
 - Short-horizon BTC/ETH taker economics are difficult; horizons must be derived from measured movement, costs, latency, and signal decay rather than guessed.
@@ -83,75 +84,82 @@ Independent reviews from multiple frontier LLMs converged on the following:
 - Micro-live is the first stage that can validate real-money execution economics.
 - Unattended autonomy requires reconciliation, durable state, fault drills, and an independent external watchdog—not merely an automatic strategy loop.
 
-## Resolved disagreements from the reviews
+## Resolved disagreements
 
-- **Do not hard-code prediction horizons.** Derive them in Stage 0.5.
-- **Do not hard-code arbitrary 14/30/90-day evidence windows.** Duration is derived from effective sample size, power, regime coverage, and evidence rate.
-- **Do not build a maker queue simulator initially.** Maker is measured live later.
-- **Do not place GPT in runtime v1.**
-- **Do not make Jev a directional engine.** One bounded veto/ranking hypothesis only.
-- **Do not treat an unknown order observation as proof that an order never existed without full reconciliation evidence.**
-- **Do not assume documented market-data cadence when it can be measured.** Recorder reports observed cadence and gaps.
-- **Production key topology is intentionally not frozen before Gate 1.** A later design must separate ordinary strategy authorization from independent cleanup/watchdog authority and prevent split-brain exposure creation.
+- **Prediction horizons:** derive in Stage 0.5; do not hard-code them.
+- **Evidence duration:** derive from effective sample size, power, regime coverage, evidence rate and budget; no magic 14/30/90-day gates.
+- **Maker execution:** no initial queue simulator; live-measure later if justified.
+- **GPT:** no runtime v1.
+- **Jev:** one bounded veto/ranking hypothesis only; not a directional engine.
+- **Unknown orders:** an `unknown` observation is not proof an order never existed without full reconciliation evidence.
+- **Market-data cadence:** measure observed cadence/gaps; do not turn an undocumented cadence assumption into architecture.
+- **Production key topology:** intentionally deferred until Gate 1. Later design must separate ordinary strategy authorization from independent cleanup authority and prevent split-brain exposure creation.
 
-## Current implementation status
+## TASK-001 implementation status
 
-### Completed / being committed in TASK-001
+### Implemented on PR #1
 
-- Repository created by the user.
-- Project/package naming fixed: repository `quant-crypto-engine`, Python package `cryptobot`.
-- Python version policy: 3.12 primary, 3.13 compatibility test.
-- `uv` chosen for dependency locking/reproducible environments.
-- Ruff, strict mypy, and pytest selected as mandatory first-line quality gates.
-- GitHub Actions CI defined.
-- Initial authoritative docs created:
-  - `docs/MASTER_PLAN.md`
-  - `docs/ARCHITECTURE_DECISIONS.md`
-  - `docs/EVIDENCE_POLICY.md`
-  - `docs/GATES.md`
-  - `stages/STAGE_0.md`
-  - `stages/STAGE_05.md`
-  - `stages/STAGE_1.md`
-  - `stages/STAGE_2.md`
-- `tasks/TASK_001.md` and `tasks/TASK_002.md` created.
-- `STATUS.md` established as the cross-chat continuation source of truth.
+- Reproducible Python package skeleton.
+- Python 3.12 primary; Python 3.13 compatibility test.
+- `uv` dependency management with committed `uv.lock`.
+- Ruff lint + format checks.
+- strict mypy.
+- pytest.
+- GitHub Actions CI.
+- `README.md`.
+- `docs/MASTER_PLAN.md`.
+- `docs/ARCHITECTURE_DECISIONS.md`.
+- `docs/EVIDENCE_POLICY.md`.
+- `docs/GATES.md`.
+- `stages/STAGE_0.md`, `STAGE_05.md`, `STAGE_1.md`, `STAGE_2.md`.
+- `tasks/TASK_001.md`, `tasks/TASK_002.md`.
+- `artifacts/stage_0/bootstrap_report.json`.
+- This `STATUS.md` continuation record.
 
-### Local validation completed
+### Validation already observed
 
-- Python 3.13.5: `compileall` PASS.
-- Python 3.13.5: `pytest` PASS (1/1).
-- Local sandbox has no external DNS, so Ruff/mypy installation and `uv lock` generation are intentionally delegated to GitHub Actions rather than fabricated.
+- Local Python 3.13.5: `compileall` PASS.
+- Local Python 3.13.5: pytest PASS.
+- GitHub Python 3.12: dependency sync PASS.
+- GitHub Ruff lint PASS.
+- GitHub Ruff format check PASS.
+- GitHub strict mypy PASS.
+- GitHub pytest 3.12 PASS.
+- GitHub pytest 3.13 PASS.
+- GitHub generated and committed `uv.lock`.
 
-### Tests required before TASK-001 is marked complete
+The local sandbox could not access external DNS, so generating the initial lock and installing missing lint/type tools locally was impossible. This was bypassed transparently through GitHub Actions. No external harness was required.
 
-- GitHub runner generates `uv.lock`.
-- Generated lock is committed.
-- `uv sync --locked --all-groups` succeeds.
-- Ruff lint passes.
-- Ruff formatting check passes.
-- strict mypy passes.
-- pytest passes on Python 3.12 and 3.13.
-- GitHub Actions `CI` is green.
+### Remaining before TASK-001 merge
+
+Run CI once more using:
+
+- committed `uv.lock`;
+- pinned uv 0.12.18;
+- GitHub token with `contents: read` only;
+- no workflow self-commit behavior.
+
+If this passes, merge PR #1 and begin TASK-002.
 
 ## Exact next task
 
-After TASK-001 is green, perform **[`tasks/TASK_002.md`](tasks/TASK_002.md): Implement the Evidence Contract**.
+After PR #1 merges, perform **[`tasks/TASK_002.md`](tasks/TASK_002.md): Implement the Evidence Contract**.
 
 Do **not** start Hyperliquid recorder code before the evidence-contract schema is reviewed and tested.
 
 ## User actions currently required
 
-None after repository creation, unless GitHub reports a permissions/Actions configuration problem that cannot be changed through the connected tooling.
+**None.**
 
-Future user actions will be explicitly recorded here before they are requested.
+If a future blocker cannot be bypassed safely with the connected GitHub tooling, provide the user a complete self-contained task prompt for another harness (for example DeepSeek) rather than silently lowering test/quality requirements.
 
 ## Open decisions — intentionally deferred
 
-- Final external reference venue/feed after Stage 0 probe/fit-for-purpose review.
-- VM/provider/region for long-running recorder, chosen from legal/access/latency/storage considerations rather than assumption.
+- Final external reference venue/feed after Stage 0 fit-for-purpose review.
+- VM/provider/region for long-running recorder.
 - Production signing-key topology and remote submit-gate design, deferred until Gate 1.
 - Exact operational thresholds (staleness, timeouts, disk reserve, watchdog TTL), derived from measured distributions later.
-- Capital amounts and scale ladder, derived from loss budget, depth, slippage, and exit evidence later.
+- Capital amounts and scale ladder, derived later from loss budget, depth, slippage, and exit evidence.
 - Project software license. Repository is public but no open-source license has been approved; do not copy third-party code merely because it is visible.
 
 ## Rules for future coding sessions
@@ -161,8 +169,8 @@ Future user actions will be explicitly recorded here before they are requested.
 3. Do not skip gates because later infrastructure is interesting.
 4. Every coding task requires tests.
 5. Run relevant tests before committing.
-6. Update `STATUS.md` in the same commit or immediately after every completed task/gate.
+6. Update `STATUS.md` with every completed task/gate and material architecture decision.
 7. Record failed experiments and rejected decisions; do not rewrite history.
-8. Do not add trading credentials or secrets to Git, logs, environment examples, or test fixtures.
-9. If a task reveals an architectural conflict, stop that task at a safe boundary, document it here, and resolve it before building around the conflict.
-10. Prefer a small correct commit over a broad speculative implementation.
+8. Never add trading credentials/secrets to Git, logs, examples, or fixtures.
+9. If a task reveals an architectural conflict, stop at a safe boundary, document it here, and resolve it before building around it.
+10. Prefer a small correct commit over broad speculative implementation.

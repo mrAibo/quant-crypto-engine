@@ -2,7 +2,7 @@
 
 ## Status
 
-`IN REVIEW — OFFLINE IMPLEMENTATION COMPLETE, CI PENDING, LIVE SMOKE NOT RUN`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
@@ -279,4 +279,38 @@ Implemented offline:
 - systemd static tests;
 - `artifacts/stage_0/live_capture_smoke.json` with `live_observation.status=NOT_RUN`.
 
-The real Hyperliquid live smoke has **not** been fabricated or inferred. It remains a separate acceptance step after offline CI.
+A real Hyperliquid mainnet public-only smoke completed successfully in GitHub Actions run `35912388990`; observed evidence is recorded in `artifacts/stage_0/live_capture_smoke.json`.
+
+
+## Validation result
+
+Offline/default CI run `35912396692`:
+
+- lock/install: PASS;
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS;
+- pytest Python 3.12: **173 PASS**;
+- pytest Python 3.13: **173 PASS**.
+
+Real public-only Hyperliquid smoke run `35912388990`:
+
+- duration: **30.158069475 s**;
+- observed frames: **559**;
+- market-data frames: **551**;
+- subscription acknowledgments: **8 / 8**;
+- malformed frames: **0**;
+- unknown frames: **0**;
+- reconnects: **0**;
+- queue high-water mark: **1**;
+- durable frames: **559**;
+- durable bytes: **364893**;
+- shutdown: **CLEAN_DURABLE**;
+- sealed storage audit: **VALID**;
+- credentials/private account access: **none**.
+
+These are smoke observations only, not a feed-completeness or capacity guarantee.
+
+## Next task
+
+`TASK-010 — Hyperliquid L2/BBO Normalization from Raw Capture`.

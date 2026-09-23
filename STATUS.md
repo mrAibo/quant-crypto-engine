@@ -5,9 +5,9 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `main`
+- Current branch: `task-008-recorder-supervisor`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-008 / S0-WP08 — Recorder supervisor and raw-writer integration**
+- Current work package: **TASK-008 / S0-WP08 — Recorder supervisor and raw-writer integration (implemented; CI pending)**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -205,16 +205,24 @@ Artifact: `artifacts/stage_0/hl_capture_probe.json`.
 
 Read **[`tasks/TASK_008.md`](tasks/TASK_008.md)**.
 
-Objective: compose TASK-007 network capture with TASK-005 raw storage and TASK-006 sealing/manifest publication behind a bounded recorder supervisor.
+Implemented on the feature branch:
 
-Planned outputs:
+- bounded async capture queue;
+- raw writer integration;
+- explicit sync/durable accounting;
+- deterministic segment identity;
+- TASK-006 sealing/manifest handoff;
+- graceful stop/drain semantics;
+- explicit fault classifications;
+- backpressure/fault/end-to-end tests;
+- network-free runtime validation CLI;
+- `artifacts/stage_0/recorder_smoke.json`.
 
-- `src/cryptobot/data/recorder.py`
-- `src/cryptobot/cli.py`
-- unit/integration/fault tests
-- `artifacts/stage_0/recorder_smoke.json`
+### Exact next action
 
-No normalization, Parquet, reference venue, strategy, or trading logic belongs in TASK-008.
+Open TASK-008 PR and require full GitHub CI green.
+
+After merge, begin **TASK-009 — minimal early deployment/systemd + real public-feed smoke evidence**.
 
 ## User actions currently required
 

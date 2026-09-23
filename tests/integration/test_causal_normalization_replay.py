@@ -246,11 +246,7 @@ def test_qcr1_two_venue_causal_replay_is_deterministic_and_auditable(
     context_records = [record for record in records_first if record.recv_mono_ns == 700]
     assert [record.event_ordinal for record in context_records] == [0, 1, 2]
 
-    trades = [
-        record.event
-        for record in records_first
-        if isinstance(record.event, Trade)
-    ]
+    trades = [record.event for record in records_first if isinstance(record.event, Trade)]
     assert len(trades) == 2
     assert trades[0].trade_id == trades[1].trade_id
     assert trades[0].envelope.event_id != trades[1].envelope.event_id

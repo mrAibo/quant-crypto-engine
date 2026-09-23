@@ -617,6 +617,7 @@ def _build_dataset_audit(
         ),
     )
 
+
 def _stream_cadence_audit(
     event_rows: tuple[dict[str, object], ...],
     *,

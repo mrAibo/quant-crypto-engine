@@ -47,12 +47,15 @@
     "github_ruff_format_check": "PASS",
     "github_mypy_strict": "PASS",
     "github_pytest_python_3_12": "PASS",
-    "github_pytest_python_3_13": "PASS"
+    "github_pytest_python_3_13": "PASS",
+    "final_github_ci_run": 35892726690
   },
   "known_limitations": [
     "No segment sealing/manifest yet.",
     "No compression inside frames.",
     "No recorder batching/fsync policy yet.",
     "No venue/network integration."
-  ]
+  ],
+  "merged_pr": 5,
+  "merge_commit": "544bf8ad0f4c04468035e0af9a4e260f3b39f187"
 }

@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`IN REVIEW — IMPLEMENTED, GITHUB CI PENDING`
 
 ## Objective
 
@@ -209,3 +209,30 @@ Write multiple Hyperliquid and Binance frames through QCR1, replay them through 
 - gap backfill;
 - live execution/OMS/signing;
 - AI/Jev/GPT logic.
+
+
+## Implementation status
+
+Implemented:
+
+- venue-neutral `FrameResult`, `PipelineError`, `CausalRecord`, and `PipelineReport` contracts;
+- strict frozen-source dispatch with no payload-based venue guessing;
+- reuse of TASK-010/011/012/013 normalizers and serializers;
+- explicit EVENTS / EMPTY / NOT_APPLICABLE / ERROR outcomes;
+- same-host/boot causal merge using receive monotonic time;
+- deterministic non-semantic tie-break for equal monotonic timestamps;
+- explicit rejection of mixed host/boot strict causal merge;
+- wall-clock regression anomaly counting without reordering;
+- parser event IDs and all raw occurrences preserved;
+- duplicate stable trade identities counted but never removed;
+- deterministic normalized-record serialization and SHA-256 digest;
+- deterministic report serialization;
+- unit coverage for dispatch, ordering, errors, duplicates, domains, and digest;
+- two-venue QCR1 integration replay;
+- `artifacts/stage_0/causal_normalization_pipeline.json`.
+
+No Parquet/features/labels/backtest/deduplication/execution code is present.
+
+## Validation status
+
+GitHub CI: **PENDING**.

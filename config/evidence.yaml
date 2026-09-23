@@ -679,6 +679,111 @@
       ],
       "reverify_after": null,
       "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.trades.data_shape",
+      "subject": "Hyperliquid WsTrade data shape",
+      "claim": "The trades WebSocket subscription returns WsTrade[] where each trade is documented with coin, side, px, sz, hash, time, tid, and users:[buyer,seller].",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/subscriptions",
+      "source_retrieved_at": "2026-09-23T20:30:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-trade-normalization",
+      "limitations": "The official type declares side as string but does not define it as aggressor direction in the reviewed section.",
+      "reverify_trigger": [
+        "BEFORE_TRADE_NORMALIZATION",
+        "WEBSOCKET_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.trade_tid_identity",
+      "subject": "Hyperliquid public trade native identity",
+      "claim": "The official WsTrade definition states tid is a 50-bit hash of (buyer_oid, seller_oid) and recommends (block_time, coin, tid) for a globally unique trade id.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/subscriptions",
+      "source_retrieved_at": "2026-09-23T20:30:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-trade-normalization",
+      "limitations": "The WebSocket type exposes a field named time but the reviewed docs do not separately define that field as block_time. TASK-011 uses the raw numeric time value in the normalized trade_id without promoting its timestamp semantic beyond what is verified.",
+      "reverify_trigger": [
+        "BEFORE_TRADE_NORMALIZATION",
+        "WEBSOCKET_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.trade_users_order",
+      "subject": "Hyperliquid public trade users ordering",
+      "claim": "The official WsTrade definition documents users as [buyer, seller].",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/subscriptions",
+      "source_retrieved_at": "2026-09-23T20:30:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-trade-normalization",
+      "limitations": "The v1 normalized Trade contract intentionally does not store buyer/seller addresses; raw provenance preserves them.",
+      "reverify_trigger": [
+        "BEFORE_TRADE_NORMALIZATION",
+        "WEBSOCKET_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.trade_side_aggressor_semantics",
+      "subject": "Hyperliquid public trade side aggressor semantics",
+      "claim": "The reviewed official WebSocket documentation and official Python SDK define the public trade side field as A/B string values but do not explicitly state in the trade schema that A/B denotes aggressor buy/sell direction.",
+      "status": "UNKNOWN",
+      "verification_scope": "UNVERIFIED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/subscriptions",
+      "source_retrieved_at": "2026-09-23T20:30:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-trade-normalization",
+      "limitations": "TASK-011 preserves native_side and sets aggressor_side=UNKNOWN rather than relying on third-party interpretations.",
+      "reverify_trigger": [
+        "SIDE_SEMANTICS_EVIDENCE",
+        "WEBSOCKET_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.trade_reconnect_duplicates",
+      "subject": "Hyperliquid public trade reconnect/replay semantics",
+      "claim": "The reviewed official WebSocket documentation does not document whether the public trades stream may replay recent trades after reconnect or whether array ordering provides a durable sequencing guarantee.",
+      "status": "UNKNOWN",
+      "verification_scope": "UNVERIFIED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/subscriptions",
+      "source_retrieved_at": "2026-09-23T20:30:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-trade-normalization",
+      "limitations": "TASK-011 preserves raw order and native identity but does not claim stream completeness or implement global deduplication.",
+      "reverify_trigger": [
+        "WEBSOCKET_DOC_CHANGE",
+        "RECONNECT_BEHAVIOR_MEASUREMENT"
+      ],
+      "reverify_after": null,
+      "owner": "project"
     }
   ]
 }

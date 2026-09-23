@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
@@ -173,3 +173,41 @@ Write raw frames through QCR1 and prove:
 - Parquet/materialized research tables;
 - features/labels/models/backtest;
 - strategy/OMS/signing/trading.
+
+
+## Implementation status
+
+Implemented:
+
+- current official `activeAssetCtx` / funding / mark / oracle evidence;
+- mainnet wire-shape probe confirming string values and no native timestamp;
+- explicit schema conflict resolution via additive `FundingObservationKind.CURRENT`;
+- schema artifact amendment and enum validation;
+- exact-Decimal activeAssetCtx parser;
+- deterministic FundingRateObservation + MarkPrice + OraclePrice derivation;
+- no fabricated exchange timestamp;
+- `MISSING_EXCHANGE_TIME` quality signaling;
+- strict BTC/ETH mapping;
+- complete raw provenance;
+- deterministic serialization;
+- QCR1 replay tests;
+- `artifacts/stage_0/hyperliquid_context_normalization.json`.
+
+No user/account funding payments, reference feed, Parquet, feature/model/backtest, or execution code is present.
+
+## Validation status
+
+GitHub CI: **PASS** — run `35918301023`; 246 tests passed on Python 3.12 and Python 3.13; Ruff, formatter, and strict mypy passed.
+
+
+## Validation result
+
+GitHub CI run `35918301023` on head `4a1291274f5ebaed4f333c2e1b7553e5f4c48344`:
+
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS — 47 source files;
+- pytest Python 3.12: **246 PASS**;
+- pytest Python 3.13: **246 PASS**.
+
+Default CI remains network-independent. The temporary activeAssetCtx probe workflow was removed before validation.

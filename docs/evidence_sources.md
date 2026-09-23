@@ -238,3 +238,44 @@ Decision:
 
 TASK-011 preserves **every raw occurrence** and does not silently deduplicate reconnect replay. The normalized stable `trade_id` uses the vendor-recommended tuple material `(time, coin, tid)`; the capture-derived `event_id` additionally includes raw segment/offset/index, so duplicate deliveries remain separately auditable. Exact replay-window size and completeness remain UNKNOWN.
 
+
+
+## Hyperliquid activeAssetCtx normalization
+
+Primary official sources:
+
+- <https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/subscriptions>
+- <https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/info-endpoint/perpetuals>
+- <https://hyperliquid.gitbook.io/hyperliquid-docs/trading/funding>
+- <https://hyperliquid.gitbook.io/hyperliquid-docs/trading/robust-price-indices>
+- <https://hyperliquid.gitbook.io/hyperliquid-docs/hypercore/oracle>
+
+Official Python SDK reference:
+
+- <https://github.com/hyperliquid-dex/hyperliquid-python-sdk/tree/2fdb18f9517675ea03695a0962bd19eece9c83f0>
+
+Re-verified on 2026-09-23 before TASK-012 implementation:
+
+- `activeAssetCtx` returns `WsActiveAssetCtx { coin, ctx: PerpsAssetCtx }` for perps.
+- The reviewed `WsActiveAssetCtx` / `PerpsAssetCtx` shape contains **no native timestamp field**.
+- Official Python SDK `PerpAssetCtx` types the monetary/rate fields as strings on the wire.
+- The perpetuals info docs describe the context value as **current funding**.
+- Hyperliquid funding is paid every hour; the funding docs state the cash-flow formula is position size × oracle price × funding rate.
+- Mark price is a robust fair-price input for margining/liquidations/TP-SL/unrealized PnL; oracle price is validator-derived and is used in funding.
+- Mark/oracle are not executable fill prices.
+
+Schema conflict found:
+
+The repository's v1 `FundingObservationKind` currently contains only `PREDICTED` and `REALIZED`. The source is explicitly described as **current funding**. Mapping it to either existing enum would distort the source semantics. TASK-012 therefore treats this as an explicit additive contract correction and will add `CURRENT` before emitting `FundingRateObservation`.
+
+Measured mainnet context probe:
+
+- One-shot public-only run: <https://github.com/mrAibo/quant-crypto-engine/actions/runs/35917667508>
+- BTC top-level payload keys: `coin`, `ctx`.
+- `ctx` keys observed: `dayBaseVlm`, `dayNtlVlm`, `funding`, `impactPxs`, `markPx`, `midPx`, `openInterest`, `oraclePx`, `premium`, `prevDayPx`.
+- No `time` field was present at the top level or inside `ctx`.
+- `funding`, `markPx`, `oraclePx`, and the other sampled scalar context values were JSON strings.
+- Observed sample values: funding `0.0000118657`, mark `84384.0`, oracle `84419.0`.
+
+Decision: TASK-012 parses these values as exact Decimal strings and leaves exchange timestamp absent.
+

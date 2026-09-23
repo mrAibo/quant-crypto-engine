@@ -826,6 +826,111 @@
       ],
       "reverify_after": null,
       "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.active_asset_ctx.shape",
+      "subject": "Hyperliquid activeAssetCtx perps shape",
+      "claim": "Official WebSocket docs define WsActiveAssetCtx as {coin:string, ctx:PerpsAssetCtx}. The official Python SDK types PerpAssetCtx funding/openInterest/prevDayPx/dayNtlVlm/premium/oraclePx/markPx/dayBaseVlm as strings, midPx as optional string, and impactPxs as optional pair of strings.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/subscriptions",
+      "source_retrieved_at": "2026-09-23T20:41:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-activeassetctx-normalization",
+      "limitations": "The GitBook TypeScript excerpt displays number types for shared context fields while the official Python SDK and info examples use strings; TASK-012 follows observed wire behavior after a dedicated mainnet probe.",
+      "reverify_trigger": [
+        "BEFORE_CONTEXT_NORMALIZATION",
+        "WEBSOCKET_DOC_CHANGE",
+        "SDK_TYPE_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.active_asset_ctx.no_native_time",
+      "subject": "Hyperliquid activeAssetCtx native timestamp",
+      "claim": "The reviewed official WsActiveAssetCtx and PerpsAssetCtx definitions contain no native timestamp field.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/subscriptions",
+      "source_retrieved_at": "2026-09-23T20:41:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-activeassetctx-normalization",
+      "limitations": "Normalized events must use local receive time for availability and must not fabricate exchange_ts.",
+      "reverify_trigger": [
+        "WEBSOCKET_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.asset_context.funding_semantics",
+      "subject": "Hyperliquid asset-context funding semantics",
+      "claim": "The official perpetuals info documentation describes asset contexts as including mark price, current funding, open interest, etc. Hyperliquid funding is paid every hour, while the formula is defined on an 8-hour rate and one eighth is paid each hour.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/info-endpoint/perpetuals",
+      "source_retrieved_at": "2026-09-23T20:41:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-activeassetctx-normalization",
+      "limitations": "The context field is documented as current funding, not as a realized account payment. The existing v1 enum PREDICTED/REALIZED cannot represent CURRENT without an additive contract correction.",
+      "reverify_trigger": [
+        "FUNDING_DOC_CHANGE",
+        "WEBSOCKET_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.mark_oracle.semantics",
+      "subject": "Hyperliquid mark and oracle semantics",
+      "claim": "Official docs state oracle price is validator-derived from external spot sources and used for funding; mark price is a robust median-based fair perp price used for margining, liquidations, TP/SL triggering, and unrealized PnL.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/trading/robust-price-indices",
+      "source_retrieved_at": "2026-09-23T20:41:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-activeassetctx-normalization",
+      "limitations": "Neither mark nor oracle is an executable fill price.",
+      "reverify_trigger": [
+        "PRICE_INDEX_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.active_asset_ctx_wire_observed",
+      "subject": "Observed Hyperliquid activeAssetCtx wire shape",
+      "claim": "TASK-012 mainnet probe observed BTC activeAssetCtx with top-level keys coin/ctx, no top-level or ctx timestamp, and funding/markPx/oraclePx plus other numeric context values encoded as strings.",
+      "status": "VERIFIED",
+      "verification_scope": "MEASURED",
+      "source_url": "https://github.com/mrAibo/quant-crypto-engine/actions/runs/35917667508",
+      "source_retrieved_at": "2026-09-23T20:41:55Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-activeassetctx-normalization",
+      "limitations": "Single BTC mainnet sample confirms the current observed wire shape; it is not a schema stability guarantee.",
+      "reverify_trigger": [
+        "WEBSOCKET_DOC_CHANGE",
+        "WIRE_TYPE_CHANGE",
+        "CONTEXT_SCHEMA_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
     }
   ]
 }

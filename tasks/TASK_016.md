@@ -2,7 +2,7 @@
 
 ## Status
 
-`VALIDATED — FINAL NETWORK-INDEPENDENT CI PENDING`
+`COMPLETE`
 
 ## Gate finding that created this task
 
@@ -225,3 +225,18 @@ All 12 real-smoke acceptance criteria passed.
 This PASS validates the prospective dual-source evidence pipeline only. It does **not** establish alpha, positive expectancy, live execution quality, or production readiness.
 
 The temporary mainnet workflow is removed before merge and the PR must pass one final network-independent CI run.
+
+
+## Final validation and merge
+
+Final network-independent CI run `35930608146` after removal of the temporary mainnet workflow:
+
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS — 61 source files;
+- pytest Python 3.12: **306 PASS**;
+- pytest Python 3.13: **306 PASS**.
+
+Merged as PR #16 in commit `ed13f9054b290e04151bc1d9de15eddbe4434b5f`.
+
+Stage-0 Data Gate is **PASS**. The project may proceed to Stage 0.5 economic-frontier research, but no alpha/profitability claim exists yet.

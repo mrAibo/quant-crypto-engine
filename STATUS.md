@@ -8,7 +8,7 @@
 - Current branch: `task-014-causal-normalization-pipeline`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
 - Current work package: **TASK-014 / S0-WP14 — causal raw-to-normalized pipeline implemented; CI pending**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
@@ -312,30 +312,33 @@ Delivered:
 - **271 tests PASS** on Python 3.12 and 3.13;
 - Ruff/format/strict mypy PASS.
 
+## Completed — TASK-014
+
+PR #14, merge commit `e6a4d2d2af6a14adbb23687e41183932731d6f4e`.
+
+Delivered:
+
+- one frozen-source raw-to-normalized dispatcher for Hyperliquid + Binance reference;
+- explicit EVENTS / EMPTY / NOT_APPLICABLE / ERROR outcomes;
+- same-host/boot monotonic causal replay;
+- deterministic equal-timestamp tie-break;
+- mixed-domain strict rejection;
+- clock-order anomaly visibility;
+- duplicate stable trade-ID counting without deduplication;
+- deterministic canonical causal-record/report digests;
+- two-venue QCR1 end-to-end replay;
+- **288 tests PASS** on Python 3.12 and 3.13;
+- Ruff/format/strict mypy PASS.
+
 ## Current task
 
-Read **[`tasks/TASK_014.md`](tasks/TASK_014.md)**.
+Read **[`tasks/TASK_015.md`](tasks/TASK_015.md)**.
 
-TASK-014 is validated on PR #14:
-
-- frozen-source dispatcher for Hyperliquid + Binance reference;
-- explicit EVENTS / EMPTY / NOT_APPLICABLE / ERROR outcomes;
-- parser reuse without duplicated venue semantics;
-- same-host/boot causal ordering by receive monotonic time;
-- deterministic non-semantic tie-break;
-- mixed-domain strict rejection;
-- wall-clock regression anomaly reporting;
-- raw occurrence and parser event-ID preservation;
-- stable trade duplicate counting without deduplication;
-- deterministic causal-record/report serialization and SHA-256 digest;
-- two-venue QCR1 replay;
-- **288 tests PASS** on Python 3.12 and 3.13;
-- Ruff/format/strict mypy PASS;
-- CI run `35924328402`.
+Objective: materialize TASK-014 evidence into a deterministic typed Parquet research dataset while keeping QCR1 raw data authoritative and preserving exact provenance.
 
 ### Exact next action
 
-Merge PR #14, close TASK-014 on main, define TASK-015 for deterministic materialized research tables / Parquet, then implement it on a separate feature branch without adding features, labels, or backtest logic.
+Create a TASK-015 feature branch, add a locked PyArrow dependency, implement the explicit schemas/materializer/manifest first, then add round-trip and byte-determinism tests before opening the PR.
 
 ## User actions currently required
 

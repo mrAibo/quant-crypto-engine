@@ -122,11 +122,7 @@ class TransportSettings:
             ("max_message_bytes", self.max_message_bytes),
             ("receive_queue_high_water", self.receive_queue_high_water),
         ):
-            if (
-                isinstance(int_value, bool)
-                or not isinstance(int_value, int)
-                or int_value <= 0
-            ):
+            if isinstance(int_value, bool) or not isinstance(int_value, int) or int_value <= 0:
                 raise HyperliquidPublicError(f"{field} must be a positive integer")
         for field, number_value in (
             ("open_timeout_seconds", self.open_timeout_seconds),

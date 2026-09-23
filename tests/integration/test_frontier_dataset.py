@@ -37,10 +37,23 @@ def _write_dataset(
         encoding="utf-8",
     )
 
+    frames: list[dict[str, object]] = []
     events: list[dict[str, object]] = []
     bbo: list[dict[str, object]] = []
     for index, (mono_ns, bid, ask, host, boot, quality_flags) in enumerate(points):
         event_id = f"event-{index}"
+        wall_ns = 1_790_000_000_000_000_000 + mono_ns
+        frames.append(
+            {
+                "source_id": "hyperliquid-mainnet-public",
+                "host_id": host,
+                "boot_id": boot,
+                "recv_mono_ns": mono_ns,
+                "recv_wall_ns": wall_ns,
+                "channel_or_stream": "bbo",
+                "outcome": "EVENTS",
+            }
+        )
         events.append(
             {
                 "event_id": event_id,
@@ -50,7 +63,7 @@ def _write_dataset(
                 "host_id": host,
                 "boot_id": boot,
                 "recv_mono_ns": mono_ns,
-                "recv_wall_ns": 1_790_000_000_000_000_000 + mono_ns,
+                "recv_wall_ns": wall_ns,
                 "quality_flags": quality_flags,
             }
         )
@@ -62,6 +75,17 @@ def _write_dataset(
             }
         )
 
+    frame_schema = pa.schema(
+        [
+            pa.field("source_id", pa.string(), nullable=False),
+            pa.field("host_id", pa.string(), nullable=False),
+            pa.field("boot_id", pa.string(), nullable=False),
+            pa.field("recv_mono_ns", pa.int64(), nullable=False),
+            pa.field("recv_wall_ns", pa.int64(), nullable=False),
+            pa.field("channel_or_stream", pa.string(), nullable=True),
+            pa.field("outcome", pa.string(), nullable=False),
+        ]
+    )
     event_schema = pa.schema(
         [
             pa.field("event_id", pa.string(), nullable=False),
@@ -82,6 +106,7 @@ def _write_dataset(
             pa.field("ask_price_exact", pa.string(), nullable=True),
         ]
     )
+    _WRITE_TABLE(pa.Table.from_pylist(frames, schema=frame_schema), root / "frames.parquet")
     _WRITE_TABLE(pa.Table.from_pylist(events, schema=event_schema), root / "events.parquet")
     _WRITE_TABLE(pa.Table.from_pylist(bbo, schema=bbo_schema), root / "bbo.parquet")
 
@@ -128,12 +153,22 @@ def test_frontier_pilot_reads_real_parquet_and_derives_horizon_bounds(
     assert report.horizon_lower_bound_seconds == 1
     assert report.horizon_upper_bound_seconds == 10
     assert report.dataset_audit.causal_domain_count == 1
+    assert report.dataset_audit.raw_frame_count == 21
+    assert report.dataset_audit.observed_duration_ns == 20_000_000_000
+    assert report.dataset_audit.observed_wall_duration_ns == 20_000_000_000
+    assert report.dataset_audit.frame_counts_by_source_outcome == (
+        ("hyperliquid-mainnet-public", "EVENTS", 21),
+    )
+    assert report.dataset_audit.frame_counts_by_source_channel == (
+        ("hyperliquid-mainnet-public", "bbo", 21),
+    )
     assert dict(report.dataset_audit.primary_btc_event_counts)["BBO"] == 21
     assert dict(report.dataset_audit.primary_btc_event_counts)["L2_SNAPSHOT"] == 0
     assert report.dataset_audit.primary_bbo_cadence.observed_count == 21
     assert report.dataset_audit.primary_bbo_cadence.q99_ns == 1_000_000_000
     assert [item.horizon_seconds for item in report.horizons] == [1, 2, 5, 10]
     assert all(item.movement_sample_count > 0 for item in report.horizons)
+    assert all(dict(item.signed_return_quantiles_bps) for item in report.horizons)
     assert all(item.median_known_friction_bps > 0 for item in report.horizons)
     assert report.to_json_bytes() == report.to_json_bytes()
 

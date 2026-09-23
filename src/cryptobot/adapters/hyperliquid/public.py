@@ -167,9 +167,7 @@ class HyperliquidPublicAdapter:
             )
         for coin in coins:
             if not coin or coin.strip() != coin:
-                raise HyperliquidPublicError(
-                    "coins must contain only non-empty trimmed strings"
-                )
+                raise HyperliquidPublicError("coins must contain only non-empty trimmed strings")
 
         self._source_id = source_id
         self._coins = coins

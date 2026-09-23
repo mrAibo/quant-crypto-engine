@@ -556,7 +556,7 @@ def _build_dataset_audit(
         recv_mono_values.append(recv_mono_ns)
         recv_wall_values.append(recv_wall_ns)
         frame_outcomes[(source, cast(str, outcome))] += 1
-        frame_channels[(source, cast(str | None, channel))] += 1
+        frame_channels[(source, channel)] += 1
 
     for row in event_rows:
         source_id = row.get("source_id")

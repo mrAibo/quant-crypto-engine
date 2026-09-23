@@ -315,13 +315,9 @@ def classify_binance_payload(payload: bytes) -> BinancePayloadClassification:
     try:
         decoded = json.loads(payload)
     except (UnicodeDecodeError, json.JSONDecodeError):
-        return BinancePayloadClassification(
-            BinanceFrameKind.MALFORMED, None, None, None
-        )
+        return BinancePayloadClassification(BinanceFrameKind.MALFORMED, None, None, None)
     if not isinstance(decoded, dict) or not all(isinstance(k, str) for k in decoded):
-        return BinancePayloadClassification(
-            BinanceFrameKind.MALFORMED, None, None, None
-        )
+        return BinancePayloadClassification(BinanceFrameKind.MALFORMED, None, None, None)
     obj = cast(dict[str, object], decoded)
 
     if "result" in obj and "id" in obj:

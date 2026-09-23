@@ -9,19 +9,14 @@ from pathlib import Path
 from typing import cast
 
 from cryptobot.adapters.binance.public import (
-    MARKET_ENDPOINT,
-    PUBLIC_ENDPOINT,
-    SOURCE_ID as BINANCE_SOURCE_ID,
     BinanceFrameKind,
     BinanceReconnectPolicy,
     BinanceReferenceAdapter,
     BinanceTransportSettings,
     classify_binance_payload,
 )
+from cryptobot.adapters.binance.public import SOURCE_ID as BINANCE_SOURCE_ID
 from cryptobot.adapters.hyperliquid.public import (
-    MAINNET_WS_URL,
-    CapturedPublicFrame,
-    FrameKind,
     HyperliquidPublicAdapter,
     ReconnectPolicy,
     SubscriptionKey,
@@ -474,22 +469,30 @@ async def merge_capture_sources(
 ) -> AsyncIterator[CaptureFrame]:
     if not sources:
         raise DualSourceConfigError("at least one capture source is required")
-    if isinstance(queue_capacity, bool) or not isinstance(queue_capacity, int) or queue_capacity <= 0:
-        raise DualSourceConfigError("multiplexer queue_capacity must be a positive integer")
+    if (
+        isinstance(queue_capacity, bool)
+        or not isinstance(queue_capacity, int)
+        or queue_capacity <= 0
+    ):
+        raise DualSourceConfigError(
+            "multiplexer queue_capacity must be a positive integer"
+        )
 
     queue: asyncio.Queue[CaptureFrame | _SourceDone] = asyncio.Queue(maxsize=queue_capacity)
 
     async def pump(index: int, source: AsyncIterator[CaptureFrame]) -> None:
         error: Exception | None = None
+        cancelled = False
         try:
             async for frame in source:
                 await queue.put(frame)
         except asyncio.CancelledError:
+            cancelled = True
             raise
         except Exception as exc:
             error = exc
         finally:
-            if not asyncio.current_task() or not asyncio.current_task().cancelled():
+            if not cancelled:
                 await queue.put(_SourceDone(source_index=index, error=error))
 
     tasks = [

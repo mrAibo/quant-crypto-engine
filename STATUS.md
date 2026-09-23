@@ -5,10 +5,10 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `task-008-recorder-supervisor`
+- Current branch: `main`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-008 / S0-WP08 — Recorder supervisor and raw-writer integration (validated; merge pending)**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007**
+- Current work package: **TASK-009 / S0-WP09 — Public recorder runtime, systemd template, and live smoke evidence**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
@@ -201,28 +201,33 @@ Delivered:
 
 Artifact: `artifacts/stage_0/hl_capture_probe.json`.
 
+## Completed — TASK-008
+
+PR #8, merge commit `069bddf1f8ef9aed1fc210bb46e690bc564cbb22`.
+
+Delivered:
+
+- bounded async capture queue with backpressure and no silent drops;
+- exact TASK-007 frame → TASK-005 raw log persistence;
+- fsync-based durable frame/byte accounting;
+- deterministic segment IDs;
+- TASK-006 seal/manifest handoff;
+- graceful stop and bounded drain behavior;
+- explicit producer/writer/append/sync/seal/cancellation failure states;
+- network-free runtime validation CLI;
+- end-to-end, backpressure, and fault tests;
+- final green closeout CI run `35910694098`;
+- **161 tests PASS** on Python 3.12 and 3.13.
+
+Artifact: `artifacts/stage_0/recorder_smoke.json`.
+
 ## Current task
 
-Read **[`tasks/TASK_008.md`](tasks/TASK_008.md)**.
+Read **[`tasks/TASK_009.md`](tasks/TASK_009.md)**.
 
-TASK-008 is validated:
+Objective: build the first runnable public-recorder process, add safe signal handling and a minimal systemd template, then obtain short real Hyperliquid public-feed smoke evidence without introducing credentials, normalization, strategy, or trading code.
 
-- bounded async queue with backpressure/no silent drops;
-- exact raw metadata/payload persistence;
-- sync-based durability accounting;
-- clean seal/manifest publication;
-- graceful stop/drain;
-- explicit storage/cancellation failure states;
-- network-free runtime validation CLI;
-- **161 tests PASS** on Python 3.12 and 3.13;
-- Ruff, format and strict mypy PASS;
-- GitHub Actions run `35905174696`.
-
-### Exact next action
-
-Run closeout CI after docs/artifact updates, then merge PR #8.
-
-After merge, begin **[TASK-009 — Public Recorder Runtime, systemd Template, and Live Smoke Evidence](tasks/TASK_009.md)**.
+If the current execution environment cannot reach the public Internet, complete all offline code/tests first and generate a self-contained live-smoke task for an Internet-enabled harness rather than weakening the gate.
 
 ## User actions currently required
 

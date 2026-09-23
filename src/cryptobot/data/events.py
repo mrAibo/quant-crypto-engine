@@ -62,6 +62,7 @@ class TradeSide(StrEnum):
 
 
 class FundingObservationKind(StrEnum):
+    CURRENT = "CURRENT"
     PREDICTED = "PREDICTED"
     REALIZED = "REALIZED"
 
@@ -271,6 +272,8 @@ class FundingRateObservation:
     def __post_init__(self) -> None:
         _require_event_type(self.envelope, EventType.FUNDING_RATE_OBSERVATION)
         _require_decimal(self.rate, "rate")
+        if not isinstance(self.kind, FundingObservationKind):
+            raise EventValidationError("kind must be FundingObservationKind")
         _require_positive_int(self.rate_period_seconds, "rate_period_seconds")
         _require_optional_nonnegative_int(
             self.effective_boundary_ns, "effective_boundary_ns"

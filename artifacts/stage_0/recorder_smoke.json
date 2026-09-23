@@ -1,0 +1,65 @@
+{
+  "task": "TASK-008",
+  "status": "IMPLEMENTED_CI_PENDING",
+  "supervisor_contract_version": 1,
+  "pipeline": [
+    "async frame source",
+    "bounded asyncio queue",
+    "RecorderSupervisor writer",
+    "QCR1 RawLog .raw.open",
+    "sync/fsync policy",
+    "TASK-006 seal + manifest"
+  ],
+  "queue_semantics": {
+    "bounded": true,
+    "silent_drop": false,
+    "backpressure": "producer awaits queue capacity",
+    "high_watermark_recorded": true
+  },
+  "durability": {
+    "append_does_not_imply_durable": true,
+    "sync_policy": "explicit sync_every_frames",
+    "durable_frames_advance_only_after_sync": true,
+    "seal_on_clean_shutdown": "configurable"
+  },
+  "rollover": "DISABLED in TASK-008; deployment/automatic policy deferred to TASK-009",
+  "shutdown_states": [
+    "NONE",
+    "CLEAN_DURABLE",
+    "CLEAN_UNSEALED",
+    "TIMED_OUT",
+    "FAILED"
+  ],
+  "fault_matrix": [
+    "producer failure",
+    "append failure",
+    "sync failure",
+    "seal failure",
+    "writer cancellation",
+    "queue drain timeout"
+  ],
+  "tests": [
+    "runtime settings validation",
+    "segment ID determinism/safety",
+    "status immutability",
+    "raw metadata/payload round-trip",
+    "ordering",
+    "sync/durable accounting",
+    "seal + manifest audit",
+    "bounded queue backpressure",
+    "request_stop drain",
+    "append/sync/seal failures",
+    "writer cancellation",
+    "drain timeout",
+    "producer failure with truthful persisted prefix",
+    "network-free runtime validation CLI"
+  ],
+  "validation": {
+    "github_ci": "PENDING"
+  },
+  "known_limitations": [
+    "Automatic size/time segment rollover is intentionally disabled.",
+    "Deployment values are not frozen until TASK-009 smoke measurement.",
+    "No normalization, Parquet, reference venue, strategy, or trading code."
+  ]
+}

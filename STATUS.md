@@ -5,9 +5,9 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `main`
+- Current branch: `task-012-hyperliquid-context-normalization`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-012 / S0-WP12 — Hyperliquid activeAssetCtx funding/mark/oracle normalization**
+- Current work package: **TASK-012 / S0-WP12 — Hyperliquid activeAssetCtx normalization implemented; CI pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -282,11 +282,21 @@ Delivered:
 
 Read **[`tasks/TASK_012.md`](tasks/TASK_012.md)**.
 
-Objective: normalize Hyperliquid `activeAssetCtx` into funding-rate, mark-price, and oracle-price observations without inventing timestamps or funding semantics that the source does not support.
+Implemented on the feature branch:
+
+- current official context/funding/mark/oracle evidence;
+- live wire probe proving string-valued context and no native timestamp;
+- additive `FundingObservationKind.CURRENT` contract correction;
+- exact-Decimal funding/mark/oracle normalization;
+- no fabricated exchange timestamp;
+- `MISSING_EXCHANGE_TIME` quality flag;
+- complete raw provenance and deterministic event IDs;
+- QCR1 replay tests;
+- `artifacts/stage_0/hyperliquid_context_normalization.json`.
 
 ### Exact next action
 
-Re-verify the current official `activeAssetCtx` / `PerpsAssetCtx` and funding documentation. Resolve whether the v1 `FundingRateObservation` contract can represent the verified feed semantics exactly before implementing the parser.
+Open TASK-012 PR and require full network-independent CI green. Then merge and advance to TASK-013 (external reference feed).
 
 ## User actions currently required
 

@@ -128,9 +128,7 @@ def test_l2_snapshot_normalizes_exactly_with_raw_provenance() -> None:
 
 
 def test_bbo_preserves_independent_null_side() -> None:
-    frame = _raw_frame(
-        _bbo_payload([{"px": "2500.5", "sz": "3.25", "n": 6}, None])
-    )
+    frame = _raw_frame(_bbo_payload([{"px": "2500.5", "sz": "3.25", "n": 6}, None]))
 
     result = normalize_book_frame(frame, _registry())
 

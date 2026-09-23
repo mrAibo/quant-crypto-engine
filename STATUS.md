@@ -334,24 +334,26 @@ Delivered:
 
 Read **[`tasks/TASK_015.md`](tasks/TASK_015.md)**.
 
-Implemented on the feature branch:
+TASK-015 is validated on PR #15:
 
 - PyArrow 24.0.0 locked in `uv.lock`;
-- explicit schemas for eleven fixed Parquet tables plus deterministic manifest;
-- exact fixed-point string persistence for market numerics;
-- deterministic table ordering and L2 level ordinals;
-- frame/control/error preservation;
-- strict event/frame provenance verification;
+- eleven explicit Parquet schemas plus deterministic manifest;
+- exact fixed-point string market numerics; no binary-float market columns;
+- deterministic row ordering;
+- frame/control/error visibility;
+- strict event/frame provenance agreement;
 - duplicate stable trade identities preserved;
-- fixed writer options and per-file/schema/bundle hashes;
 - schema-correct empty datasets;
-- sibling-temp verification and non-overwriting atomic publish;
-- unit and QCR1→normalize→Parquet integration tests;
-- `artifacts/stage_0/parquet_materialization.json`.
+- fixed writer contract and deterministic file/schema/source-report/bundle hashes;
+- non-overwriting sibling-temp atomic publication;
+- QCR1 → TASK-014 normalize → Parquet → readback integration replay;
+- **299 tests PASS** on Python 3.12 and Python 3.13;
+- Ruff/format/strict mypy PASS;
+- CI run `35927351683`.
 
 ### Exact next action
 
-Open PR #15 and require full network-independent CI green. Fix Ruff/format/strict-mypy/PyArrow/pytest failures without weakening exact-numeric, provenance, determinism, or atomic-publication guarantees. Then merge and advance to the Stage-0 Data Gate audit.
+Require final PR-head CI after validation-document commits, merge PR #15, then run a separate Stage-0 Data Gate audit before implementing Stage 0.5 economic-frontier or any feature/backtest code.
 
 ## User actions currently required
 

@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`IN REVIEW — IMPLEMENTED, GITHUB CI PENDING`
 
 ## Objective
 
@@ -282,3 +282,27 @@ Each must end in a deterministic status and leave bytes/audit state truthful.
 - Parquet;
 - strategy/features/backtest;
 - OMS/signing/trading.
+
+
+## Implementation status
+
+Implemented:
+
+- bounded async recorder supervisor;
+- explicit immutable runtime settings;
+- network-source-independent capture-frame protocol;
+- exact metadata/payload mapping into QCR1;
+- explicit sync/durable accounting;
+- deterministic safe segment IDs;
+- clean seal/manifest handoff;
+- graceful stop and bounded drain;
+- producer/writer/storage failure classification;
+- network-free runtime validation CLI;
+- end-to-end, backpressure, and fault tests;
+- `artifacts/stage_0/recorder_smoke.json`.
+
+No normalization, Parquet, reference venue, strategy, execution, or trading code is present.
+
+## Validation status
+
+GitHub CI: **PENDING**.

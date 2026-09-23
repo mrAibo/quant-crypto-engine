@@ -45,6 +45,9 @@ select = [
   "RUF",
 ]
 
+[tool.ruff.lint.isort]
+known-first-party = ["cryptobot"]
+
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"

@@ -44,9 +44,7 @@ class SubscriptionKey:
 
     def __post_init__(self) -> None:
         if self.channel not in SUPPORTED_PUBLIC_CHANNELS:
-            raise HyperliquidPublicError(
-                f"unsupported Hyperliquid public channel: {self.channel}"
-            )
+            raise HyperliquidPublicError(f"unsupported Hyperliquid public channel: {self.channel}")
         if not self.coin or self.coin.strip() != self.coin:
             raise HyperliquidPublicError("coin must be a non-empty trimmed string")
 

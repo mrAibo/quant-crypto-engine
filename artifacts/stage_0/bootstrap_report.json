@@ -1,16 +1,22 @@
 {
   "task": "TASK-001",
-  "status": "PENDING_CI",
-  "local_validation": {
-    "python": "3.13.5",
-    "compileall": "PASS",
-    "pytest": "PASS (1 test)",
-    "ruff": "PENDING_GITHUB_CI (tool unavailable in sandbox without network)",
-    "mypy": "PENDING_GITHUB_CI (tool unavailable in sandbox without network)",
-    "uv_lock": "PENDING_GITHUB_CI (sandbox has no external DNS)"
+  "status": "VALIDATED_FINAL_CI_PENDING",
+  "validation": {
+    "local_python": "3.13.5",
+    "local_compileall": "PASS",
+    "local_pytest": "PASS (1 test)",
+    "github_python_3_12": "PASS",
+    "github_uv_sync_locked": "PASS",
+    "github_ruff_check": "PASS",
+    "github_ruff_format_check": "PASS",
+    "github_mypy_strict": "PASS",
+    "github_pytest_3_12": "PASS",
+    "github_pytest_3_13": "PASS",
+    "uv_lock_committed": true
   },
   "notes": [
     "No trading logic or exchange client code is present.",
-    "GitHub CI is configured to generate uv.lock as an artifact, verify lint/type/tests, and fail until the generated lock is committed."
+    "The initial CI failure was intentional: it required the generated uv.lock to be committed.",
+    "A final read-only CI run is required before merge."
   ]
 }

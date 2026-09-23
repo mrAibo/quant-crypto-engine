@@ -1,0 +1,56 @@
+{
+  "task": "TASK-016",
+  "gate": "Stage-0 Data Gate",
+  "decision": "BLOCKED",
+  "status": "IMPLEMENTED_LOCAL_CI_PENDING_LIVE_SMOKE_PENDING",
+  "blocking_reason": "Prospective simultaneous Hyperliquid + Binance capture under one shared host/boot clock domain has not yet been demonstrated on real mainnet.",
+  "prerequisites": {
+    "tasks_001_through_015": "VALIDATED",
+    "immutable_qcr1": "PASS",
+    "storage_recovery": "PASS",
+    "hyperliquid_public_capture": "PASS",
+    "hyperliquid_normalization": "PASS",
+    "binance_reference_adapter_and_normalization": "PASS",
+    "causal_pipeline": "PASS",
+    "deterministic_parquet": "PASS"
+  },
+  "task016_implementation": {
+    "shared_clock": true,
+    "shared_recorder_supervisor": true,
+    "bounded_source_multiplexer": true,
+    "frozen_sources": [
+      "hyperliquid-mainnet-public",
+      "binance-usdm-reference-public"
+    ],
+    "hyperliquid_expected_acks": 8,
+    "binance_expected_ack_ids": [
+      1301,
+      1302
+    ],
+    "fake_server_e2e": "IMPLEMENTED_CI_PENDING",
+    "real_mainnet_smoke": "PENDING"
+  },
+  "live_smoke_acceptance": [
+    "CLEAN_DURABLE recorder",
+    "VALID storage audit",
+    "manifest contains both source IDs",
+    "one host/boot clock domain",
+    "both sources produced frames",
+    "Hyperliquid 8/8 subscription ACKs",
+    "Binance ACK IDs 1301 and 1302",
+    "at least one normalized market event from each source",
+    "one causal domain",
+    "zero normalization ERROR frames",
+    "Parquet materialization/readback succeeds",
+    "materialized/raw/event counts reconcile"
+  ],
+  "residual_unknowns": [
+    "long-run feed completeness",
+    "long-run venue uptime",
+    "latency distributions",
+    "clock offset/uncertainty beyond host monotonic ordering",
+    "economic usefulness or alpha",
+    "future project-account fees/slippage/impact"
+  ],
+  "promotion_rule": "PASS permits Stage 0.5 economic-feasibility/frontier work only; it does not establish predictive edge or profitability."
+}

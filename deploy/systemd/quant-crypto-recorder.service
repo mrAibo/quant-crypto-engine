@@ -1,0 +1,25 @@
+[Unit]
+Description=Quant Crypto Engine public market-data recorder
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=quantcrypto
+Group=quantcrypto
+WorkingDirectory=/opt/quant-crypto-engine
+ExecStart=/opt/quant-crypto-engine/.venv/bin/python -m cryptobot.cli run-public-recorder --config /etc/quant-crypto-engine/public-recorder.json
+Restart=on-failure
+RestartSec=5s
+KillSignal=SIGTERM
+TimeoutStopSec=30s
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/quant-crypto-engine
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

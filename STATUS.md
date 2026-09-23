@@ -7,7 +7,7 @@
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `task-004-event-time-contracts`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-004 / S0-WP04 — Immutable event envelope, exact numeric rules, and clock abstraction (implemented; CI pending)**
+- Current work package: **TASK-004 / S0-WP04 — Immutable event envelope, exact numeric rules, and clock abstraction (validated; merge pending)**
 - Completed: **TASK-001, TASK-002, TASK-003**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -139,25 +139,22 @@ Artifact: `artifacts/stage_0/config_report.json`.
 
 Read **[`tasks/TASK_004.md`](tasks/TASK_004.md)**.
 
-Implemented on the feature branch:
+TASK-004 is validated:
 
 - immutable event envelope;
-- 12 normalized event-domain types;
+- normalized event-domain types;
 - exact Decimal policy;
-- scaled-integer helpers;
-- standard-library clock abstraction;
-- host/boot-safe monotonic elapsed-time rules;
-- apparent exchange-lag helper;
-- unit tests for event, numeric, and clock contracts;
-- `artifacts/stage_0/schema_v1.json`.
+- host/boot-safe clock abstraction;
+- deterministic serialization;
+- no venue parser/network/writer/trading code.
 
-No network, raw-writer, Parquet, strategy, or trading code has been added.
+Green GitHub Actions run: `35891685346`.
 
 ### Exact next action
 
-Open TASK-004 PR and require full GitHub CI green.
+Run one closeout CI after documentation/artifact changes, then merge PR #4.
 
-After merge, begin **TASK-005 — append-only raw framed writer**.
+After merge, begin **[TASK-005 — append-only raw framed writer](tasks/TASK_005.md)**.
 
 ## User actions currently required
 

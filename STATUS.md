@@ -1,163 +1,165 @@
 # Project Status
 
-> **Continuation entry point:** Read this file first in every new chat/session. Then read the referenced current task.
+> **Continuation entry point:** Read this file first in every new chat/session, then read the referenced current task. Treat this repository as the source of truth over conversational memory.
 
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `task-002-evidence-contract`
+- Current branch: `main`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-002 / S0-WP02 — Evidence Contract (validated; merge pending)**
-- Previous work package: **TASK-001 COMPLETE**
+- Current work package: **TASK-003 / S0-WP03 — Strict recorder configuration and instrument registry**
+- Completed: **TASK-001, TASK-002**
 - Economic status: **UNPROVEN**
-- Live-trading status: **FORBIDDEN**
-- Production execution work before Gate 1: **FORBIDDEN**
+- Live trading: **FORBIDDEN**
+- Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
 
 ## Primary objective
 
-Determine, as cheaply and scientifically as possible, whether an automated cryptocurrency strategy can produce reproducible **positive net expectancy after all real costs**. If the evidence survives, evolve the same core architecture toward unattended 24/7 trading.
+Determine whether an automated crypto strategy can produce reproducible **positive net expectancy after all real costs**, using the shortest scientifically defensible path. If evidence survives, evolve the same architecture toward unattended 24/7 trading.
 
-A win rate above 50% is descriptive only, not the optimization objective.
+Win rate above 50% is descriptive/preferable only; it is not the optimization target.
 
 ## Settled scope
 
 - Crypto only for now.
-- Hyperliquid is the current execution candidate, not an assumption of profitability.
-- BTC primary; ETH replication/generalization.
-- One external reference feed will be selected/frozen during Stage 0.
+- Hyperliquid is the current execution candidate, not a profitability assumption.
+- BTC primary research market.
+- ETH replication/generalization market.
+- One external major-market reference feed to be selected/frozen during Stage 0.
 - Python 3.12+ layered/modular monolith.
 - Taker-only first economic validation.
-- Maker execution is a later live-measurement branch.
-- Deterministic rules → regularized logistic regression → optional LightGBM.
+- Maker execution deferred to a separately gated live-measurement experiment.
+- Model sequence: deterministic rules → regularized logistic regression → optional LightGBM only if justified.
 - GPT has no runtime role in v1.
-- Jev gets only one initial bounded veto/ranking hypothesis.
+- Jev receives only one initial bounded veto/ranking hypothesis after the core strategy is validated.
 - No autonomous self-modification.
-- Human approval is required for strategy releases, capital increases, hard-risk changes, and reset of a latched halt.
+- Human approval required for strategy promotion, capital/risk increases, and latched-halt reset.
 
-## Binding project principles
+## Binding principles
 
-1. First deliverable is a trustworthy evidence system, not a trading bot.
-2. Raw market data must be immutable and replayable.
+1. The first product is a trustworthy evidence system, not a trading bot.
+2. Raw data must be immutable and replayable.
 3. Point-in-time availability and missingness are explicit.
-4. Core strategy/risk logic contains no exchange/network/filesystem I/O.
+4. Core strategy/risk logic contains no network/filesystem/exchange I/O.
 5. Research/replay/shadow/paper/live reuse stable strategy/risk/ledger contracts.
-6. Costs are accounted once; no double-counting of spread/depth/latency/funding/fees.
-7. No production signer/OMS/watchdog deployment before Gate 1.
-8. Later live order intent is durable before transmission.
-9. Ambiguous writes are never blindly retransmitted.
+6. Costs are counted once; no spread/depth/latency/funding/fee double counting.
+7. No production execution stack before Gate 1.
+8. Live order intent will be durable before transmission.
+9. Ambiguous writes will never be blindly retransmitted.
 10. Reconciled exchange evidence is authoritative for orders/fills/positions/cash.
-11. Emergency paths do not depend on optional AI/models.
-12. Production restart begins in recovery.
-13. Automatic scale-down is allowed; automatic scale-up is forbidden.
-14. Independent watchdog required before unattended live operation.
+11. Emergency paths do not depend on optional models/AI.
+12. Production restarts begin in recovery, never RUNNING.
+13. Automatic scale-down/halt is allowed; automatic scale-up is forbidden.
+14. An independent watchdog is mandatory before unattended live operation.
+15. Unknown facts remain UNKNOWN until specifically verified/measured.
 
 ## Stage sequence
 
 Stage 0 → Stage 0.5 → Stage 1 → Stage 2 → **Gate 1** → Replay → Shadow/Paper → OMS/Recovery → Watchdog/Chaos → Micro-live → optional Jev/Maker → controlled scaling.
 
-## Completed
+## Completed work
 
-### TASK-001 — repository bootstrap
+### TASK-001 — Repository bootstrap
 
-Merged PR #1.
+PR #1, merge commit `ed9adb0fe868baeed955302bc3d50deaaa1cb7ca`.
 
-Validated:
+Delivered:
 
-- committed `uv.lock`;
-- Python 3.12 and 3.13 compatibility;
-- Ruff lint/format;
-- strict mypy;
-- pytest;
+- Python package skeleton.
+- committed `uv.lock`.
+- Python 3.12 primary and 3.13 compatibility checks.
+- Ruff lint/format.
+- strict mypy.
+- pytest.
 - read-only GitHub Actions CI.
+- master architecture/evidence/gate/stage documentation.
+- `STATUS.md` continuation mechanism.
 
-See `artifacts/stage_0/bootstrap_report.json`.
+Artifact: `artifacts/stage_0/bootstrap_report.json`.
 
-## Current TASK-002 implementation
+### TASK-002 — Evidence contract
 
-Implemented:
+PR #2, merge commit `b10034fe26a1af1f48f4c3eaa8d5703abd041d7c`.
 
-- strict evidence data model and validator;
-- JSON-compatible YAML 1.2 configuration with zero new parser dependency;
-- human-readable source/provenance notes;
-- evidence audit report;
-- 10 unit tests;
-- 21 initial facts:
-  - 13 VERIFIED documented facts;
-  - 8 intentionally UNKNOWN facts.
+Delivered:
 
-Important preserved UNKNOWNs include:
+- `config/evidence.yaml` using JSON-compatible YAML 1.2.
+- strict evidence parser/validator.
+- official Hyperliquid provenance notes.
+- re-verification rules/reporting.
+- 10 evidence-specific unit tests.
+- 21 initial facts: **13 VERIFIED / 8 intentionally UNKNOWN**.
+- final Ruff/format/strict-mypy/pytest CI green on Python 3.12 and 3.13.
+
+Artifact: `artifacts/stage_0/evidence_report.json`.
+
+Important UNKNOWNs deliberately retained:
 
 - actual future project-account fee rates;
-- mainnet submit-to-ACK latency;
-- IOC partial-fill/rejection distributions;
+- submit-to-ACK latency distribution;
+- IOC partial-fill/rejection distribution;
 - realized slippage/own-order impact;
-- API-wallet transfer/withdrawal capability boundaries;
-- external reference-feed selection and timestamp/completeness guarantees;
-- actual completeness of any imported historical period.
-
-This is intentional: the project must not turn review-model assumptions or generic documentation into observed production facts.
-
-### Validation
-
-- TASK-002 unit tests: **10/10 PASS**
-- compileall: **PASS**
-- GitHub Ruff lint: **PASS**
-- GitHub Ruff format: **PASS**
-- GitHub strict mypy: **PASS**
-- GitHub pytest Python 3.12: **PASS**
-- GitHub pytest Python 3.13: **PASS**
-- Green CI run: `35879128871`
+- runtime API-wallet transfer/withdrawal capability boundaries;
+- reference-feed selection and timing/completeness semantics;
+- completeness of any actual imported historical period.
 
 ## Current verified documentation baseline
 
-Checked against official Hyperliquid documentation on 2026-09-23:
+Checked against official Hyperliquid docs on 2026-09-23 and captured in the evidence contract:
 
-- base perps fee schedule 0.045% taker / 0.015% maker;
-- first maker rebate tier above 0.5% weighted maker volume;
-- funding paid hourly with documented oracle-price-based payment formula;
-- public `l2Book`, `trades`, `bbo`, `activeAssetCtx` subscriptions;
-- `WsBook` documented as snapshot feed, but actual cadence must still be measured;
-- `cloid`, ALO/IOC/GTC, `scheduleCancel` documented;
-- API wallets sign for an account but account queries use the actual account/subaccount address;
-- nonces are per signer;
-- historical archive may be delayed/missing and cannot replace native receive-time capture.
+- base perps schedule: 0.045% taker / 0.015% maker;
+- first maker rebate tier begins above 0.5% weighted maker volume;
+- funding paid hourly; documented payment formula uses oracle price;
+- public `l2Book`, `trades`, `bbo`, `activeAssetCtx` channels;
+- `WsBook` is documented as a snapshot feed; observed cadence must still be measured;
+- `cloid`, ALO/IOC/GTC and `scheduleCancel` documented;
+- API-wallet/account identity and per-signer nonce semantics documented;
+- official historical archive may be delayed/incomplete and does not replace native receive-time capture.
 
-Human-readable provenance is in `docs/evidence_sources.md`.
+Human-readable provenance: `docs/evidence_sources.md`.
 
-## Exact next action
+## Current task
 
-Merge PR #2 after the closeout commit receives green CI.
+Read **[`tasks/TASK_003.md`](tasks/TASK_003.md)**.
 
-After merge, current work package becomes:
+Objective: define strict recorder configuration and instrument identities **before any WebSocket/network recorder code exists**.
 
-**[TASK-003 — strict recorder configuration and instrument registry](tasks/TASK_003.md).**
+Planned outputs:
 
-Recorder network code must not start before TASK-003 is complete.
+- `config/recorder.yaml`
+- `config/instruments.yaml`
+- `src/cryptobot/config.py`
+- `src/cryptobot/data/instruments.py`
+- `tests/unit/test_config.py`
+- `tests/unit/test_instruments.py`
+- `artifacts/stage_0/config_report.json`
+
+Do not implement a Hyperliquid WebSocket client until TASK-003 passes and merges.
 
 ## User actions currently required
 
 **None.**
 
-If a blocker cannot be bypassed safely with the connected tooling, provide a complete self-contained prompt for another harness (e.g. DeepSeek) instead of lowering the quality/test bar.
+If a future blocker cannot be bypassed safely through available GitHub/CI tooling, provide a complete self-contained task prompt for another harness (for example DeepSeek) rather than weakening tests or quality gates.
 
 ## Open decisions intentionally deferred
 
-- external reference venue/feed;
-- recorder VM/provider/region;
-- production signing-key topology;
-- operational threshold values;
-- capital amounts/scaling ladder;
-- software license.
+- Final external reference venue/feed.
+- Recorder VM/provider/region.
+- Production signing-key topology.
+- Operational timeout/staleness/watchdog thresholds.
+- Capital amounts/scaling ladder.
+- Software license.
 
 ## Rules for future sessions
 
 1. Read `STATUS.md` first.
 2. Read the current task file.
-3. Every coding task needs tests.
-4. Run relevant tests before merge.
-5. Update `STATUS.md` on material progress/decisions.
+3. Every coding task requires tests.
+4. Require green relevant CI before merge.
+5. Update `STATUS.md` after each completed task/gate/material decision.
 6. Preserve failed experiments and UNKNOWN facts.
-7. Never commit secrets or credentials.
+7. Never commit credentials/secrets.
 8. Do not skip economic/safety gates.
-9. Stop and document architectural conflicts before coding around them.
+9. Stop and document architectural conflicts instead of coding around them.
 10. Prefer small correct commits over speculative breadth.

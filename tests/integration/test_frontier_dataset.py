@@ -127,6 +127,11 @@ def test_frontier_pilot_reads_real_parquet_and_derives_horizon_bounds(
     assert report.largest_gap_ns == 1_000_000_000
     assert report.horizon_lower_bound_seconds == 1
     assert report.horizon_upper_bound_seconds == 10
+    assert report.dataset_audit.causal_domain_count == 1
+    assert dict(report.dataset_audit.primary_btc_event_counts)["BBO"] == 21
+    assert dict(report.dataset_audit.primary_btc_event_counts)["L2_SNAPSHOT"] == 0
+    assert report.dataset_audit.primary_bbo_cadence.observed_count == 21
+    assert report.dataset_audit.primary_bbo_cadence.q99_ns == 1_000_000_000
     assert [item.horizon_seconds for item in report.horizons] == [1, 2, 5, 10]
     assert all(item.movement_sample_count > 0 for item in report.horizons)
     assert all(item.median_known_friction_bps > 0 for item in report.horizons)
@@ -199,3 +204,39 @@ def test_frontier_pilot_rejects_invalid_manifest_binding(tmp_path: Path) -> None
             dataset,
             fee_scenario_bps_per_side=Decimal("4.5"),
         )
+
+
+def test_frontier_pilot_derives_next_125_evidence_window_when_cost_not_reached(
+    tmp_path: Path,
+) -> None:
+    dataset = tmp_path / "flat-dataset"
+    points: list[tuple[int, str, str, str, str, int]] = []
+    for index in range(61):
+        points.append(
+            (
+                index * 1_000_000_000,
+                "99.95",
+                "100.05",
+                "host-a",
+                "boot-a",
+                0,
+            )
+        )
+    _write_dataset(dataset, points=points)
+
+    report = analyze_frontier_pilot_dataset(
+        dataset,
+        fee_scenario_bps_per_side=Decimal("4.5"),
+    )
+
+    assert report.status == "PILOT_MEASURED"
+    assert not report.movement_q95_meets_median_known_friction
+    assert [item.horizon_seconds for item in report.horizons] == [1, 2, 5, 10, 20]
+    assert all(item.gap_excluded_count == 0 for item in report.horizons)
+    assert report.evidence_window_plan.required_non_overlapping_windows == 2952
+    assert report.evidence_window_plan.target_horizon_seconds == 50
+    assert report.evidence_window_plan.minimum_observed_duration_seconds == 147600
+    assert (
+        report.evidence_window_plan.target_reason
+        == "EXPAND_ONE_125_CELL_BECAUSE_PILOT_Q95_BELOW_MEDIAN_KNOWN_FRICTION"
+    )

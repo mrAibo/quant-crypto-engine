@@ -339,29 +339,19 @@ def load_public_recorder_config(path: str | Path) -> PublicRecorderConfig:
             "shutdown_drain_timeout_seconds",
         ),
         seal_on_shutdown=_bool(values["seal_on_shutdown"], "seal_on_shutdown"),
-        reconnect_base_seconds=_number(
-            values["reconnect_base_seconds"], "reconnect_base_seconds"
-        ),
-        reconnect_max_seconds=_number(
-            values["reconnect_max_seconds"], "reconnect_max_seconds"
-        ),
+        reconnect_base_seconds=_number(values["reconnect_base_seconds"], "reconnect_base_seconds"),
+        reconnect_max_seconds=_number(values["reconnect_max_seconds"], "reconnect_max_seconds"),
         reconnect_jitter_fraction=_number(
             values["reconnect_jitter_fraction"],
             "reconnect_jitter_fraction",
         ),
-        heartbeat_idle_seconds=_number(
-            values["heartbeat_idle_seconds"], "heartbeat_idle_seconds"
-        ),
+        heartbeat_idle_seconds=_number(values["heartbeat_idle_seconds"], "heartbeat_idle_seconds"),
         max_message_bytes=_int(values["max_message_bytes"], "max_message_bytes"),
         receive_queue_high_water=_int(
             values["receive_queue_high_water"], "receive_queue_high_water"
         ),
-        open_timeout_seconds=_number(
-            values["open_timeout_seconds"], "open_timeout_seconds"
-        ),
-        close_timeout_seconds=_number(
-            values["close_timeout_seconds"], "close_timeout_seconds"
-        ),
+        open_timeout_seconds=_number(values["open_timeout_seconds"], "open_timeout_seconds"),
+        close_timeout_seconds=_number(values["close_timeout_seconds"], "close_timeout_seconds"),
         storage_root=_path(values["storage_root"], "storage_root"),
         manifest_path=_path(values["manifest_path"], "manifest_path"),
         run_duration_seconds=duration,
@@ -398,9 +388,9 @@ def derive_runtime_identity(
     entropy = run_entropy or uuid.uuid4().hex
     if not entropy.strip():
         raise RuntimeConfigError("run entropy must be non-empty")
-    run_digest = hashlib.sha256(
-        f"{host_id}\0{boot_id}\0{wall_ns}\0{entropy}".encode()
-    ).hexdigest()[:20]
+    run_digest = hashlib.sha256(f"{host_id}\0{boot_id}\0{wall_ns}\0{entropy}".encode()).hexdigest()[
+        :20
+    ]
     return RuntimeIdentity(
         host_id=host_id,
         boot_id=boot_id,
@@ -559,10 +549,10 @@ def _runtime_exit_code(
     observed_frames: int,
     all_subscription_acks_observed: bool,
 ) -> RuntimeExitCode:
-    if (
-        recorder.state is RecorderState.FAILED
-        or recorder.shutdown_outcome in {ShutdownOutcome.TIMED_OUT, ShutdownOutcome.FAILED}
-    ):
+    if recorder.state is RecorderState.FAILED or recorder.shutdown_outcome in {
+        ShutdownOutcome.TIMED_OUT,
+        ShutdownOutcome.FAILED,
+    }:
         return RuntimeExitCode.RECORDER_FAILED
     if not audit_clean:
         return RuntimeExitCode.STORAGE_AUDIT_FAILED

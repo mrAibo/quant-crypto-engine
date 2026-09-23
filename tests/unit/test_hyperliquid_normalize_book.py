@@ -14,8 +14,8 @@ from cryptobot.adapters.hyperliquid.normalize import (
     serialize_normalized_book_event,
 )
 from cryptobot.data.events import (
-    AvailabilityKind,
     BBO,
+    AvailabilityKind,
     ExchangeTimestampSemantics,
     L2Snapshot,
     QualityFlag,

@@ -511,8 +511,7 @@ def _build_dataset_audit(
         causal_domain_count=len(domains),
         observed_duration_ns=duration,
         event_counts_by_source_type=tuple(
-            (source, event, count)
-            for (source, event), count in sorted(event_counts.items())
+            (source, event, count) for (source, event), count in sorted(event_counts.items())
         ),
         primary_btc_event_counts=tuple(
             (event_type, primary_counts[event_type])

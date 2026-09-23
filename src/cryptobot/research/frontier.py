@@ -426,14 +426,35 @@ def empirical_quantile_nearest_rank(
     values: tuple[Decimal, ...],
     probability: ExactDecimalInput,
 ) -> Decimal:
+    checked = tuple(_parse_nonnegative(value, "quantile value") for value in values)
+    return _empirical_quantile_nearest_rank(checked, probability)
+
+
+def empirical_signed_quantile_nearest_rank(
+    values: tuple[Decimal, ...],
+    probability: ExactDecimalInput,
+) -> Decimal:
+    checked: list[Decimal] = []
+    for value in values:
+        try:
+            parsed = parse_exact_decimal(value)
+        except NumericValidationError as exc:
+            raise FrontierValidationError(str(exc)) from exc
+        checked.append(parsed)
+    return _empirical_quantile_nearest_rank(tuple(checked), probability)
+
+
+def _empirical_quantile_nearest_rank(
+    values: tuple[Decimal, ...],
+    probability: ExactDecimalInput,
+) -> Decimal:
     if not values:
         raise FrontierValidationError("quantile requires at least one value")
-    checked = tuple(_parse_nonnegative(value, "quantile value") for value in values)
     p = parse_exact_decimal(probability)
     if p <= 0 or p > 1:
         raise FrontierValidationError("probability must be in (0, 1]")
 
-    ordered = sorted(checked)
+    ordered = sorted(values)
     rank = int((p * Decimal(len(ordered))).to_integral_value(rounding=ROUND_CEILING))
     return ordered[rank - 1]
 

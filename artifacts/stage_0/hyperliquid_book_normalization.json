@@ -1,6 +1,6 @@
 {
   "task": "TASK-010",
-  "status": "IMPLEMENTED_CI_PENDING",
+  "status": "PASS",
   "parse_version": "hyperliquid-book-v1",
   "official_schema": {
     "l2Book": {
@@ -66,7 +66,15 @@
     "empty L2 side preservation"
   ],
   "validation": {
-    "github_ci": "PENDING"
+    "github_ci": "PASS",
+    "workflow_run": 35914447469,
+    "head_sha": "07342619ed5ad90299e8f1e08054534f1ff71912",
+    "ruff": "PASS",
+    "ruff_format": "PASS",
+    "mypy_strict": "PASS_41_SOURCE_FILES",
+    "pytest_python_3_12": "PASS_193",
+    "pytest_python_3_13": "PASS_193",
+    "default_ci_network_dependency": false
   },
   "deliberately_out_of_scope": [
     "trades",

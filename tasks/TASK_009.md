@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
@@ -260,3 +260,57 @@ After a successful real run it records only actually observed facts.
 - Docker/Kubernetes;
 - remote orchestration;
 - production HA/failover.
+
+
+## Implementation status
+
+Implemented offline:
+
+- strict labeled runtime config;
+- host/boot/run identity derivation;
+- public-only runtime composition;
+- finite-duration operation;
+- SIGINT/SIGTERM graceful-stop request path;
+- final machine-readable summary;
+- storage audit command;
+- systemd template;
+- operational runbook;
+- fake-server runtime integration tests;
+- systemd static tests;
+- `artifacts/stage_0/live_capture_smoke.json` with `live_observation.status=NOT_RUN`.
+
+A real Hyperliquid mainnet public-only smoke completed successfully in GitHub Actions run `35912388990`; observed evidence is recorded in `artifacts/stage_0/live_capture_smoke.json`.
+
+
+## Validation result
+
+Offline/default CI run `35912396692`:
+
+- lock/install: PASS;
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS;
+- pytest Python 3.12: **173 PASS**;
+- pytest Python 3.13: **173 PASS**.
+
+Real public-only Hyperliquid smoke run `35912388990`:
+
+- duration: **30.158069475 s**;
+- observed frames: **559**;
+- market-data frames: **551**;
+- subscription acknowledgments: **8 / 8**;
+- malformed frames: **0**;
+- unknown frames: **0**;
+- reconnects: **0**;
+- queue high-water mark: **1**;
+- durable frames: **559**;
+- durable bytes: **364893**;
+- shutdown: **CLEAN_DURABLE**;
+- sealed storage audit: **VALID**;
+- credentials/private account access: **none**.
+
+These are smoke observations only, not a feed-completeness or capacity guarantee.
+
+## Next task
+
+`TASK-010 — Hyperliquid L2/BBO Normalization from Raw Capture`.

@@ -5,9 +5,9 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `main`
+- Current branch: `task-009-public-recorder-runtime`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-009 / S0-WP09 — Public recorder runtime, systemd template, and live smoke evidence**
+- Current work package: **TASK-009 / S0-WP09 — Public recorder runtime/systemd/live smoke validated; merge pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -225,9 +225,23 @@ Artifact: `artifacts/stage_0/recorder_smoke.json`.
 
 Read **[`tasks/TASK_009.md`](tasks/TASK_009.md)**.
 
-Objective: build the first runnable public-recorder process, add safe signal handling and a minimal systemd template, then obtain short real Hyperliquid public-feed smoke evidence without introducing credentials, normalization, strategy, or trading code.
+TASK-009 is validated:
 
-If the current execution environment cannot reach the public Internet, complete all offline code/tests first and generate a self-contained live-smoke task for an Internet-enabled harness rather than weakening the gate.
+- strict labeled runtime config;
+- public-only executable runtime;
+- graceful finite/signal stop path;
+- storage audit CLI;
+- systemd template and runbook;
+- **173 tests PASS** on Python 3.12 and 3.13;
+- strict mypy/Ruff/format PASS;
+- default CI run `35912396692`;
+- real Hyperliquid public-only smoke run `35912388990`: **559 frames, 8/8 ACKs, 364893 durable bytes, queue HWM 1, CLEAN_DURABLE, audit VALID**.
+
+### Exact next action
+
+Remove the one-shot network workflow, run final network-independent closeout CI, then merge PR #9.
+
+After merge begin **[TASK-010 — Hyperliquid L2/BBO Normalization from Raw Capture](tasks/TASK_010.md)**.
 
 ## User actions currently required
 

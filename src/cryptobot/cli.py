@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import asyncio
 import json
 from collections.abc import Sequence
 
@@ -12,6 +13,11 @@ from cryptobot.data.recorder import (
     RecorderRuntimeSettings,
     RolloverMode,
 )
+from cryptobot.runtime.public_recorder import (
+    audit_public_recorder,
+    load_public_recorder_config,
+    run_public_recorder,
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -20,27 +26,50 @@ def build_parser() -> argparse.ArgumentParser:
 
     validate = subparsers.add_parser(
         "validate-recorder-runtime",
-        help="Validate explicit public-recorder runtime values without network access.",
+        help="Validate explicit recorder primitive values without network access.",
     )
     validate.add_argument("--queue-capacity", type=int, required=True)
     validate.add_argument("--sync-every-frames", type=int, required=True)
     validate.add_argument("--shutdown-drain-timeout-seconds", type=float, required=True)
     validate.add_argument("--seal-on-shutdown", action="store_true")
-
     validate.add_argument("--reconnect-base-seconds", type=float, required=True)
     validate.add_argument("--reconnect-max-seconds", type=float, required=True)
     validate.add_argument("--reconnect-jitter-fraction", type=float, required=True)
-
     validate.add_argument("--heartbeat-idle-seconds", type=float, required=True)
     validate.add_argument("--max-message-bytes", type=int, required=True)
     validate.add_argument("--receive-queue-high-water", type=int, required=True)
     validate.add_argument("--open-timeout-seconds", type=float, required=True)
     validate.add_argument("--close-timeout-seconds", type=float, required=True)
+
+    public_run = subparsers.add_parser(
+        "run-public-recorder",
+        help="Run the public-only Hyperliquid recorder from a strict JSON config.",
+    )
+    public_run.add_argument("--config", required=True)
+
+    public_audit = subparsers.add_parser(
+        "audit-public-recorder",
+        help="Audit raw storage configured for the public recorder without network access.",
+    )
+    public_audit.add_argument("--config", required=True)
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+
+    if args.command == "run-public-recorder":
+        config = load_public_recorder_config(args.config)
+        summary = asyncio.run(run_public_recorder(config))
+        print(summary.to_json())
+        return summary.exit_code
+
+    if args.command == "audit-public-recorder":
+        config = load_public_recorder_config(args.config)
+        report = audit_public_recorder(config)
+        print(json.dumps(report, sort_keys=True, separators=(",", ":")))
+        return 0 if bool(report["clean"]) else 3
+
     if args.command != "validate-recorder-runtime":
         raise RuntimeError("unreachable command")
 

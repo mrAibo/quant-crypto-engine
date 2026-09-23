@@ -261,3 +261,17 @@ Current official Binance USDⓈ-M documentation was re-verified before implement
 - JSON stream subscription `id` is documented as an unsigned integer.
 
 TASK-013 therefore uses two unauthenticated connections and deterministic integer IDs `1301` (PUBLIC) and `1302` (MARKET).
+
+
+## Final transport verification
+
+After aligning JSON `SUBSCRIBE` IDs with the documented unsigned-integer contract, the final adapter was exercised directly against Binance mainnet in workflow `35922113843`:
+
+- ACK IDs: `1301` / `1302`;
+- both `/public` and `/market` routes connected;
+- all four frozen BTCUSDT/ETHUSDT streams observed;
+- every sampled `st` value was `1`;
+- 313 market-data frames observed in approximately 7.3 seconds;
+- no credentials used.
+
+The temporary network workflow was removed afterward. Default project CI remains network-independent.

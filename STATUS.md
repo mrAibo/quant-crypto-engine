@@ -351,11 +351,19 @@ Delivered:
 
 Read **[`tasks/TASK_016.md`](tasks/TASK_016.md)**.
 
-Data Gate audit found one remaining Stage-0 blocker: the runnable recorder is Hyperliquid-only, so simultaneous Hyperliquid + Binance capture under one host/boot clock domain has not yet been proven prospectively.
+Implemented on the feature branch:
+
+- strict dual-source smoke configuration;
+- shared-clock Hyperliquid + Binance public capture;
+- bounded source multiplexer with failure propagation;
+- one mixed-source durable QCR1 recorder/manifest;
+- source, ACK, connection, and clock-domain accounting;
+- fake-server end-to-end capture → normalization → Parquet test;
+- initial Data Gate artifact intentionally remains **BLOCKED** pending real-mainnet evidence.
 
 ### Exact next action
 
-Implement a reusable dual-source public recorder using the existing Hyperliquid/Binance adapters, one shared clock and one RecorderSupervisor. Validate with fake servers, then run one bounded real-mainnet smoke through raw capture → normalization → Parquet before deciding the Stage-0 Data Gate.
+Open PR #16 and make all network-independent CI green. Then run one temporary bounded real-mainnet dual-source workflow, normalize/materialize the resulting QCR1 segment, update `data_gate.json` from measured evidence, remove the temporary network workflow, rerun final CI, and merge only if the Data Gate decision is justified.
 
 ## User actions currently required
 

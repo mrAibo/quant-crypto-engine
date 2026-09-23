@@ -141,9 +141,11 @@ def test_append_after_close_is_rejected(tmp_path: Path) -> None:
 
 def test_payload_must_be_bytes(tmp_path: Path) -> None:
     path = tmp_path / "segment.raw"
-    with RawLog.open(path, "segment-1") as log:
-        with pytest.raises(RawLogError, match="payload must be bytes"):
-            log.append(_metadata(), bytearray(b"payload"))  # type: ignore[arg-type]
+    with (
+        RawLog.open(path, "segment-1") as log,
+        pytest.raises(RawLogError, match="payload must be bytes"),
+    ):
+        log.append(_metadata(), bytearray(b"payload"))  # type: ignore[arg-type]
 
 
 def test_sync_calls_fsync_and_advances_durable_length(

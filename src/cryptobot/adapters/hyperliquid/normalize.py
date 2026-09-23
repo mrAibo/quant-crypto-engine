@@ -155,11 +155,7 @@ def normalize_book_frame(
         )
 
     time_value = payload.get("time")
-    if (
-        isinstance(time_value, bool)
-        or not isinstance(time_value, int)
-        or time_value < 0
-    ):
+    if isinstance(time_value, bool) or not isinstance(time_value, int) or time_value < 0:
         return _error_result(
             frame,
             channel,

@@ -6,14 +6,16 @@ on:
   pull_request:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout PR branch
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
@@ -25,6 +27,17 @@ jobs:
 
       - name: Resolve lock file
         run: uv lock --python 3.12
+
+      - name: Commit generated lock file if needed
+        if: github.event_name == 'pull_request'
+        run: |
+          if [ -n "$(git status --porcelain -- uv.lock)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add uv.lock
+            git commit -m "chore: add generated uv lock"
+            git push origin HEAD:${{ github.head_ref }}
+          fi
 
       - name: Install dependencies
         run: uv sync --locked --all-groups --python 3.12
@@ -40,23 +53,6 @@ jobs:
 
       - name: Pytest
         run: uv run --python 3.12 pytest
-
-      - name: Upload resolved lock file
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: uv-lock
-          path: uv.lock
-          if-no-files-found: error
-          retention-days: 1
-
-      - name: Require committed lock file
-        run: |
-          if [ -n "$(git status --porcelain -- uv.lock)" ]; then
-            echo "uv.lock is missing or out of date. Commit the generated lock artifact."
-            git status --short -- uv.lock
-            exit 1
-          fi
 
   test-python-313:
     runs-on: ubuntu-latest

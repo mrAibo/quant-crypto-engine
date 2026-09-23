@@ -1,0 +1,108 @@
+{
+  "task": "TASK-014",
+  "status": "PASS",
+  "pipeline_version": "causal-normalization-v1",
+  "frozen_sources": [
+    "hyperliquid-mainnet-public",
+    "binance-usdm-reference-public"
+  ],
+  "dispatch": {
+    "hyperliquid-mainnet-public": {
+      "l2Book": "hyperliquid-book-v1",
+      "bbo": "hyperliquid-book-v1",
+      "trades": "hyperliquid-trade-v1",
+      "activeAssetCtx": "hyperliquid-context-v1",
+      "other": "NOT_APPLICABLE via hyperliquid-dispatch-v1"
+    },
+    "binance-usdm-reference-public": {
+      "combined_stream": "binance-usdm-reference-v1",
+      "control_or_non_target": "NOT_APPLICABLE"
+    }
+  },
+  "frame_outcomes": [
+    "EVENTS",
+    "EMPTY",
+    "NOT_APPLICABLE",
+    "ERROR"
+  ],
+  "causal_ordering": {
+    "domain": [
+      "host_id",
+      "boot_id"
+    ],
+    "primary": "recv_mono_ns",
+    "utc_availability": "recv_wall_ns",
+    "strict_cross_domain_merge": "REJECTED",
+    "equal_monotonic_tie_break": [
+      "recv_wall_ns",
+      "source_id",
+      "raw_segment_id",
+      "raw_offset",
+      "event_ordinal"
+    ],
+    "wall_clock_regression": "preserve monotonic replay order and count anomaly",
+    "tie_break_is_market_lead_evidence": false
+  },
+  "duplicate_policy": {
+    "raw_occurrences_preserved": true,
+    "stable_trade_id_duplicates_removed": false,
+    "duplicate_stable_trade_ids_counted_in_report": true,
+    "parser_event_ids_rewritten": false
+  },
+  "report": {
+    "counts": [
+      "total_raw_frames",
+      "source_counts",
+      "frame_outcome_counts",
+      "event_type_counts",
+      "error_counts",
+      "causal_domain_count",
+      "clock_order_anomaly_count",
+      "duplicate_stable_trade_id_count",
+      "normalized_record_count"
+    ],
+    "ranges": "first/last receive wall and monotonic timestamps along monotonic replay order per causal domain",
+    "digest": "SHA-256 over canonical normalized causal-record serialization",
+    "completeness_claim": false
+  },
+  "tests": [
+    "Hyperliquid book/trade/context dispatch",
+    "Binance reference dispatch",
+    "control NOT_APPLICABLE",
+    "empty trade batch EMPTY",
+    "unsupported source ERROR",
+    "dispatcher malformed JSON",
+    "structured parser error forwarding",
+    "raw SHA mismatch",
+    "multi-event ordinal preservation",
+    "same-domain monotonic ordering",
+    "deterministic equal-mono tie-break",
+    "wall-clock regression anomaly",
+    "mixed host rejection",
+    "mixed boot rejection",
+    "duplicate stable trade ID preserved/counting",
+    "deterministic records/report digest",
+    "two-venue QCR1 end-to-end replay"
+  ],
+  "intentionally_out_of_scope": [
+    "Parquet/materialized research tables",
+    "feature engineering",
+    "labels/forward returns",
+    "deduplication service",
+    "backtest/simulator",
+    "gap backfill",
+    "OMS/signing/execution",
+    "AI/Jev/GPT"
+  ],
+  "validation": {
+    "github_ci": "PASS",
+    "workflow_run": 35924328402,
+    "head_sha": "16e524d08a37db9e08f8e523c8365b094719a55c",
+    "ruff": "PASS",
+    "ruff_format": "PASS",
+    "mypy_strict": "PASS_55_SOURCE_FILES",
+    "pytest_python_3_12": "PASS_288",
+    "pytest_python_3_13": "PASS_288",
+    "default_ci_network_dependency": false
+  }
+}

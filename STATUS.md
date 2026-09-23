@@ -5,9 +5,9 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `main`
+- Current branch: `task-014-causal-normalization-pipeline`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-014 / S0-WP14 — deterministic causal raw-to-normalized pipeline**
+- Current work package: **TASK-014 / S0-WP14 — causal raw-to-normalized pipeline implemented; CI pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -316,11 +316,26 @@ Delivered:
 
 Read **[`tasks/TASK_014.md`](tasks/TASK_014.md)**.
 
-Objective: connect QCR1 replay to all validated venue normalizers, preserve every event/error/control outcome, and provide deterministic same-host/boot causal ordering plus a reproducible Stage-0 normalization report.
+TASK-014 is validated on PR #14:
+
+- frozen-source dispatcher for Hyperliquid + Binance reference;
+- explicit EVENTS / EMPTY / NOT_APPLICABLE / ERROR outcomes;
+- parser reuse without duplicated venue semantics;
+- same-host/boot causal ordering by receive monotonic time;
+- deterministic non-semantic tie-break;
+- mixed-domain strict rejection;
+- wall-clock regression anomaly reporting;
+- raw occurrence and parser event-ID preservation;
+- stable trade duplicate counting without deduplication;
+- deterministic causal-record/report serialization and SHA-256 digest;
+- two-venue QCR1 replay;
+- **288 tests PASS** on Python 3.12 and 3.13;
+- Ruff/format/strict mypy PASS;
+- CI run `35924328402`.
 
 ### Exact next action
 
-Create a TASK-014 feature branch, implement the venue-neutral frame/result/causal-record contracts and dispatcher first, then add same-domain merge/report logic and QCR1 integration replay tests.
+Merge PR #14, close TASK-014 on main, define TASK-015 for deterministic materialized research tables / Parquet, then implement it on a separate feature branch without adding features, labels, or backtest logic.
 
 ## User actions currently required
 

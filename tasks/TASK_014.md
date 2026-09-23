@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
@@ -209,3 +209,43 @@ Write multiple Hyperliquid and Binance frames through QCR1, replay them through 
 - gap backfill;
 - live execution/OMS/signing;
 - AI/Jev/GPT logic.
+
+
+## Implementation status
+
+Implemented:
+
+- venue-neutral `FrameResult`, `PipelineError`, `CausalRecord`, and `PipelineReport` contracts;
+- strict frozen-source dispatch with no payload-based venue guessing;
+- reuse of TASK-010/011/012/013 normalizers and serializers;
+- explicit EVENTS / EMPTY / NOT_APPLICABLE / ERROR outcomes;
+- same-host/boot causal merge using receive monotonic time;
+- deterministic non-semantic tie-break for equal monotonic timestamps;
+- explicit rejection of mixed host/boot strict causal merge;
+- wall-clock regression anomaly counting without reordering;
+- parser event IDs and all raw occurrences preserved;
+- duplicate stable trade identities counted but never removed;
+- deterministic normalized-record serialization and SHA-256 digest;
+- deterministic report serialization;
+- unit coverage for dispatch, ordering, errors, duplicates, domains, and digest;
+- two-venue QCR1 integration replay;
+- `artifacts/stage_0/causal_normalization_pipeline.json`.
+
+No Parquet/features/labels/backtest/deduplication/execution code is present.
+
+## Validation status
+
+GitHub CI: **PASS** — run `35924328402`; 288 tests passed on Python 3.12 and Python 3.13; Ruff, formatter, and strict mypy passed.
+
+
+## Validation result
+
+GitHub CI run `35924328402` on head `16e524d08a37db9e08f8e523c8365b094719a55c`:
+
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS — 55 source files;
+- pytest Python 3.12: **288 PASS**;
+- pytest Python 3.13: **288 PASS**.
+
+Default CI remains network-independent.

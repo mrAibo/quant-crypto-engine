@@ -909,6 +909,28 @@
       ],
       "reverify_after": null,
       "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.active_asset_ctx_wire_observed",
+      "subject": "Observed Hyperliquid activeAssetCtx wire shape",
+      "claim": "TASK-012 mainnet probe observed BTC activeAssetCtx with top-level keys coin/ctx, no top-level or ctx timestamp, and funding/markPx/oraclePx plus other numeric context values encoded as strings.",
+      "status": "VERIFIED",
+      "verification_scope": "MEASURED",
+      "source_url": "https://github.com/mrAibo/quant-crypto-engine/actions/runs/35917667508",
+      "source_retrieved_at": "2026-09-23T20:41:55Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-activeassetctx-normalization",
+      "limitations": "Single BTC mainnet sample confirms the current observed wire shape; it is not a schema stability guarantee.",
+      "reverify_trigger": [
+        "WEBSOCKET_DOC_CHANGE",
+        "WIRE_TYPE_CHANGE",
+        "CONTEXT_SCHEMA_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
     }
   ]
 }

@@ -7,7 +7,7 @@
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `task-009-public-recorder-runtime`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-009 / S0-WP09 — Public recorder runtime/systemd implemented offline; CI and real live smoke pending**
+- Current work package: **TASK-009 / S0-WP09 — Public recorder runtime/systemd/live smoke validated; merge pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -225,21 +225,23 @@ Artifact: `artifacts/stage_0/recorder_smoke.json`.
 
 Read **[`tasks/TASK_009.md`](tasks/TASK_009.md)**.
 
-Implemented on the feature branch:
+TASK-009 is validated:
 
-- strict labeled smoke/runtime config;
-- public-only executable runtime composition;
-- host/boot/run identity;
-- finite-duration mode;
-- graceful SIGINT/SIGTERM stop request;
-- final JSON summary and storage audit CLI;
+- strict labeled runtime config;
+- public-only executable runtime;
+- graceful finite/signal stop path;
+- storage audit CLI;
 - systemd template and runbook;
-- fake-server and static tests;
-- live-smoke artifact intentionally left `NOT_RUN`.
+- **173 tests PASS** on Python 3.12 and 3.13;
+- strict mypy/Ruff/format PASS;
+- default CI run `35912396692`;
+- real Hyperliquid public-only smoke run `35912388990`: **559 frames, 8/8 ACKs, 364893 durable bytes, queue HWM 1, CLEAN_DURABLE, audit VALID**.
 
 ### Exact next action
 
-Open TASK-009 PR and require offline CI green. Then perform a real short Hyperliquid public-only smoke in an Internet-enabled environment. If the current sandbox cannot reach Hyperliquid, produce a self-contained harness task rather than weakening the gate.
+Remove the one-shot network workflow, run final network-independent closeout CI, then merge PR #9.
+
+After merge begin **[TASK-010 — Hyperliquid L2/BBO Normalization from Raw Capture](tasks/TASK_010.md)**.
 
 ## User actions currently required
 

@@ -15,7 +15,6 @@ from websockets.exceptions import ConnectionClosedOK, WebSocketException
 from cryptobot.data.clock import Clock
 from cryptobot.data.rawlog import RawFrameMetadata
 
-
 PUBLIC_ENDPOINT = "wss://fstream.binance.com/public/stream"
 MARKET_ENDPOINT = "wss://fstream.binance.com/market/stream"
 SOURCE_ID = "binance-usdm-reference-public"

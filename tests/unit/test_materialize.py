@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import hashlib
-import json
 from dataclasses import dataclass, replace
 from decimal import Decimal
 from pathlib import Path

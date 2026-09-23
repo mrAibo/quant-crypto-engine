@@ -2,7 +2,7 @@
 
 ## Status
 
-`VALIDATED — MERGE PENDING`
+`COMPLETE`
 
 ## Objective
 
@@ -206,3 +206,16 @@ GitHub CI run `35914447469` on head `07342619ed5ad90299e8f1e08054534f1ff71912`:
 - pytest Python 3.13: **193 PASS**.
 
 No default-CI network dependency was introduced.
+
+
+## Merge provenance
+
+Merged as PR #10 in commit `a99b3667714a74bc38d5422b3214ee460034a6fd`.
+
+The validated implementation passed CI run `35914447469` with:
+
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS;
+- pytest Python 3.12: **193 PASS**;
+- pytest Python 3.13: **193 PASS**.

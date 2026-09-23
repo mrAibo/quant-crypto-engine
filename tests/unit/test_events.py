@@ -36,9 +36,7 @@ def _envelope(
     *,
     exchange_ts_ns: int | None = 1_000_000_000,
     exchange_ts_resolution_ns: int | None = 1_000_000,
-    exchange_ts_semantics: ExchangeTimestampSemantics = (
-        ExchangeTimestampSemantics.EVENT_TIME
-    ),
+    exchange_ts_semantics: ExchangeTimestampSemantics = (ExchangeTimestampSemantics.EVENT_TIME),
     quality_flags: QualityFlag = QualityFlag.NONE,
 ) -> EventEnvelope:
     if exchange_ts_ns is None:

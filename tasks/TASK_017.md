@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`IN REVIEW — PRIMITIVES IMPLEMENTED, CI PENDING`
 
 ## Objective
 
@@ -220,3 +220,30 @@ Then define the next Stage-0.5 task for the evidence window and Frontier Gate ad
 - maker queue simulator;
 - OMS/signing/orders;
 - live capital deployment.
+
+
+## Implementation progress
+
+Implemented first model-free frontier primitives:
+
+- exact BBO mid/spread arithmetic;
+- exact signed/absolute bps movement;
+- exact per-side/round-trip fee arithmetic;
+- direction-specific top-of-book round-trip friction;
+- required-capture-fraction diagnostic;
+- strict displayed-depth L2 book walking with explicit partial fills;
+- crossed/locked/unsorted book rejection;
+- deterministic 1-2-5 horizon grid;
+- non-overlapping window support accounting;
+- nearest-rank empirical quantile without float interpolation;
+- OBSERVED / SCENARIO / UNKNOWN evidence classes;
+- digest-bound deterministic frontier report contract;
+- Stage-0.5 frontier contract artifact;
+- 18 unit tests.
+
+Still pending in TASK-017:
+
+- dataset audit/real Parquet reader;
+- prospective pilot frontier run;
+- derived evidence-window requirement;
+- final CI and merge.

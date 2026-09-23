@@ -7,7 +7,7 @@
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `task-013-binance-reference-feed`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-013 / S0-WP13 — Binance USDⓈ-M public reference feed implemented; CI pending**
+- Current work package: **TASK-013 / S0-WP13 — Binance USDⓈ-M public reference feed validated; merge pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -297,22 +297,25 @@ Delivered:
 
 Read **[`tasks/TASK_013.md`](tasks/TASK_013.md)**.
 
-Implemented on the feature branch:
+TASK-013 is validated on PR #13:
 
-- frozen Binance USD-M reference source;
-- BTCUSDT/ETHUSDT REFERENCE perpetual registry entries;
-- separate /public bookTicker and /market aggTrade raw adapters;
+- Stage-0 reference venue frozen as Binance USDⓈ-M BTCUSDT/ETHUSDT;
+- current 2026 two-route architecture: `/public` bookTicker + `/market` aggTrade;
+- documented unsigned-integer SUBSCRIBE IDs;
+- public-only two-connection adapter, no credentials;
+- exact raw payload capture and causal receive timestamps;
 - deterministic ReferenceBBO/ReferenceTrade normalization;
-- exact decimals and st=1 universe guard;
-- documented `m` maker-flag aggressor mapping;
+- exact Decimal numerics and `st=1` USD-M guard;
+- documented maker-flag aggressor mapping;
 - QCR1 replay + fake-server coverage;
-- successful public mainnet probe `35919551313`: both ACKs, all four streams, 60 market frames in 6.3 s, no credentials;
-- temporary network probe removed;
-- `artifacts/stage_0/binance_reference_probe.json`.
+- final public adapter probe `35922113843`: ACK 1301/1302, all four frozen streams, 313 market frames in ~7.3 s, no credentials;
+- **271 tests PASS** on Python 3.12 and Python 3.13;
+- Ruff/format/strict mypy PASS;
+- final CI run `35923067510`.
 
 ### Exact next action
 
-Open TASK-013 PR and require full network-independent CI green. Then merge and advance to TASK-014 causal raw reader / normalization pipeline.
+Merge PR #13, close TASK-013 on main, then define TASK-014 as the deterministic raw-to-normalized causal reader/dispatch pipeline before Parquet materialization.
 
 ## User actions currently required
 

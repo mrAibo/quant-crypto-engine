@@ -390,7 +390,8 @@ def seal_segment(
     stats = derive_segment_stats(source, segment_id)
 
     _fault(fault_hook, "before_segment_fsync")
-    with source.open("rb") as file:
+    with source.open("r+b") as file:
+        file.flush()
         os.fsync(file.fileno())
     _fault(fault_hook, "after_segment_fsync")
 

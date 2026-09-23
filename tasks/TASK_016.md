@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`IN REVIEW — IMPLEMENTED, CI AND REAL SMOKE PENDING`
 
 ## Gate finding that created this task
 
@@ -167,3 +167,27 @@ A temporary GitHub Actions mainnet smoke workflow is allowed for evidence collec
 - maker logic;
 - Jev/GPT/LLM runtime;
 - profitability claims.
+
+
+## Implementation status
+
+Implemented:
+
+- strict frozen dual-source runtime config;
+- one shared Clock for Hyperliquid and Binance adapters;
+- bounded async source multiplexer;
+- one RecorderSupervisor / one mixed-source QCR1 segment;
+- per-source frame/kind/connection accounting;
+- Hyperliquid 8-ACK accounting;
+- Binance 1301/1302 ACK accounting;
+- clock-domain and manifest-source validation;
+- explicit runtime exit codes;
+- source-failure propagation and peer cancellation tests;
+- fake-server mixed-source capture → QCR1 → TASK-014 normalization → TASK-015 Parquet integration test;
+- initial `artifacts/stage_0/data_gate.json` remains BLOCKED until real-mainnet evidence exists.
+
+## Validation status
+
+Network-independent GitHub CI: **PENDING**.
+
+Real bounded mainnet dual-source smoke: **PENDING**.

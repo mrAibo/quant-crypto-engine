@@ -7,7 +7,7 @@ from collections.abc import AsyncIterator, Awaitable, Callable
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
-from typing import Protocol
+from typing import Protocol, TypeVar, cast
 
 from cryptobot.data.clock import Clock
 from cryptobot.data.manifest import SegmentManifestRecord, seal_segment
@@ -102,6 +102,7 @@ class SegmentSealer(Protocol):
 
 RawLogFactory = Callable[[Path, str], RawLogPort]
 AsyncPersistHook = Callable[[CaptureFrame], Awaitable[None]]
+_T = TypeVar("_T")
 
 
 @dataclass(frozen=True, slots=True)
@@ -287,11 +288,13 @@ class RecorderSupervisor:
                 writer.cancel()
                 await _await_cancelled(writer)
             except asyncio.CancelledError:
-                self._set_failure(
-                    RecorderFailureCode.WRITER_CANCELLED,
-                    "writer task was cancelled during drain",
-                )
-                raise
+                if writer.cancelled():
+                    self._set_failure(
+                        RecorderFailureCode.WRITER_CANCELLED,
+                        "writer task was cancelled during drain",
+                    )
+                else:
+                    raise
             except Exception as exc:
                 self._set_failure(
                     RecorderFailureCode.WRITER_FAILED,
@@ -325,6 +328,7 @@ class RecorderSupervisor:
 
     async def _produce(self) -> None:
         iterator = self._source.__aiter__()
+        cancelled = False
         try:
             while not self._stop_requested.is_set():
                 next_frame = asyncio.create_task(_next_frame(iterator))
@@ -355,6 +359,7 @@ class RecorderSupervisor:
                     break
                 await self._enqueue(frame)
         except asyncio.CancelledError:
+            cancelled = True
             raise
         except Exception as exc:
             self._set_failure(
@@ -362,7 +367,13 @@ class RecorderSupervisor:
                 _exception_detail(exc),
             )
         finally:
-            await self._queue.put(_END)
+            if cancelled:
+                try:
+                    self._queue.put_nowait(_END)
+                except asyncio.QueueFull:
+                    pass
+            else:
+                await self._queue.put(_END)
 
     async def _enqueue(self, frame: CaptureFrame) -> None:
         self._counters.received_frames += 1
@@ -511,7 +522,7 @@ async def _next_frame(iterator: AsyncIterator[CaptureFrame]) -> CaptureFrame:
     return await anext(iterator)
 
 
-async def _await_cancelled(task: asyncio.Task[object]) -> None:
+async def _await_cancelled(task: asyncio.Task[_T]) -> None:
     try:
         await task
     except (asyncio.CancelledError, StopAsyncIteration):
@@ -525,7 +536,7 @@ def _open_raw_log(path: Path, segment_id: str) -> RawLogPort:
 def _require_capture_frame(value: CaptureFrame | object) -> CaptureFrame:
     if not hasattr(value, "metadata") or not hasattr(value, "payload"):
         raise RecorderError("queue contained an invalid capture frame")
-    return value
+    return cast(CaptureFrame, value)
 
 
 def _require_positive_int(value: int, field: str) -> None:

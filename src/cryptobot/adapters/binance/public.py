@@ -124,7 +124,7 @@ class BinancePayloadClassification:
 @dataclass(frozen=True, slots=True)
 class _RouteFailure:
     route: BinanceRoute
-    error: BaseException | None
+    error: Exception | None
 
 
 class BinanceReferenceAdapter:
@@ -160,7 +160,9 @@ class BinanceReferenceAdapter:
         self._random_unit = random_unit
 
     async def session_frames(self) -> AsyncIterator[BinanceCapturedFrame]:
-        queue: asyncio.Queue[BinanceCapturedFrame | _RouteFailure] = asyncio.Queue(maxsize=4096)
+        queue: asyncio.Queue[BinanceCapturedFrame | _RouteFailure] = asyncio.Queue(
+            maxsize=self._transport.receive_queue_high_water * 2
+        )
         tasks = [
             asyncio.create_task(
                 self._pump_route(
@@ -238,7 +240,7 @@ class BinanceReferenceAdapter:
         output: asyncio.Queue[BinanceCapturedFrame | _RouteFailure],
     ) -> None:
         ingest_seq = 0
-        error: BaseException | None = None
+        error: Exception | None = None
         try:
             connection_id = self._connection_id_factory(route.value.lower())
             if not connection_id.strip():
@@ -285,9 +287,9 @@ class BinanceReferenceAdapter:
                             subscription_ack_id=classification.subscription_ack_id,
                         )
                     )
-        except BaseException as exc:
-            if isinstance(exc, asyncio.CancelledError):
-                raise
+        except asyncio.CancelledError:
+            raise
+        except Exception as exc:
             error = exc
         finally:
             await output.put(_RouteFailure(route=route, error=error))

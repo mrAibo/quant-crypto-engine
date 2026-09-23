@@ -20,11 +20,11 @@ from cryptobot.data.events import (
     L2Snapshot,
     QualityFlag,
 )
-from cryptobot.data.instruments import load_instrument_registry
+from cryptobot.data.instruments import InstrumentRegistry, load_instrument_registry
 from cryptobot.data.rawlog import RawFrame, RawFrameMetadata, RawRef
 
 
-def _registry():
+def _registry() -> InstrumentRegistry:
     return load_instrument_registry("config/instruments.yaml")
 
 

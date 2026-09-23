@@ -772,6 +772,7 @@ def _movement_samples(
         gap_excluded_count,
     )
 
+
 def _q95_meets_friction(horizons: tuple[PilotHorizonResult, ...]) -> bool:
     for item in horizons:
         q95 = dict(item.movement_quantiles_bps).get("q95")

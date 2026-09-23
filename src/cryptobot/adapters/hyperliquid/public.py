@@ -15,7 +15,6 @@ from websockets.exceptions import ConnectionClosedOK, WebSocketException
 from cryptobot.data.clock import Clock
 from cryptobot.data.rawlog import RawFrameMetadata
 
-
 MAINNET_WS_URL = "wss://api.hyperliquid.xyz/ws"
 SUPPORTED_PUBLIC_CHANNELS = frozenset({"l2Book", "bbo", "trades", "activeAssetCtx"})
 APPLICATION_PING = '{"method":"ping"}'

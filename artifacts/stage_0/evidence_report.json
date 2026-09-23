@@ -1,6 +1,8 @@
 {
   "task": "TASK-002",
   "status": "PASS",
+  "merged_pr": 2,
+  "merge_commit": "b10034fe26a1af1f48f4c3eaa8d5703abd041d7c",
   "checked_at": "2026-09-23T00:00:00Z",
   "schema_version": 1,
   "total_facts": 21,
@@ -20,7 +22,7 @@
     "github_pytest_python_3_12": "PASS",
     "github_lock_check_python_3_13": "PASS",
     "github_pytest_python_3_13": "PASS",
-    "github_ci_run": 35879128871
+    "final_github_ci_run": 35879318573
   },
   "notes": [
     "Missing retained source hashes are intentionally reported, not hidden.",

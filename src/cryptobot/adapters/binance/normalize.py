@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass
+from decimal import Decimal
 from enum import StrEnum
 from typing import cast
 
@@ -79,10 +80,19 @@ class BinanceReferenceNormalizationResult:
 def normalize_binance_reference_frame(
     frame: RawFrame,
     registry: InstrumentRegistry,
+    availability: AvailabilityKind,
 ) -> BinanceReferenceNormalizationResult:
     provenance_error = _validate_raw_provenance(frame)
     if provenance_error is not None:
         return _error(frame, None, BinanceReferenceParseErrorCode.INVALID_PROVENANCE, provenance_error)
+    availability = _availability(frame)
+    if availability is None:
+        return _error(
+            frame,
+            None,
+            BinanceReferenceParseErrorCode.INVALID_PROVENANCE,
+            "capture_flags do not identify a supported availability kind",
+        )
     try:
         decoded = json.loads(frame.payload)
     except (UnicodeDecodeError, json.JSONDecodeError):
@@ -111,9 +121,9 @@ def normalize_binance_reference_frame(
     payload = cast(dict[str, object], data)
     event_type = payload.get("e")
     if event_type == "bookTicker":
-        return _normalize_book_ticker(frame, stream, payload, registry)
+        return _normalize_book_ticker(frame, stream, payload, registry, availability)
     if event_type == "aggTrade":
-        return _normalize_agg_trade(frame, stream, payload, registry)
+        return _normalize_agg_trade(frame, stream, payload, registry, availability)
     return BinanceReferenceNormalizationResult(
         status=BinanceReferenceNormalizationStatus.NOT_APPLICABLE, stream=stream
     )
@@ -153,6 +163,21 @@ def _normalize_book_ticker(
     instrument = _instrument(payload, registry, frame, stream)
     if isinstance(instrument, BinanceReferenceNormalizationResult):
         return instrument
+    expected_stream = f"{instrument.native_symbol.lower()}@bookTicker"
+    if stream != expected_stream:
+        return _error(
+            frame,
+            stream,
+            BinanceReferenceParseErrorCode.UNSUPPORTED_STREAM,
+            f"bookTicker wrapper stream must be {expected_stream}",
+        )
+    if payload.get("ps") != instrument.native_symbol:
+        return _error(
+            frame,
+            stream,
+            BinanceReferenceParseErrorCode.UNSUPPORTED_SYMBOL,
+            "bookTicker ps must match the USD-M symbol",
+        )
     if not _is_int(payload.get("E")):
         return _error(frame, stream, BinanceReferenceParseErrorCode.INVALID_EVENT_TIMESTAMP, "E must be non-negative integer milliseconds")
     if not _is_int(payload.get("T")):
@@ -177,6 +202,7 @@ def _normalize_book_ticker(
             semantics=ExchangeTimestampSemantics.EVENT_TIME,
             native_update_id=str(update_id),
             quality=quality,
+            availability=availability,
         ),
         bid_price=bid_price,
         bid_size=bid_size,
@@ -194,10 +220,19 @@ def _normalize_agg_trade(
     stream: str,
     payload: dict[str, object],
     registry: InstrumentRegistry,
+    availability: AvailabilityKind,
 ) -> BinanceReferenceNormalizationResult:
     instrument = _instrument(payload, registry, frame, stream)
     if isinstance(instrument, BinanceReferenceNormalizationResult):
         return instrument
+    expected_stream = f"{instrument.native_symbol.lower()}@aggTrade"
+    if stream != expected_stream:
+        return _error(
+            frame,
+            stream,
+            BinanceReferenceParseErrorCode.UNSUPPORTED_STREAM,
+            f"aggTrade wrapper stream must be {expected_stream}",
+        )
     if not _is_int(payload.get("E")):
         return _error(frame, stream, BinanceReferenceParseErrorCode.INVALID_EVENT_TIMESTAMP, "E must be non-negative integer milliseconds")
     trade_time = payload.get("T")
@@ -206,6 +241,19 @@ def _normalize_agg_trade(
     aggregate_id = payload.get("a")
     if not _is_int(aggregate_id):
         return _error(frame, stream, BinanceReferenceParseErrorCode.INVALID_NATIVE_ID, "a must be a non-negative integer")
+    first_id = payload.get("f")
+    last_id = payload.get("l")
+    if not _is_int(first_id) or not _is_int(last_id) or cast(int, first_id) > cast(int, last_id):
+        return _error(
+            frame,
+            stream,
+            BinanceReferenceParseErrorCode.INVALID_NATIVE_ID,
+            "f/l must be ordered non-negative integer trade IDs",
+        )
+    try:
+        _nonnegative_decimal(payload.get("nq"), "nq")
+    except (TypeError, NumericValidationError) as exc:
+        return _error(frame, stream, BinanceReferenceParseErrorCode.INVALID_NUMERIC, str(exc))
     maker = payload.get("m")
     if not isinstance(maker, bool):
         return _error(frame, stream, BinanceReferenceParseErrorCode.INVALID_MAKER_FLAG, "m must be boolean")
@@ -226,6 +274,7 @@ def _normalize_agg_trade(
             semantics=ExchangeTimestampSemantics.TRADE_TIME,
             native_update_id=trade_id,
             quality=QualityFlag.NONE,
+            availability=availability,
         ),
         price=price,
         size=size,
@@ -248,7 +297,7 @@ def _instrument(
     if not isinstance(symbol, str):
         return _error(frame, stream, BinanceReferenceParseErrorCode.UNSUPPORTED_SYMBOL, "s must be string")
     st = payload.get("st")
-    if st != 1:
+    if isinstance(st, bool) or not isinstance(st, int) or st != 1:
         return _error(frame, stream, BinanceReferenceParseErrorCode.WRONG_SYMBOL_TYPE, "st must be 1 for USD-M")
     matches = [
         item
@@ -275,10 +324,8 @@ def _envelope(
     semantics: ExchangeTimestampSemantics,
     native_update_id: str,
     quality: QualityFlag,
+    availability: AvailabilityKind,
 ) -> EventEnvelope:
-    availability = _availability(frame)
-    if availability is None:
-        raise ValueError("raw capture flags do not identify availability")
     return EventEnvelope(
         schema_version=1,
         event_id=_event_id(frame, event_type, native_update_id),
@@ -320,12 +367,21 @@ def _event_id(frame: RawFrame, event_type: EventType, native_update_id: str) -> 
     return hashlib.sha256(material).hexdigest()
 
 
-def _positive_decimal(raw: object, field: str):
+def _positive_decimal(raw: object, field: str) -> Decimal:
     if not isinstance(raw, str):
         raise TypeError(f"{field} must be string")
     value = parse_exact_decimal(raw)
     if value <= 0:
         raise NumericValidationError(f"{field} must be positive")
+    return value
+
+
+def _nonnegative_decimal(raw: object, field: str) -> Decimal:
+    if not isinstance(raw, str):
+        raise TypeError(f"{field} must be string")
+    value = parse_exact_decimal(raw)
+    if value < 0:
+        raise NumericValidationError(f"{field} must be non-negative")
     return value
 
 
@@ -374,7 +430,7 @@ def _error(
     )
 
 
-def _decimal(value: object) -> str | None:
+def _decimal(value: Decimal | None) -> str | None:
     if value is None:
         return None
-    return serialize_exact_decimal(cast("str", value))
+    return serialize_exact_decimal(value)

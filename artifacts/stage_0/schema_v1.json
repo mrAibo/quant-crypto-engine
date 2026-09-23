@@ -83,6 +83,9 @@
     "github_ruff_format_check": "PASS",
     "github_mypy_strict": "PASS",
     "github_pytest_python_3_12": "PASS",
-    "github_pytest_python_3_13": "PASS"
-  }
+    "github_pytest_python_3_13": "PASS",
+    "final_github_ci_run": 35891870831
+  },
+  "merged_pr": 4,
+  "merge_commit": "dbc08c6a6f721b9f7e0f0cc0b5afb2e91c948659"
 }

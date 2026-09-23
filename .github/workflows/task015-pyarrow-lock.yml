@@ -1,0 +1,31 @@
+name: TASK-015 PyArrow Lock
+
+on:
+  push:
+    branches: [task-015-deterministic-parquet-materialization]
+    paths:
+      - ".github/workflows/task015-pyarrow-lock.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  lock:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.18"
+      - run: uv python install 3.12
+      - name: Resolve lock
+        run: uv lock --python 3.12
+      - name: Report resolved PyArrow and lock
+        shell: bash
+        run: |
+          uv tree --locked | grep -E '^pyarrow| pyarrow' || true
+          echo "LOCK_GZIP_BASE64_BEGIN"
+          gzip -n -9 -c uv.lock | base64 -w0
+          echo
+          echo "LOCK_GZIP_BASE64_END"

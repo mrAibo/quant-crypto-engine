@@ -237,12 +237,12 @@ class BinanceReferenceAdapter:
         subscription_id: str,
         output: asyncio.Queue[BinanceCapturedFrame | _RouteFailure],
     ) -> None:
-        connection_id = self._connection_id_factory(route.value.lower())
-        if not connection_id.strip():
-            raise BinanceReferenceError("connection_id_factory returned an empty ID")
         ingest_seq = 0
         error: BaseException | None = None
         try:
+            connection_id = self._connection_id_factory(route.value.lower())
+            if not connection_id.strip():
+                raise BinanceReferenceError("connection_id_factory returned an empty ID")
             async with connect(
                 endpoint,
                 ping_interval=None,

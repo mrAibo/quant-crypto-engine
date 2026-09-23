@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
@@ -45,7 +46,7 @@ def _make_open(root: Path, segment_id: str = "segment-1") -> tuple[Path, Path, P
     return open_path, final_path, manifest_path
 
 
-def _crash_at(phase: str):
+def _crash_at(phase: str) -> Callable[[str], None]:
     def hook(current: str) -> None:
         if current == phase:
             raise InjectedCrash(phase)

@@ -169,7 +169,7 @@ class BinanceReferenceAdapter:
                     route=BinanceRoute.PUBLIC,
                     endpoint=self._public_endpoint,
                     streams=PUBLIC_STREAMS,
-                    subscription_id="task013-public",
+                    subscription_id=1301,
                     output=queue,
                 )
             ),
@@ -178,7 +178,7 @@ class BinanceReferenceAdapter:
                     route=BinanceRoute.MARKET,
                     endpoint=self._market_endpoint,
                     streams=MARKET_STREAMS,
-                    subscription_id="task013-market",
+                    subscription_id=1302,
                     output=queue,
                 )
             ),
@@ -236,7 +236,7 @@ class BinanceReferenceAdapter:
         route: BinanceRoute,
         endpoint: str,
         streams: tuple[str, ...],
-        subscription_id: str,
+        subscription_id: int,
         output: asyncio.Queue[BinanceCapturedFrame | _RouteFailure],
     ) -> None:
         ingest_seq = 0
@@ -295,11 +295,11 @@ class BinanceReferenceAdapter:
             await output.put(_RouteFailure(route=route, error=error))
 
 
-def subscription_request(streams: tuple[str, ...], request_id: str) -> str:
+def subscription_request(streams: tuple[str, ...], request_id: int) -> str:
     if not streams:
         raise BinanceReferenceError("streams must be non-empty")
-    if not request_id.strip():
-        raise BinanceReferenceError("request_id must be non-empty")
+    if isinstance(request_id, bool) or not isinstance(request_id, int) or request_id < 0:
+        raise BinanceReferenceError("request_id must be an unsigned integer")
     return json.dumps(
         {"method": "SUBSCRIBE", "params": list(streams), "id": request_id},
         separators=(",", ":"),

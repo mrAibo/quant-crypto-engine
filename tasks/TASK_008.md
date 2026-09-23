@@ -2,7 +2,7 @@
 
 ## Status
 
-`IN REVIEW — IMPLEMENTED, GITHUB CI PENDING`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
@@ -305,4 +305,20 @@ No normalization, Parquet, reference venue, strategy, execution, or trading code
 
 ## Validation status
 
-GitHub CI: **PENDING**.
+GitHub CI run `35905174696`: **PASS** — 161 tests on Python 3.12 and 161 tests on Python 3.13; Ruff, format, strict mypy, `uv --locked` all PASS.
+
+
+## Validation result
+
+GitHub Actions run `35905174696`:
+
+- `uv lock --check` Python 3.12: **PASS**
+- `uv sync --locked` Python 3.12: **PASS**
+- Ruff lint: **PASS**
+- Ruff format: **PASS**
+- strict mypy: **PASS — 33 source files**
+- pytest Python 3.12: **PASS — 161 tests**
+- `uv lock --check` Python 3.13: **PASS**
+- pytest Python 3.13: **PASS — 161 tests**
+
+TASK-008 is ready for closeout CI and merge.

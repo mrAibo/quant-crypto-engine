@@ -133,8 +133,10 @@ def normalize_binance_reference_frame(
         isinstance(k, str) for k in data
     ):
         return _error(
-            frame, None, BinanceReferenceParseErrorCode.INVALID_ENVELOPE,
-            "combined stream message must contain stream and object data"
+            frame,
+            None,
+            BinanceReferenceParseErrorCode.INVALID_ENVELOPE,
+            "combined stream message must contain stream and object data",
         )
     payload = cast(dict[str, object], data)
     event_type = payload.get("e")

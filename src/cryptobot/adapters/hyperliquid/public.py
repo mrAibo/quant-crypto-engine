@@ -98,7 +98,9 @@ class ReconnectPolicy:
         base = min(self.max_delay_seconds, self.base_delay_seconds * (2**exponent))
         jitter_span = base * self.jitter_fraction
         jitter = (2 * random_unit - 1) * jitter_span
-        return max(MIN_RECONNECT_DELAY_SECONDS, min(self.max_delay_seconds, base + jitter))
+        return float(
+            max(MIN_RECONNECT_DELAY_SECONDS, min(self.max_delay_seconds, base + jitter))
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -118,17 +120,25 @@ class TransportSettings:
             raise HyperliquidPublicError(
                 "heartbeat_idle_seconds must be in (0, 60) per documented server idle rule"
             )
-        for field, value in (
+        for field, int_value in (
             ("max_message_bytes", self.max_message_bytes),
             ("receive_queue_high_water", self.receive_queue_high_water),
         ):
-            if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+            if (
+                isinstance(int_value, bool)
+                or not isinstance(int_value, int)
+                or int_value <= 0
+            ):
                 raise HyperliquidPublicError(f"{field} must be a positive integer")
-        for field, value in (
+        for field, number_value in (
             ("open_timeout_seconds", self.open_timeout_seconds),
             ("close_timeout_seconds", self.close_timeout_seconds),
         ):
-            if isinstance(value, bool) or not isinstance(value, int | float) or value <= 0:
+            if (
+                isinstance(number_value, bool)
+                or not isinstance(number_value, int | float)
+                or number_value <= 0
+            ):
                 raise HyperliquidPublicError(f"{field} must be a positive number")
 
 

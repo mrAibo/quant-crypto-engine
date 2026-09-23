@@ -342,6 +342,49 @@ def horizon_grid_125(
     return tuple(values)
 
 
+def next_horizon_125(current_seconds: int) -> int:
+    _require_positive_int(current_seconds, "current_seconds")
+    power = 1
+    while True:
+        for multiplier in (1, 2, 5):
+            candidate = multiplier * power
+            if candidate > current_seconds:
+                return candidate
+        power *= 10
+
+
+def dkw_required_sample_count(
+    *,
+    confidence: ExactDecimalInput,
+    maximum_cdf_error: ExactDecimalInput,
+) -> int:
+    confidence_value = parse_exact_decimal(confidence)
+    error = parse_exact_decimal(maximum_cdf_error)
+    if confidence_value <= 0 or confidence_value >= 1:
+        raise FrontierValidationError("confidence must be in (0, 1)")
+    if error <= 0 or error >= 1:
+        raise FrontierValidationError("maximum_cdf_error must be in (0, 1)")
+
+    alpha = Decimal(1) - confidence_value
+    numerator = (Decimal(2) / alpha).ln()
+    denominator = Decimal(2) * error * error
+    required = numerator / denominator
+    return int(required.to_integral_value(rounding=ROUND_CEILING))
+
+
+def minimum_duration_seconds_for_windows(
+    *,
+    horizon_seconds: int,
+    required_non_overlapping_windows: int,
+) -> int:
+    _require_positive_int(horizon_seconds, "horizon_seconds")
+    _require_positive_int(
+        required_non_overlapping_windows,
+        "required_non_overlapping_windows",
+    )
+    return horizon_seconds * required_non_overlapping_windows
+
+
 def non_overlapping_window_count(
     observed_duration_ns: int,
     horizon_seconds: int,

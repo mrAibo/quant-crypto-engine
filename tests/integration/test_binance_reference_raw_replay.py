@@ -25,7 +25,7 @@ def _meta(seq: int, hint: str) -> RawFrameMetadata:
         connection_id="ref-conn",
         ingest_seq=seq,
         channel_hint=hint,
-        capture_flags=("LIVE_CAPTURE", "WS_PUBLIC", "BINANCE_PUBLIC"),
+        capture_flags=("BINANCE_PUBLIC", "LIVE_CAPTURE", "WS_PUBLIC"),
     )
 
 

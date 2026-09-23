@@ -7,7 +7,7 @@
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `task-002-evidence-contract`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-002 / S0-WP02 — Evidence Contract**
+- Current work package: **TASK-002 / S0-WP02 — Evidence Contract (validated; merge pending)**
 - Previous work package: **TASK-001 COMPLETE**
 - Economic status: **UNPROVEN**
 - Live-trading status: **FORBIDDEN**
@@ -97,11 +97,16 @@ Important preserved UNKNOWNs include:
 
 This is intentional: the project must not turn review-model assumptions or generic documentation into observed production facts.
 
-### Local tests
+### Validation
 
 - TASK-002 unit tests: **10/10 PASS**
 - compileall: **PASS**
-- GitHub Ruff/mypy/full pytest: **PENDING PR CI**
+- GitHub Ruff lint: **PASS**
+- GitHub Ruff format: **PASS**
+- GitHub strict mypy: **PASS**
+- GitHub pytest Python 3.12: **PASS**
+- GitHub pytest Python 3.13: **PASS**
+- Green CI run: `35879128871`
 
 ## Current verified documentation baseline
 
@@ -121,11 +126,11 @@ Human-readable provenance is in `docs/evidence_sources.md`.
 
 ## Exact next action
 
-Open/review TASK-002 PR and require full GitHub CI green.
+Merge PR #2 after the closeout commit receives green CI.
 
 After merge, current work package becomes:
 
-**TASK-003 — strict recorder configuration and instrument registry.**
+**[TASK-003 — strict recorder configuration and instrument registry](tasks/TASK_003.md).**
 
 Recorder network code must not start before TASK-003 is complete.
 

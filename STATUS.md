@@ -5,10 +5,10 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `task-013-binance-reference-feed`
+- Current branch: `main`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-013 / S0-WP13 — Binance USDⓈ-M public reference feed validated; merge pending**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012**
+- Current work package: **TASK-014 / S0-WP14 — deterministic causal raw-to-normalized pipeline**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
@@ -293,29 +293,34 @@ Delivered:
 - **246 tests PASS** on Python 3.12 and 3.13;
 - Ruff/format/strict mypy PASS.
 
+## Completed — TASK-013
+
+PR #13, merge commit `d850f2d54d02f47b05bfeab0d881ff76ab3275d7`.
+
+Delivered:
+
+- Stage-0 external reference source frozen as Binance USDⓈ-M BTCUSDT/ETHUSDT;
+- current 2026 `/public` bookTicker + `/market` aggTrade routing;
+- documented unsigned-integer SUBSCRIBE IDs;
+- two unauthenticated public connections;
+- exact raw capture + local availability timestamps;
+- deterministic ReferenceBBO/ReferenceTrade normalization;
+- `st=1` USD-M guard;
+- QCR1 replay and fake-server coverage;
+- final live adapter probe `35922113843`;
+- final PR-head CI `35923167765`;
+- **271 tests PASS** on Python 3.12 and 3.13;
+- Ruff/format/strict mypy PASS.
+
 ## Current task
 
-Read **[`tasks/TASK_013.md`](tasks/TASK_013.md)**.
+Read **[`tasks/TASK_014.md`](tasks/TASK_014.md)**.
 
-TASK-013 is validated on PR #13:
-
-- Stage-0 reference venue frozen as Binance USDⓈ-M BTCUSDT/ETHUSDT;
-- current 2026 two-route architecture: `/public` bookTicker + `/market` aggTrade;
-- documented unsigned-integer SUBSCRIBE IDs;
-- public-only two-connection adapter, no credentials;
-- exact raw payload capture and causal receive timestamps;
-- deterministic ReferenceBBO/ReferenceTrade normalization;
-- exact Decimal numerics and `st=1` USD-M guard;
-- documented maker-flag aggressor mapping;
-- QCR1 replay + fake-server coverage;
-- final public adapter probe `35922113843`: ACK 1301/1302, all four frozen streams, 313 market frames in ~7.3 s, no credentials;
-- **271 tests PASS** on Python 3.12 and Python 3.13;
-- Ruff/format/strict mypy PASS;
-- final CI run `35923067510`.
+Objective: connect QCR1 replay to all validated venue normalizers, preserve every event/error/control outcome, and provide deterministic same-host/boot causal ordering plus a reproducible Stage-0 normalization report.
 
 ### Exact next action
 
-Merge PR #13, close TASK-013 on main, then define TASK-014 as the deterministic raw-to-normalized causal reader/dispatch pipeline before Parquet materialization.
+Create a TASK-014 feature branch, implement the venue-neutral frame/result/causal-record contracts and dispatcher first, then add same-domain merge/report logic and QCR1 integration replay tests.
 
 ## User actions currently required
 

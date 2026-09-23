@@ -5,9 +5,9 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `main`
+- Current branch: `task-014-causal-normalization-pipeline`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-014 / S0-WP14 — deterministic causal raw-to-normalized pipeline**
+- Current work package: **TASK-014 / S0-WP14 — causal raw-to-normalized pipeline implemented; CI pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -316,11 +316,24 @@ Delivered:
 
 Read **[`tasks/TASK_014.md`](tasks/TASK_014.md)**.
 
-Objective: connect QCR1 replay to all validated venue normalizers, preserve every event/error/control outcome, and provide deterministic same-host/boot causal ordering plus a reproducible Stage-0 normalization report.
+Implemented on the feature branch:
+
+- frozen-source dispatcher across Hyperliquid and Binance USDⓈ-M reference data;
+- explicit EVENTS / EMPTY / NOT_APPLICABLE / ERROR frame outcomes;
+- parser reuse without venue semantic duplication;
+- same-host/boot monotonic causal ordering;
+- deterministic equal-monotonic tie-break;
+- mixed clock-domain strict rejection;
+- wall-clock regression anomaly reporting;
+- raw occurrence and parser event-ID preservation;
+- duplicate stable trade-ID counting without deduplication;
+- deterministic causal-record/report serialization and digest;
+- unit and two-venue QCR1 replay tests;
+- `artifacts/stage_0/causal_normalization_pipeline.json`.
 
 ### Exact next action
 
-Create a TASK-014 feature branch, implement the venue-neutral frame/result/causal-record contracts and dispatcher first, then add same-domain merge/report logic and QCR1 integration replay tests.
+Open PR #14 and require network-independent CI green. Fix any Ruff/format/strict-mypy/pytest failures without weakening causal-domain or raw-provenance guarantees. Then merge and advance to TASK-015 (deterministic Parquet/materialized research tables).
 
 ## User actions currently required
 

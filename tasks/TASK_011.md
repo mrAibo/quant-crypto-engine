@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
@@ -200,3 +200,42 @@ Create `artifacts/stage_0/hyperliquid_trade_normalization.json` with:
 - backtest;
 - strategy/models;
 - OMS/signing/trading.
+
+
+## Implementation status
+
+Implemented:
+
+- official/current `WsTrade[]` schema re-verification;
+- official `tid` identity and `users=[buyer,seller]` evidence;
+- native side A/B preservation with normalized aggressor side intentionally UNKNOWN;
+- measured Unix-millisecond trade timestamp unit;
+- measured reconnect replay/duplicate behavior;
+- exact-Decimal multi-event normalizer;
+- stable vendor-style `trade_id=(time,coin,tid)`;
+- occurrence-specific deterministic `event_id`;
+- strict BTC/ETH mapping;
+- complete raw provenance;
+- structured all-or-nothing target parse errors;
+- deterministic serialization;
+- QCR1 replay and reconnect-duplicate tests;
+- `artifacts/stage_0/hyperliquid_trade_normalization.json`.
+
+No funding/reference/Parquet/feature/model/backtest/execution code is present.
+
+## Validation status
+
+GitHub CI: **PASS** — run `35917274342`; 222 tests passed on Python 3.12 and Python 3.13; Ruff, formatter, and strict mypy passed.
+
+
+## Validation result
+
+GitHub CI run `35917274342` on head `9f5790cca55b6a24a823e3a3b714fc74f01824bf`:
+
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS — 44 source files;
+- pytest Python 3.12: **222 PASS**;
+- pytest Python 3.13: **222 PASS**.
+
+Default CI remains network-independent. The temporary trade probe workflow was removed before validation.

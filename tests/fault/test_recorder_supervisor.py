@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -65,7 +66,7 @@ def _settings(
     )
 
 
-async def _one_frame_source():
+async def _one_frame_source() -> AsyncIterator[FakeFrame]:
     yield _frame()
 
 
@@ -233,7 +234,7 @@ def test_drain_timeout_is_explicit_and_does_not_claim_durability(tmp_path: Path)
 
 def test_producer_failure_can_still_leave_persisted_prefix_truthful(tmp_path: Path) -> None:
     async def scenario() -> None:
-        async def source():
+        async def source() -> AsyncIterator[FakeFrame]:
             yield _frame()
             raise RuntimeError("source exploded")
 

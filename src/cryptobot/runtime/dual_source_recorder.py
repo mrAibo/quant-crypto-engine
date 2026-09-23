@@ -66,9 +66,7 @@ class HyperliquidRuntimeConfig:
 
     def __post_init__(self) -> None:
         if self.source_id != HYPERLIQUID_SOURCE_ID:
-            raise DualSourceConfigError(
-                f"Hyperliquid source_id must be {HYPERLIQUID_SOURCE_ID}"
-            )
+            raise DualSourceConfigError(f"Hyperliquid source_id must be {HYPERLIQUID_SOURCE_ID}")
         if self.coins != _REQUIRED_HL_COINS:
             raise DualSourceConfigError("Hyperliquid coins must be exactly BTC,ETH")
         if self.channels != _REQUIRED_HL_CHANNELS:
@@ -120,9 +118,7 @@ class DualSourceRecorderConfig:
         try:
             self.manifest_path.relative_to(self.storage_root)
         except ValueError as exc:
-            raise DualSourceConfigError(
-                "manifest_path must be inside storage_root"
-            ) from exc
+            raise DualSourceConfigError("manifest_path must be inside storage_root") from exc
 
 
 @dataclass(frozen=True, slots=True)
@@ -474,9 +470,7 @@ async def merge_capture_sources(
         or not isinstance(queue_capacity, int)
         or queue_capacity <= 0
     ):
-        raise DualSourceConfigError(
-            "multiplexer queue_capacity must be a positive integer"
-        )
+        raise DualSourceConfigError("multiplexer queue_capacity must be a positive integer")
 
     queue: asyncio.Queue[CaptureFrame | _SourceDone] = asyncio.Queue(maxsize=queue_capacity)
 
@@ -635,8 +629,7 @@ async def run_dual_source_recorder(
         kind_counts=tuple(sorted(observation.kind_counts.items())),
         source_connection_ids=tuple(
             sorted(
-                (source, tuple(sorted(ids)))
-                for source, ids in observation.connection_ids.items()
+                (source, tuple(sorted(ids))) for source, ids in observation.connection_ids.items()
             )
         ),
         clock_domains=tuple(sorted(observation.clock_domains)),
@@ -686,10 +679,7 @@ def _exit_code(
         return DualSourceExitCode.RECORDER_FAILED
     if not audit_clean:
         return DualSourceExitCode.STORAGE_AUDIT_FAILED
-    if (
-        not both_sources_observed
-        or not set(required_source_ids).issubset(set(manifest_source_ids))
-    ):
+    if not both_sources_observed or not set(required_source_ids).issubset(set(manifest_source_ids)):
         return DualSourceExitCode.SOURCE_COVERAGE_FAILED
     if not single_expected_clock_domain:
         return DualSourceExitCode.CLOCK_DOMAIN_FAILED
@@ -713,9 +703,7 @@ def _require_exact_fields(
     if actual != expected:
         missing = sorted(expected - actual)
         extra = sorted(actual - expected)
-        raise DualSourceConfigError(
-            f"{label} fields mismatch: missing={missing}, extra={extra}"
-        )
+        raise DualSourceConfigError(f"{label} fields mismatch: missing={missing}, extra={extra}")
 
 
 def _str(value: object, label: str) -> str:

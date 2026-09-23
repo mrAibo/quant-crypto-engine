@@ -53,10 +53,13 @@
     "github_mypy_strict": "PASS",
     "github_pytest_python_3_12": "PASS",
     "github_pytest_python_3_13": "PASS",
-    "tests_total": 116
+    "tests_total": 116,
+    "final_github_ci_run": 35893879796
   },
   "known_limitations": [
     "Power-loss durability is modeled through ordered fsync/rename operations and injected process-failure phases; CI cannot emulate sudden physical power loss.",
     "No network ingest, normalization, Parquet, retention, or object-storage backup exists yet."
-  ]
+  ],
+  "merged_pr": 6,
+  "merge_commit": "725e79e930534d3396bc399f2c7d4fa73af25bcc"
 }

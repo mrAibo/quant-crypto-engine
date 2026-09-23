@@ -18,7 +18,6 @@ from cryptobot.research.frontier import (
     EvidenceClass,
     FrontierValidationError,
     TradeDirection,
-    absolute_move_bps,
     dkw_required_sample_count,
     empirical_quantile_nearest_rank,
     empirical_signed_quantile_nearest_rank,

@@ -1,6 +1,6 @@
 {
   "task": "TASK-012",
-  "status": "IMPLEMENTED_CI_PENDING",
+  "status": "PASS",
   "parse_version": "hyperliquid-context-v1",
   "official_schema": {
     "channel": "activeAssetCtx",
@@ -81,7 +81,15 @@
     "capture-occurrence event identity"
   ],
   "validation": {
-    "github_ci": "PENDING"
+    "github_ci": "PASS",
+    "workflow_run": 35918301023,
+    "head_sha": "4a1291274f5ebaed4f333c2e1b7553e5f4c48344",
+    "ruff": "PASS",
+    "ruff_format": "PASS",
+    "mypy_strict": "PASS_47_SOURCE_FILES",
+    "pytest_python_3_12": "PASS_246",
+    "pytest_python_3_13": "PASS_246",
+    "default_ci_network_dependency": false
   },
   "deliberately_out_of_scope": [
     "FundingPayment account cash flows",

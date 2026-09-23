@@ -5,9 +5,9 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `main`
+- Current branch: `task-017-profitability-frontier`
 - Current phase: **Stage 0.5 — Profitability / Economic Frontier**
-- Current work package: **TASK-017 — model-free profitability-frontier measurement contract**
+- Current work package: **TASK-017 — frontier primitives implemented; CI/pilot pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -371,11 +371,11 @@ This validates the data/evidence pipeline only. Economic edge remains UNPROVEN.
 
 Read **[`tasks/TASK_017.md`](tasks/TASK_017.md)**.
 
-TASK-017 begins Stage 0.5. It builds model-free movement/cost/frontier measurements before any predictive model is fitted.
+Stage-0.5 primitive implementation now includes exact Decimal movement/friction arithmetic, strict displayed-depth book walking, deterministic horizon/support accounting, nearest-rank quantiles, evidence classes, and digest-bound frontier report contracts.
 
 ### Exact next action
 
-Create a dedicated TASK-017 branch and implement exact frontier primitives with synthetic tests first: BBO mid/spread, bps movement, 1-2-5 horizon grid, L2 book walking, fee accounting, coverage/sample support, and deterministic report contracts.
+Run full network-independent CI for the primitive layer. If green, add the deterministic TASK-015 Parquet dataset audit/frontier pilot runner and execute it on a bounded prospective dual-source dataset. The pilot will measure feasibility diagnostics only and cannot pass the Frontier Gate by itself.
 
 ## User actions currently required
 

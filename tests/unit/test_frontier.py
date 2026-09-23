@@ -17,8 +17,11 @@ from cryptobot.research.frontier import (
     bbo_mid,
     bbo_spread_bps,
     empirical_quantile_nearest_rank,
+    dkw_required_sample_count,
     horizon_grid_125,
     horizon_support,
+    minimum_duration_seconds_for_windows,
+    next_horizon_125,
     non_overlapping_window_count,
     required_capture_fraction,
     round_trip_fee_bps,
@@ -277,4 +280,47 @@ def test_frontier_report_rejects_invalid_dataset_digest() -> None:
             funding_boundary_evidence_class=EvidenceClass.UNKNOWN,
             horizons=(),
             cells=(),
+        )
+
+
+def test_next_horizon_125_advances_one_log_grid_cell() -> None:
+    assert next_horizon_125(1) == 2
+    assert next_horizon_125(2) == 5
+    assert next_horizon_125(20) == 50
+    assert next_horizon_125(50) == 100
+
+
+def test_dkw_sample_requirement_is_derived_from_confidence_and_cdf_precision() -> None:
+    required = dkw_required_sample_count(
+        confidence=Decimal("0.95"),
+        maximum_cdf_error=Decimal("0.025"),
+    )
+
+    assert required == 2952
+    assert (
+        minimum_duration_seconds_for_windows(
+            horizon_seconds=50,
+            required_non_overlapping_windows=required,
+        )
+        == 147600
+    )
+
+
+@pytest.mark.parametrize(
+    ("confidence", "cdf_error"),
+    [
+        ("0", "0.025"),
+        ("1", "0.025"),
+        ("0.95", "0"),
+        ("0.95", "1"),
+    ],
+)
+def test_dkw_sample_requirement_rejects_invalid_probability_inputs(
+    confidence: str,
+    cdf_error: str,
+) -> None:
+    with pytest.raises(FrontierValidationError):
+        dkw_required_sample_count(
+            confidence=confidence,
+            maximum_cdf_error=cdf_error,
         )

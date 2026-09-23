@@ -453,7 +453,8 @@ def test_reconnect_duplicate_trade_id_is_counted_not_removed() -> None:
     report = build_pipeline_report((first, second))
 
     assert len(records) == 2
-    assert all(isinstance(record.event, Trade) for record in records)
+    assert isinstance(records[0].event, Trade)
+    assert isinstance(records[1].event, Trade)
     assert records[0].event.trade_id == records[1].event.trade_id
     assert records[0].event.envelope.event_id != records[1].event.envelope.event_id
     assert report.duplicate_stable_trade_id_count == 1

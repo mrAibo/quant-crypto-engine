@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "instruments": [
+    {
+      "instrument_id": "hyperliquid.mainnet.perpetual.btc",
+      "venue": "hyperliquid",
+      "environment": "MAINNET",
+      "native_symbol": "BTC",
+      "base_asset": "BTC",
+      "quote_asset": null,
+      "settlement_asset": null,
+      "margin_asset": null,
+      "product_type": "PERPETUAL",
+      "role": "PRIMARY",
+      "price_decimals": null,
+      "size_decimals": null,
+      "native_asset_id": null
+    },
+    {
+      "instrument_id": "hyperliquid.mainnet.perpetual.eth",
+      "venue": "hyperliquid",
+      "environment": "MAINNET",
+      "native_symbol": "ETH",
+      "base_asset": "ETH",
+      "quote_asset": null,
+      "settlement_asset": null,
+      "margin_asset": null,
+      "product_type": "PERPETUAL",
+      "role": "REPLICATION",
+      "price_decimals": null,
+      "size_decimals": null,
+      "native_asset_id": null
+    }
+  ]
+}

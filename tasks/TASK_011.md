@@ -2,7 +2,7 @@
 
 ## Status
 
-`VALIDATED — MERGE PENDING`
+`COMPLETE`
 
 ## Objective
 
@@ -239,3 +239,17 @@ GitHub CI run `35917274342` on head `9f5790cca55b6a24a823e3a3b714fc74f01824bf`:
 - pytest Python 3.13: **222 PASS**.
 
 Default CI remains network-independent. The temporary trade probe workflow was removed before validation.
+
+
+## Merge provenance
+
+Merged as PR #11 in commit `b5fc231ad0631eb442a3c881ee868dc72106ecfd`.
+
+Validated implementation:
+
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS;
+- pytest Python 3.12: **222 PASS**;
+- pytest Python 3.13: **222 PASS**;
+- CI run: `35917274342`.

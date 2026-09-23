@@ -1,6 +1,6 @@
 {
   "task": "TASK-007",
-  "status": "IMPLEMENTED_CI_PENDING",
+  "status": "PASS",
   "protocol_evidence": {
     "mainnet_endpoint": "wss://api.hyperliquid.xyz/ws",
     "channels": [
@@ -47,6 +47,14 @@
     "binary/malformed payload preservation"
   ],
   "validation": {
-    "github_ci": "PENDING"
+    "github_ci_run": 35903825794,
+    "uv_lock_python_3_12": "PASS",
+    "uv_sync_locked_python_3_12": "PASS",
+    "github_ruff_check": "PASS",
+    "github_ruff_format_check": "PASS",
+    "github_mypy_strict": "PASS",
+    "github_pytest_python_3_12": "PASS_140",
+    "uv_lock_python_3_13": "PASS",
+    "github_pytest_python_3_13": "PASS_140"
   }
 }

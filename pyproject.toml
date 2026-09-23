@@ -9,7 +9,9 @@ description = "Evidence-driven research and engineering framework for autonomous
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
 authors = [{ name = "mrAibo" }]
-dependencies = []
+dependencies = [
+  "websockets==17.0.1",
+]
 
 [dependency-groups]
 dev = [
@@ -42,6 +44,9 @@ select = [
   "SIM",
   "RUF",
 ]
+
+[tool.ruff.lint.isort]
+known-first-party = ["cryptobot"]
 
 [tool.ruff.format]
 quote-style = "double"

@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from enum import StrEnum
 from typing import cast
 
-from websockets.asyncio.client import ClientConnection, connect
+from websockets.asyncio.client import connect
 from websockets.exceptions import ConnectionClosedOK, WebSocketException
 
 from cryptobot.data.clock import Clock
@@ -347,14 +347,6 @@ def classify_binance_payload(payload: bytes) -> BinancePayloadClassification:
     return BinancePayloadClassification(
         BinanceFrameKind.MARKET_DATA, stream, event_type, None
     )
-
-
-async def _send_subscription(
-    websocket: ClientConnection,
-    streams: tuple[str, ...],
-    request_id: str,
-) -> None:
-    await websocket.send(subscription_request(streams, request_id))
 
 
 def _message_to_bytes(message: str | bytes) -> bytes:

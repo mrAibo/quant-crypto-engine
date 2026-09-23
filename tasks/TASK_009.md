@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`IN REVIEW — OFFLINE IMPLEMENTATION COMPLETE, CI PENDING, LIVE SMOKE NOT RUN`
 
 ## Objective
 
@@ -260,3 +260,23 @@ After a successful real run it records only actually observed facts.
 - Docker/Kubernetes;
 - remote orchestration;
 - production HA/failover.
+
+
+## Implementation status
+
+Implemented offline:
+
+- strict labeled runtime config;
+- host/boot/run identity derivation;
+- public-only runtime composition;
+- finite-duration operation;
+- SIGINT/SIGTERM graceful-stop request path;
+- final machine-readable summary;
+- storage audit command;
+- systemd template;
+- operational runbook;
+- fake-server runtime integration tests;
+- systemd static tests;
+- `artifacts/stage_0/live_capture_smoke.json` with `live_observation.status=NOT_RUN`.
+
+The real Hyperliquid live smoke has **not** been fabricated or inferred. It remains a separate acceptance step after offline CI.

@@ -5,6 +5,7 @@ on:
     branches: [task-013-binance-reference-feed]
     paths:
       - ".github/workflows/task013-binance-probe.yml"
+      - "src/cryptobot/adapters/binance/**"
 
 permissions:
   contents: read

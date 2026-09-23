@@ -2,7 +2,7 @@
   "task": "TASK-016",
   "gate": "Stage-0 Data Gate",
   "decision": "PASS",
-  "status": "PASS_REAL_MAINNET_EVIDENCE_FINAL_CI_PENDING",
+  "status": "PASS",
   "blocking_reason": null,
   "prerequisites": {
     "tasks_001_through_015": "VALIDATED",
@@ -131,6 +131,17 @@
       "pytest_python_3_13": "PASS_306"
     },
     "real_mainnet_smoke_workflow_run": 35930416414,
-    "final_network_independent_ci": "PENDING"
+    "final_network_independent_ci": {
+      "workflow_run": 35930608146,
+      "ruff": "PASS",
+      "ruff_format": "PASS",
+      "mypy_strict": "PASS_61_SOURCE_FILES",
+      "pytest_python_3_12": "PASS_306",
+      "pytest_python_3_13": "PASS_306"
+    }
+  },
+  "merge_provenance": {
+    "pr": 16,
+    "merge_commit": "ed13f9054b290e04151bc1d9de15eddbe4434b5f"
   }
 }

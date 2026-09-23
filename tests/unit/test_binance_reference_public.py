@@ -163,9 +163,7 @@ def test_two_route_fake_server_captures_ack_and_market_data(tmp_path: Path) -> N
                 await stream.aclose()
 
         assert len(requests) == 2
-        assert {
-            tuple(cast(list[str], request["params"])) for request in requests
-        } == {
+        assert {tuple(cast(list[str], request["params"])) for request in requests} == {
             PUBLIC_STREAMS,
             MARKET_STREAMS,
         }

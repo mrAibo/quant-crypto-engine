@@ -1,0 +1,150 @@
+name: TASK-016 Dual-Source Mainnet Smoke
+
+on:
+  push:
+    branches: [task-016-dual-source-data-gate]
+    paths:
+      - ".github/workflows/task016-dual-source-mainnet-smoke.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.18"
+
+      - run: uv python install 3.12
+      - run: uv sync --locked --all-groups --python 3.12
+
+      - name: Run dual-source mainnet evidence smoke
+        shell: bash
+        run: |
+          uv run --python 3.12 python - <<'PY'
+          import asyncio
+          import json
+          from pathlib import Path
+
+          from cryptobot.data.instruments import load_instrument_registry
+          from cryptobot.data.materialize import materialize_research_dataset
+          from cryptobot.data.normalization_pipeline import (
+              BINANCE_SOURCE_ID,
+              HL_SOURCE_ID,
+              FrameOutcome,
+              build_pipeline_report,
+              normalize_frames,
+          )
+          from cryptobot.data.rawlog import iter_raw_frames
+          from cryptobot.runtime.dual_source_recorder import (
+              DualSourceExitCode,
+              load_dual_source_recorder_config,
+              run_dual_source_recorder,
+          )
+
+          async def main() -> None:
+              config = load_dual_source_recorder_config(
+                  "config/runtime/dual-source-smoke.json"
+              )
+              summary = await run_dual_source_recorder(config)
+
+              if summary.recorder.final_path is None:
+                  raise AssertionError("recorder did not publish a final raw segment")
+              if summary.recorder.segment_id is None:
+                  raise AssertionError("recorder did not report a segment id")
+
+              frames = tuple(
+                  iter_raw_frames(
+                      summary.recorder.final_path,
+                      summary.recorder.segment_id,
+                  )
+              )
+              registry = load_instrument_registry("config/instruments.yaml")
+              normalized = normalize_frames(frames, registry)
+              report = build_pipeline_report(normalized)
+
+              error_results = tuple(
+                  result
+                  for result in normalized
+                  if result.outcome is FrameOutcome.ERROR
+              )
+              hl_event_count = sum(
+                  len(result.events)
+                  for result in normalized
+                  if result.source_id == HL_SOURCE_ID
+              )
+              binance_event_count = sum(
+                  len(result.events)
+                  for result in normalized
+                  if result.source_id == BINANCE_SOURCE_ID
+              )
+
+              output_dir = Path("data/task016-mainnet-parquet")
+              materialized = materialize_research_dataset(normalized, output_dir)
+
+              acceptance = {
+                  "recorder_clean_durable": (
+                      summary.exit_code == int(DualSourceExitCode.SUCCESS)
+                  ),
+                  "storage_audit_valid": summary.audit_clean,
+                  "both_sources_observed": summary.both_sources_observed,
+                  "single_expected_clock_domain": summary.single_expected_clock_domain,
+                  "hyperliquid_8_of_8_acks": (
+                      summary.all_hyperliquid_acks_observed
+                      and len(summary.hyperliquid_subscription_acks)
+                      == summary.expected_hyperliquid_subscription_acks
+                      == 8
+                  ),
+                  "binance_1301_1302_acks": (
+                      summary.all_binance_acks_observed
+                      and set(summary.binance_subscription_ack_ids) >= {1301, 1302}
+                  ),
+                  "hyperliquid_normalized_events": hl_event_count > 0,
+                  "binance_normalized_events": binance_event_count > 0,
+                  "one_normalization_causal_domain": report.causal_domain_count == 1,
+                  "zero_normalization_errors": len(error_results) == 0,
+                  "parquet_raw_count_reconciles": (
+                      materialized.manifest.raw_frame_count == len(frames)
+                  ),
+                  "parquet_event_count_reconciles": (
+                      materialized.manifest.normalized_event_count
+                      == report.normalized_record_count
+                  ),
+                  "parquet_one_causal_domain": (
+                      materialized.manifest.causal_domain_count == 1
+                  ),
+              }
+
+              evidence = {
+                  "task": "TASK-016",
+                  "acceptance": acceptance,
+                  "all_acceptance_pass": all(acceptance.values()),
+                  "summary": summary.as_dict(),
+                  "raw_frame_count": len(frames),
+                  "normalization_report": report.as_dict(),
+                  "normalization_error_count": len(error_results),
+                  "hyperliquid_normalized_event_count": hl_event_count,
+                  "binance_normalized_event_count": binance_event_count,
+                  "materialization_manifest": materialized.manifest.as_dict(),
+              }
+              print("TASK016_EVIDENCE=" + json.dumps(
+                  evidence,
+                  sort_keys=True,
+                  separators=(",", ":"),
+              ))
+
+              if not all(acceptance.values()):
+                  failed = sorted(
+                      key for key, passed in acceptance.items() if not passed
+                  )
+                  raise AssertionError(
+                      "TASK-016 mainnet smoke acceptance failed: " + ",".join(failed)
+                  )
+
+          asyncio.run(main())
+          PY

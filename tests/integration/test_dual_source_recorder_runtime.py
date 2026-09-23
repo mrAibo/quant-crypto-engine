@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import asyncio
 import json
+from collections.abc import Callable
 from dataclasses import replace
 from pathlib import Path
+from typing import cast
 
+import pyarrow as pa
 import pyarrow.parquet as pq
 from websockets.asyncio.server import ServerConnection, serve
 
@@ -25,6 +28,11 @@ from cryptobot.runtime.dual_source_recorder import (
     run_dual_source_recorder,
 )
 from cryptobot.runtime.public_recorder import RuntimeIdentity
+
+
+type _ReadTableFn = Callable[..., pa.Table]
+
+_READ_TABLE = cast(_ReadTableFn, pq.read_table)
 
 
 def _hl_market_payloads() -> tuple[dict[str, object], ...]:
@@ -252,7 +260,7 @@ def test_fake_servers_capture_both_sources_in_one_clock_domain_and_materialize(
         )
         assert materialized.manifest.raw_frame_count == len(frames)
         assert materialized.manifest.normalized_event_count == report.normalized_record_count
-        event_rows = pq.read_table(
+        event_rows = _READ_TABLE(
             materialized.output_dir / "events.parquet",
             use_threads=False,
         )

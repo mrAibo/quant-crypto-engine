@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`IN REVIEW — IMPLEMENTED, GITHUB CI PENDING`
 
 ## Objective
 
@@ -156,15 +156,30 @@ Add a middle-frame corruption test proving it is not silently truncated away.
 - CI result;
 - known limitations.
 
+## Implementation status
+
+Implemented:
+
+- deterministic QCR1 binary frame format;
+- immutable capture metadata and RawRef types;
+- append/sync/close semantics with explicit durable_length;
+- exact payload SHA-256 and whole-frame checksum;
+- scan/replay helpers;
+- CLEAN / INCOMPLETE / CORRUPT classification;
+- explicit incomplete-tail truncation helper;
+- unit and fault tests covering torn tail and middle corruption.
+
+No network/parser/Parquet/trading logic is present.
+
 ## Definition of Done
 
-1. Raw bytes can be appended and replayed exactly.
-2. Frame checksums/lengths detect corruption.
-3. Torn-tail recovery preserves valid prefix without hiding middle corruption.
-4. Durability semantics are explicit and tested.
-5. Python 3.12/3.13 tests green.
-6. Ruff/format/strict mypy/full pytest green.
-7. `STATUS.md` advances to TASK-006.
+1. Raw bytes can be appended and replayed exactly. **IMPLEMENTED**
+2. Frame checksums/lengths detect corruption. **IMPLEMENTED**
+3. Torn-tail recovery preserves valid prefix without hiding middle corruption. **IMPLEMENTED**
+4. Durability semantics are explicit and tested. **IMPLEMENTED**
+5. Python 3.12/3.13 tests green. **PENDING CI**
+6. Ruff/format/strict mypy/full pytest green. **PENDING CI**
+7. `STATUS.md` advances to TASK-006. **PENDING**
 
 ## Do Not Build
 

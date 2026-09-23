@@ -5,9 +5,9 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `main`
+- Current branch: `task-007-hyperliquid-public-ws`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-007 / S0-WP07 — Hyperliquid raw public WebSocket adapter**
+- Current work package: **TASK-007 / S0-WP07 — Hyperliquid raw public WebSocket adapter (implemented; CI pending)**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -187,11 +187,24 @@ Artifact: `artifacts/stage_0/storage_recovery_report.json`.
 
 Read **[`tasks/TASK_007.md`](tasks/TASK_007.md)**.
 
-Objective: implement the first live Hyperliquid public WebSocket raw-capture adapter.
+Implemented on the feature branch:
 
-Mandatory first action: re-verify the current official endpoint, subscription/ack formats, message envelopes, keepalive behavior, and documented limits from official Hyperliquid sources before writing network behavior.
+- official Hyperliquid WS protocol evidence;
+- pinned BSD-3-Clause `websockets==17.0.1`;
+- public raw WebSocket adapter;
+- top-level ACK/channel classification only;
+- application heartbeat;
+- explicit reconnect policy;
+- exact inbound payload preservation;
+- fake-server integration tests;
+- `docs/THIRD_PARTY_REUSE.md`;
+- `artifacts/stage_0/hl_capture_probe.json`.
 
-No normalization, feature logic, strategy, execution, or trading code belongs in TASK-007.
+### Exact next action
+
+Open TASK-007 PR and require full GitHub CI green. Do not merge if `uv --locked`, strict mypy, Ruff/format, or Python 3.12/3.13 tests fail.
+
+After merge, begin **TASK-008 — recorder supervisor and raw-writer integration**.
 
 ## User actions currently required
 

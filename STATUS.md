@@ -5,9 +5,9 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `main`
+- Current branch: `task-013-binance-reference-feed`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-013 / S0-WP13 — Binance USDⓈ-M public reference feed**
+- Current work package: **TASK-013 / S0-WP13 — Binance USDⓈ-M public reference feed implemented; CI pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -297,13 +297,22 @@ Delivered:
 
 Read **[`tasks/TASK_013.md`](tasks/TASK_013.md)**.
 
-Stage-0 external reference source is now frozen as **Binance USDⓈ-M Futures** for BTCUSDT and ETHUSDT, using only public `bookTicker` and `aggTrade` streams.
+Implemented on the feature branch:
 
-Reason: it gives real-time BBO and ~100 ms aggregate trades on perpetual instruments, avoiding Coinbase Exchange ticker's match-driven sampling and the larger spot/perp semantic gap.
+- frozen Binance USD-M reference source;
+- BTCUSDT/ETHUSDT REFERENCE perpetual registry entries;
+- separate /public bookTicker and /market aggTrade raw adapters;
+- deterministic ReferenceBBO/ReferenceTrade normalization;
+- exact decimals and st=1 universe guard;
+- documented `m` maker-flag aggressor mapping;
+- QCR1 replay + fake-server coverage;
+- successful public mainnet probe `35919551313`: both ACKs, all four streams, 60 market frames in 6.3 s, no credentials;
+- temporary network probe removed;
+- `artifacts/stage_0/binance_reference_probe.json`.
 
 ### Exact next action
 
-Re-verify current official Binance USDⓈ-M public WebSocket endpoint/schema/connection rules and record them in the evidence contract. Then implement raw public capture + deterministic ReferenceBBO/ReferenceTrade normalization on a dedicated feature branch.
+Open TASK-013 PR and require full network-independent CI green. Then merge and advance to TASK-014 causal raw reader / normalization pipeline.
 
 ## User actions currently required
 

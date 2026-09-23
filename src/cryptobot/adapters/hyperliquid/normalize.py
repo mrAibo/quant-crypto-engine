@@ -4,6 +4,7 @@ import hashlib
 import json
 from collections.abc import Mapping
 from dataclasses import dataclass
+from decimal import Decimal
 from enum import StrEnum
 from typing import TypeAlias, cast
 
@@ -503,7 +504,7 @@ def _level_as_dict(level: BookLevel) -> dict[str, object]:
     }
 
 
-def _decimal_or_none(value: object) -> str | None:
+def _decimal_or_none(value: Decimal | None) -> str | None:
     if value is None:
         return None
-    return serialize_exact_decimal(cast("str | int", value))
+    return serialize_exact_decimal(value)

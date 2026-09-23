@@ -324,11 +324,7 @@ def load_public_recorder_config(path: str | Path) -> PublicRecorderConfig:
         bases.append(ParameterBasisRecord(name=name, basis=basis))
 
     duration_raw = values["run_duration_seconds"]
-    duration = (
-        None
-        if duration_raw is None
-        else _number(duration_raw, "run_duration_seconds")
-    )
+    duration = None if duration_raw is None else _number(duration_raw, "run_duration_seconds")
 
     return PublicRecorderConfig(
         schema_version=schema_version,

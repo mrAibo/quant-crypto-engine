@@ -1,6 +1,6 @@
 {
   "task": "TASK-011",
-  "status": "IMPLEMENTED_CI_PENDING",
+  "status": "PASS",
   "parse_version": "hyperliquid-trade-v1",
   "official_schema": {
     "channel": "trades",
@@ -79,7 +79,15 @@
     "QCR1 reconnect duplicate auditability"
   ],
   "validation": {
-    "github_ci": "PENDING"
+    "github_ci": "PASS",
+    "workflow_run": 35917274342,
+    "head_sha": "9f5790cca55b6a24a823e3a3b714fc74f01824bf",
+    "ruff": "PASS",
+    "ruff_format": "PASS",
+    "mypy_strict": "PASS_44_SOURCE_FILES",
+    "pytest_python_3_12": "PASS_222",
+    "pytest_python_3_13": "PASS_222",
+    "default_ci_network_dependency": false
   },
   "deliberately_out_of_scope": [
     "funding/mark/oracle",

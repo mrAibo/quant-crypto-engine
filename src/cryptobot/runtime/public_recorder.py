@@ -398,7 +398,7 @@ def derive_runtime_identity(
         if not token.strip():
             raise RuntimeConfigError("fallback boot token must be non-empty")
         boot_source = token
-    boot_id = "boot-" + hashlib.sha256(boot_source.encode("utf-8")).hexdigest()[:16]
+    boot_id = "boot-" + hashlib.sha256(boot_source.encode()).hexdigest()[:16]
 
     wall_ns = time.time_ns() if run_wall_ns is None else run_wall_ns
     if isinstance(wall_ns, bool) or not isinstance(wall_ns, int) or wall_ns < 0:
@@ -407,7 +407,7 @@ def derive_runtime_identity(
     if not entropy.strip():
         raise RuntimeConfigError("run entropy must be non-empty")
     run_digest = hashlib.sha256(
-        f"{host_id}\0{boot_id}\0{wall_ns}\0{entropy}".encode("utf-8")
+        f"{host_id}\0{boot_id}\0{wall_ns}\0{entropy}".encode()
     ).hexdigest()[:20]
     return RuntimeIdentity(
         host_id=host_id,

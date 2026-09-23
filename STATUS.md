@@ -5,9 +5,9 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `main`
+- Current branch: `task-011-hyperliquid-trade-normalization`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-011 / S0-WP11 — Hyperliquid trade normalization from raw capture**
+- Current work package: **TASK-011 / S0-WP11 — Hyperliquid trade normalization implemented; CI pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -263,11 +263,23 @@ Delivered:
 
 Read **[`tasks/TASK_011.md`](tasks/TASK_011.md)**.
 
-Objective: normalize Hyperliquid public `trades` raw frames into the existing v1 `Trade` contract with exact numerics, verified native side semantics, deterministic multi-event identity, and complete raw provenance.
+Implemented on the feature branch:
+
+- verified public trade wire schema and identity facts;
+- timestamp unit measurement;
+- measured reconnect recent-trade replay with duplicate native IDs;
+- exact-Decimal multi-event trade normalizer;
+- native A/B side preservation with aggressor semantics deliberately UNKNOWN;
+- stable `trade_id=(time,coin,tid)`;
+- capture-specific deterministic event IDs;
+- complete raw QCR1 provenance;
+- structured all-or-nothing errors;
+- QCR1 replay/reconnect duplicate tests;
+- `artifacts/stage_0/hyperliquid_trade_normalization.json`.
 
 ### Exact next action
 
-Re-verify current official Hyperliquid `trades` schema, `side`, `tid`, timestamp, hash/users, and reconnect behavior. Record evidence, then implement TASK-011 on its own feature branch.
+Open TASK-011 PR and require full network-independent CI green. Then close/merge TASK-011 and advance to TASK-012 (funding/mark/oracle context normalization).
 
 ## User actions currently required
 

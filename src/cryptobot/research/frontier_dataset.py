@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import bisect
 import json
+from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass
 from decimal import Decimal
@@ -18,8 +19,11 @@ from cryptobot.research.frontier import (
     FrontierValidationError,
     TradeDirection,
     absolute_move_bps,
+    dkw_required_sample_count,
     empirical_quantile_nearest_rank,
     horizon_grid_125,
+    minimum_duration_seconds_for_windows,
+    next_horizon_125,
     non_overlapping_window_count,
     required_capture_fraction,
     top_of_book_round_trip_friction_bps,
@@ -31,6 +35,8 @@ _READ_TABLE = cast(_ReadTableFn, pq.read_table)
 
 _PRIMARY_SOURCE = "hyperliquid-mainnet-public"
 _PRIMARY_INSTRUMENT = "hyperliquid.mainnet.perpetual.btc"
+_REFERENCE_SOURCE = "binance-usdm-reference-public"
+_REFERENCE_INSTRUMENT = "binance_usdm.reference.perpetual.btcusdt"
 _NS_PER_SECOND = 1_000_000_000
 _QUANTILES: tuple[tuple[str, Decimal], ...] = (
     ("q50", Decimal("0.50")),
@@ -38,6 +44,17 @@ _QUANTILES: tuple[tuple[str, Decimal], ...] = (
     ("q90", Decimal("0.90")),
     ("q95", Decimal("0.95")),
 )
+_PRIMARY_EXPECTED_TYPES = (
+    "BBO",
+    "L2_SNAPSHOT",
+    "TRADE",
+    "FUNDING_RATE_OBSERVATION",
+    "MARK_PRICE",
+    "ORACLE_PRICE",
+)
+_REFERENCE_EXPECTED_TYPES = ("REFERENCE_BBO", "REFERENCE_TRADE")
+_DKW_CONFIDENCE = Decimal("0.95")
+_DKW_MAX_CDF_ERROR = Decimal("0.025")
 
 
 @dataclass(frozen=True, slots=True)
@@ -56,10 +73,65 @@ class PrimaryBBOObservation:
 
 
 @dataclass(frozen=True, slots=True)
+class StreamCadenceAudit:
+    event_type: str
+    observed_count: int
+    usable_count: int
+    interarrival_count: int
+    q50_ns: int | None
+    q90_ns: int | None
+    q99_ns: int | None
+    largest_gap_ns: int | None
+
+    def as_dict(self) -> dict[str, object]:
+        return {
+            "event_type": self.event_type,
+            "observed_count": self.observed_count,
+            "usable_count": self.usable_count,
+            "interarrival_count": self.interarrival_count,
+            "q50_ns": self.q50_ns,
+            "q90_ns": self.q90_ns,
+            "q99_ns": self.q99_ns,
+            "largest_gap_ns": self.largest_gap_ns,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class FrontierDatasetAudit:
+    causal_domain_count: int
+    observed_duration_ns: int
+    event_counts_by_source_type: tuple[tuple[str, str, int], ...]
+    primary_btc_event_counts: tuple[tuple[str, int], ...]
+    reference_btc_event_counts: tuple[tuple[str, int], ...]
+    primary_bbo_cadence: StreamCadenceAudit
+    primary_l2_cadence: StreamCadenceAudit
+
+    def as_dict(self) -> dict[str, object]:
+        return {
+            "causal_domain_count": self.causal_domain_count,
+            "observed_duration_ns": self.observed_duration_ns,
+            "event_counts_by_source_type": [
+                {
+                    "source_id": source_id,
+                    "event_type": event_type,
+                    "count": count,
+                }
+                for source_id, event_type, count in self.event_counts_by_source_type
+            ],
+            "primary_btc_event_counts": dict(self.primary_btc_event_counts),
+            "reference_btc_event_counts": dict(self.reference_btc_event_counts),
+            "primary_bbo_cadence": self.primary_bbo_cadence.as_dict(),
+            "primary_l2_cadence": self.primary_l2_cadence.as_dict(),
+        }
+
+
+@dataclass(frozen=True, slots=True)
 class PilotHorizonResult:
     horizon_seconds: int
     non_overlapping_windows: int
+    candidate_start_count: int
     movement_sample_count: int
+    gap_excluded_count: int
     movement_quantiles_bps: tuple[tuple[str, Decimal], ...]
     median_known_friction_bps: Decimal
     q90_known_friction_bps: Decimal
@@ -69,7 +141,9 @@ class PilotHorizonResult:
         return {
             "horizon_seconds": self.horizon_seconds,
             "non_overlapping_windows": self.non_overlapping_windows,
+            "candidate_start_count": self.candidate_start_count,
             "movement_sample_count": self.movement_sample_count,
+            "gap_excluded_count": self.gap_excluded_count,
             "movement_quantiles_bps": {
                 name: _decimal_string(value) for name, value in self.movement_quantiles_bps
             },
@@ -79,6 +153,28 @@ class PilotHorizonResult:
                 name: _decimal_string(value)
                 for name, value in self.capture_fraction_vs_movement_quantiles
             },
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class EvidenceWindowPlan:
+    confidence: Decimal
+    maximum_cdf_error: Decimal
+    required_non_overlapping_windows: int
+    target_horizon_seconds: int | None
+    minimum_observed_duration_seconds: int | None
+    target_reason: str
+    dependence_limitation: str
+
+    def as_dict(self) -> dict[str, object]:
+        return {
+            "confidence": _decimal_string(self.confidence),
+            "maximum_cdf_error": _decimal_string(self.maximum_cdf_error),
+            "required_non_overlapping_windows": self.required_non_overlapping_windows,
+            "target_horizon_seconds": self.target_horizon_seconds,
+            "minimum_observed_duration_seconds": self.minimum_observed_duration_seconds,
+            "target_reason": self.target_reason,
+            "dependence_limitation": self.dependence_limitation,
         }
 
 
@@ -103,6 +199,9 @@ class FrontierPilotReport:
     horizon_lower_bound_seconds: int | None
     horizon_upper_bound_seconds: int | None
     horizons: tuple[PilotHorizonResult, ...]
+    dataset_audit: FrontierDatasetAudit
+    movement_q95_meets_median_known_friction: bool
+    evidence_window_plan: EvidenceWindowPlan
     gate_decision: str
     gate_limitation: str
 
@@ -129,6 +228,11 @@ class FrontierPilotReport:
             "horizon_lower_bound_seconds": self.horizon_lower_bound_seconds,
             "horizon_upper_bound_seconds": self.horizon_upper_bound_seconds,
             "horizons": [item.as_dict() for item in self.horizons],
+            "dataset_audit": self.dataset_audit.as_dict(),
+            "movement_q95_meets_median_known_friction": (
+                self.movement_q95_meets_median_known_friction
+            ),
+            "evidence_window_plan": self.evidence_window_plan.as_dict(),
             "gate_decision": self.gate_decision,
             "gate_limitation": self.gate_limitation,
         }
@@ -152,7 +256,9 @@ def analyze_frontier_pilot_dataset(
 ) -> FrontierPilotReport:
     destination = Path(dataset_dir)
     bundle_sha, normalized_sha = _load_manifest_binding(destination)
-    observations = _load_primary_bbo(destination)
+    event_rows = _load_event_rows(destination)
+    audit = _build_dataset_audit(event_rows)
+    observations = _load_primary_bbo(destination, event_rows)
 
     if len(observations) < 2:
         return _insufficient_report(
@@ -161,6 +267,7 @@ def analyze_frontier_pilot_dataset(
             observations=observations,
             fee_scenario_bps_per_side=fee_scenario_bps_per_side,
             limitation="fewer than two valid primary BTC BBO observations",
+            dataset_audit=audit,
         )
 
     domains = {(item.host_id, item.boot_id) for item in observations}
@@ -188,6 +295,7 @@ def analyze_frontier_pilot_dataset(
             observations=ordered,
             fee_scenario_bps_per_side=fee_scenario_bps_per_side,
             limitation="primary BTC BBO observations have no positive monotonic cadence",
+            dataset_audit=audit,
         )
 
     cadence_p99_ns = _nearest_rank_int(deltas, numerator=99, denominator=100)
@@ -201,7 +309,7 @@ def analyze_frontier_pilot_dataset(
 
     if upper_seconds < lower_seconds:
         return FrontierPilotReport(
-            report_version="frontier-pilot-v1",
+            report_version="frontier-pilot-v2",
             status="INSUFFICIENT_DATA",
             source_dataset_bundle_sha256=bundle_sha,
             source_normalized_records_sha256=normalized_sha,
@@ -220,6 +328,9 @@ def analyze_frontier_pilot_dataset(
             horizon_lower_bound_seconds=lower_seconds,
             horizon_upper_bound_seconds=upper_seconds,
             horizons=(),
+            dataset_audit=audit,
+            movement_q95_meets_median_known_friction=False,
+            evidence_window_plan=_evidence_window_plan((), lower_seconds),
             gate_decision="NOT_EVALUATED",
             gate_limitation=(
                 "pilot duration is too short for even two non-overlapping windows "
@@ -250,7 +361,7 @@ def analyze_frontier_pilot_dataset(
 
     horizon_results: list[PilotHorizonResult] = []
     for horizon_seconds in horizon_grid_125(lower_seconds, upper_seconds):
-        moves = _movement_samples(
+        moves, candidate_count, gap_excluded_count = _movement_samples(
             ordered,
             times,
             horizon_ns=horizon_seconds * _NS_PER_SECOND,
@@ -274,7 +385,9 @@ def analyze_frontier_pilot_dataset(
                     duration_ns,
                     horizon_seconds,
                 ),
+                candidate_start_count=candidate_count,
                 movement_sample_count=len(moves),
+                gap_excluded_count=gap_excluded_count,
                 movement_quantiles_bps=movement_quantiles,
                 median_known_friction_bps=friction_q50,
                 q90_known_friction_bps=friction_q90,
@@ -282,9 +395,11 @@ def analyze_frontier_pilot_dataset(
             )
         )
 
+    horizons = tuple(horizon_results)
+    q95_meets = _q95_meets_friction(horizons)
     return FrontierPilotReport(
-        report_version="frontier-pilot-v1",
-        status="PILOT_MEASURED" if horizon_results else "INSUFFICIENT_DATA",
+        report_version="frontier-pilot-v2",
+        status="PILOT_MEASURED" if horizons else "INSUFFICIENT_DATA",
         source_dataset_bundle_sha256=bundle_sha,
         source_normalized_records_sha256=normalized_sha,
         source_id=_PRIMARY_SOURCE,
@@ -301,12 +416,15 @@ def analyze_frontier_pilot_dataset(
         funding_boundary_evidence_class=EvidenceClass.UNKNOWN,
         horizon_lower_bound_seconds=lower_seconds,
         horizon_upper_bound_seconds=upper_seconds,
-        horizons=tuple(horizon_results),
+        horizons=horizons,
+        dataset_audit=audit,
+        movement_q95_meets_median_known_friction=q95_meets,
+        evidence_window_plan=_evidence_window_plan(horizons, lower_seconds),
         gate_decision="NOT_EVALUATED",
         gate_limitation=(
             "short pilot measures movement and known top-of-book+taker-fee friction only; "
-            "predictability, live latency/slippage, exact funding-boundary cost, and "
-            "dependence-aware Frontier Gate evidence remain unproven"
+            "predictability, live latency/slippage, exact funding-boundary cost, serial "
+            "dependence, and Frontier Gate evidence remain unproven"
         ),
     )
 
@@ -328,8 +446,8 @@ def _load_manifest_binding(dataset_dir: Path) -> tuple[str, str]:
     return bundle, normalized
 
 
-def _load_primary_bbo(dataset_dir: Path) -> tuple[PrimaryBBOObservation, ...]:
-    events = _READ_TABLE(
+def _load_event_rows(dataset_dir: Path) -> tuple[dict[str, object], ...]:
+    raw_rows = _READ_TABLE(
         dataset_dir / "events.parquet",
         columns=[
             "event_id",
@@ -344,6 +462,131 @@ def _load_primary_bbo(dataset_dir: Path) -> tuple[PrimaryBBOObservation, ...]:
         ],
         use_threads=False,
     ).to_pylist()
+    return tuple(cast(dict[str, object], row) for row in raw_rows)
+
+
+def _build_dataset_audit(
+    event_rows: tuple[dict[str, object], ...],
+) -> FrontierDatasetAudit:
+    domains: set[tuple[str, str]] = set()
+    recv_mono_values: list[int] = []
+    event_counts: Counter[tuple[str, str]] = Counter()
+    primary_counts: Counter[str] = Counter()
+    reference_counts: Counter[str] = Counter()
+
+    for row in event_rows:
+        source_id = row.get("source_id")
+        event_type = row.get("event_type")
+        instrument_id = row.get("instrument_id")
+        host_id = row.get("host_id")
+        boot_id = row.get("boot_id")
+        recv_mono_ns = row.get("recv_mono_ns")
+        if not all(
+            isinstance(value, str)
+            for value in (source_id, event_type, instrument_id, host_id, boot_id)
+        ):
+            raise FrontierValidationError("event audit identity fields must be strings")
+        if isinstance(recv_mono_ns, bool) or not isinstance(recv_mono_ns, int):
+            raise FrontierValidationError("event audit recv_mono_ns must be an integer")
+
+        source = cast(str, source_id)
+        event = cast(str, event_type)
+        instrument = cast(str, instrument_id)
+        host = cast(str, host_id)
+        boot = cast(str, boot_id)
+
+        domains.add((host, boot))
+        recv_mono_values.append(recv_mono_ns)
+        event_counts[(source, event)] += 1
+        if source == _PRIMARY_SOURCE and instrument == _PRIMARY_INSTRUMENT:
+            primary_counts[event] += 1
+        if source == _REFERENCE_SOURCE and instrument == _REFERENCE_INSTRUMENT:
+            reference_counts[event] += 1
+
+    duration = 0
+    if recv_mono_values:
+        duration = max(recv_mono_values) - min(recv_mono_values)
+
+    return FrontierDatasetAudit(
+        causal_domain_count=len(domains),
+        observed_duration_ns=duration,
+        event_counts_by_source_type=tuple(
+            (source, event, count)
+            for (source, event), count in sorted(event_counts.items())
+        ),
+        primary_btc_event_counts=tuple(
+            (event_type, primary_counts[event_type])
+            for event_type in _PRIMARY_EXPECTED_TYPES
+        ),
+        reference_btc_event_counts=tuple(
+            (event_type, reference_counts[event_type])
+            for event_type in _REFERENCE_EXPECTED_TYPES
+        ),
+        primary_bbo_cadence=_stream_cadence_audit(
+            event_rows,
+            source_id=_PRIMARY_SOURCE,
+            instrument_id=_PRIMARY_INSTRUMENT,
+            event_type="BBO",
+        ),
+        primary_l2_cadence=_stream_cadence_audit(
+            event_rows,
+            source_id=_PRIMARY_SOURCE,
+            instrument_id=_PRIMARY_INSTRUMENT,
+            event_type="L2_SNAPSHOT",
+        ),
+    )
+
+
+def _stream_cadence_audit(
+    event_rows: tuple[dict[str, object], ...],
+    *,
+    source_id: str,
+    instrument_id: str,
+    event_type: str,
+) -> StreamCadenceAudit:
+    observed: list[tuple[int, int]] = []
+    usable: list[int] = []
+
+    for row in event_rows:
+        if row.get("source_id") != source_id:
+            continue
+        if row.get("instrument_id") != instrument_id:
+            continue
+        if row.get("event_type") != event_type:
+            continue
+
+        recv_mono_ns = row.get("recv_mono_ns")
+        quality_flags = row.get("quality_flags")
+        if isinstance(recv_mono_ns, bool) or not isinstance(recv_mono_ns, int):
+            raise FrontierValidationError("stream recv_mono_ns must be an integer")
+        if isinstance(quality_flags, bool) or not isinstance(quality_flags, int):
+            raise FrontierValidationError("stream quality_flags must be an integer")
+        observed.append((recv_mono_ns, quality_flags))
+        if not (quality_flags & int(QualityFlag.SUSPECT)):
+            usable.append(recv_mono_ns)
+
+    ordered = sorted(usable)
+    deltas = tuple(
+        current - previous
+        for previous, current in pairwise(ordered)
+        if current > previous
+    )
+    return StreamCadenceAudit(
+        event_type=event_type,
+        observed_count=len(observed),
+        usable_count=len(usable),
+        interarrival_count=len(deltas),
+        q50_ns=(None if not deltas else _nearest_rank_int(deltas, numerator=50, denominator=100)),
+        q90_ns=(None if not deltas else _nearest_rank_int(deltas, numerator=90, denominator=100)),
+        q99_ns=(None if not deltas else _nearest_rank_int(deltas, numerator=99, denominator=100)),
+        largest_gap_ns=(None if not deltas else max(deltas)),
+    )
+
+
+def _load_primary_bbo(
+    dataset_dir: Path,
+    event_rows: tuple[dict[str, object], ...],
+) -> tuple[PrimaryBBOObservation, ...]:
     bbo_rows = _READ_TABLE(
         dataset_dir / "bbo.parquet",
         columns=["event_id", "bid_price_exact", "ask_price_exact"],
@@ -369,8 +612,7 @@ def _load_primary_bbo(dataset_dir: Path) -> tuple[PrimaryBBOObservation, ...]:
         prices[event_id] = (bid_value, ask_value)
 
     output: list[PrimaryBBOObservation] = []
-    for raw in events:
-        row = cast(dict[str, object], raw)
+    for row in event_rows:
         if row.get("source_id") != _PRIMARY_SOURCE:
             continue
         if row.get("instrument_id") != _PRIMARY_INSTRUMENT:
@@ -423,18 +665,81 @@ def _movement_samples(
     *,
     horizon_ns: int,
     maximum_overshoot_ns: int,
-) -> tuple[Decimal, ...]:
+) -> tuple[tuple[Decimal, ...], int, int]:
     moves: list[Decimal] = []
+    candidate_count = 0
+    gap_excluded_count = 0
+
     for index, start in enumerate(observations):
         target = start.recv_mono_ns + horizon_ns
+        if target > times[-1]:
+            break
+        candidate_count += 1
         end_index = bisect.bisect_left(times, target, lo=index + 1)
         if end_index >= len(observations):
             break
         end = observations[end_index]
         if end.recv_mono_ns - target > maximum_overshoot_ns:
+            gap_excluded_count += 1
             continue
         moves.append(absolute_move_bps(start.mid, end.mid))
-    return tuple(moves)
+    return tuple(moves), candidate_count, gap_excluded_count
+
+
+def _q95_meets_friction(horizons: tuple[PilotHorizonResult, ...]) -> bool:
+    for item in horizons:
+        q95 = dict(item.movement_quantiles_bps).get("q95")
+        if q95 is not None and q95 >= item.median_known_friction_bps:
+            return True
+    return False
+
+
+def _evidence_window_plan(
+    horizons: tuple[PilotHorizonResult, ...],
+    lower_seconds: int | None,
+) -> EvidenceWindowPlan:
+    required_windows = dkw_required_sample_count(
+        confidence=_DKW_CONFIDENCE,
+        maximum_cdf_error=_DKW_MAX_CDF_ERROR,
+    )
+
+    target_horizon: int | None = None
+    reason = "NO_SUPPORTED_PILOT_HORIZON"
+    for item in horizons:
+        q95 = dict(item.movement_quantiles_bps).get("q95")
+        if q95 is not None and q95 >= item.median_known_friction_bps:
+            target_horizon = item.horizon_seconds
+            reason = "FIRST_PILOT_Q95_AT_OR_ABOVE_MEDIAN_KNOWN_FRICTION"
+            break
+
+    if target_horizon is None and horizons:
+        target_horizon = next_horizon_125(horizons[-1].horizon_seconds)
+        reason = "EXPAND_ONE_125_CELL_BECAUSE_PILOT_Q95_BELOW_MEDIAN_KNOWN_FRICTION"
+    elif target_horizon is None and lower_seconds is not None:
+        target_horizon = lower_seconds
+        reason = "COLLECT_CADENCE_DERIVED_LOWER_HORIZON"
+
+    minimum_duration = (
+        None
+        if target_horizon is None
+        else minimum_duration_seconds_for_windows(
+            horizon_seconds=target_horizon,
+            required_non_overlapping_windows=required_windows,
+        )
+    )
+    return EvidenceWindowPlan(
+        confidence=_DKW_CONFIDENCE,
+        maximum_cdf_error=_DKW_MAX_CDF_ERROR,
+        required_non_overlapping_windows=required_windows,
+        target_horizon_seconds=target_horizon,
+        minimum_observed_duration_seconds=minimum_duration,
+        target_reason=reason,
+        dependence_limitation=(
+            "DKW planning count assumes independent samples; non-overlap reduces mechanical "
+            "overlap but does not prove independence. Serial dependence or gaps can only "
+            "increase the required real evidence window."
+        ),
+    )
 
 
 def _quantile_summary(values: tuple[Decimal, ...]) -> tuple[tuple[str, Decimal], ...]:
@@ -479,11 +784,12 @@ def _insufficient_report(
     observations: tuple[PrimaryBBOObservation, ...],
     fee_scenario_bps_per_side: Decimal,
     limitation: str,
+    dataset_audit: FrontierDatasetAudit,
 ) -> FrontierPilotReport:
     domains = {(item.host_id, item.boot_id) for item in observations}
     causal_domain = next(iter(domains)) if len(domains) == 1 else None
     return FrontierPilotReport(
-        report_version="frontier-pilot-v1",
+        report_version="frontier-pilot-v2",
         status="INSUFFICIENT_DATA",
         source_dataset_bundle_sha256=bundle_sha,
         source_normalized_records_sha256=normalized_sha,
@@ -502,6 +808,9 @@ def _insufficient_report(
         horizon_lower_bound_seconds=None,
         horizon_upper_bound_seconds=None,
         horizons=(),
+        dataset_audit=dataset_audit,
+        movement_q95_meets_median_known_friction=False,
+        evidence_window_plan=_evidence_window_plan((), None),
         gate_decision="NOT_EVALUATED",
         gate_limitation=limitation,
     )

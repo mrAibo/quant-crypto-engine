@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import asyncio
 import json
+from collections.abc import AsyncIterator
 from dataclasses import replace
+from typing import cast
 from pathlib import Path, PurePosixPath
 
 from websockets.asyncio.server import ServerConnection, serve
 
+from cryptobot.data.recorder import CaptureFrame
 from cryptobot.runtime.public_recorder import (
     PublicRecorderConfig,
     RuntimeExitCode,
@@ -98,10 +101,11 @@ def test_signal_state_requests_graceful_stop_of_running_runtime(tmp_path: Path) 
         from cryptobot.data.clock import SystemClock
         from cryptobot.data.recorder import RecorderSupervisor
 
-        async def source():
+        async def source() -> AsyncIterator[CaptureFrame]:
             while True:
                 await asyncio.sleep(3600)
-                yield  # pragma: no cover
+                if False:
+                    yield cast(CaptureFrame, object())  # pragma: no cover
 
         base = _base_config()
         root = tmp_path / "signal"

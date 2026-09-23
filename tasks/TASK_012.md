@@ -2,7 +2,7 @@
 
 ## Status
 
-`VALIDATED — MERGE PENDING`
+`COMPLETE`
 
 ## Objective
 
@@ -211,3 +211,17 @@ GitHub CI run `35918301023` on head `4a1291274f5ebaed4f333c2e1b7553e5f4c48344`:
 - pytest Python 3.13: **246 PASS**.
 
 Default CI remains network-independent. The temporary activeAssetCtx probe workflow was removed before validation.
+
+
+## Merge provenance
+
+Merged as PR #12 in commit `9a6e4c801464b1a56036ae6f50c6fab9e7c1c966`.
+
+Validated implementation:
+
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS;
+- pytest Python 3.12: **246 PASS**;
+- pytest Python 3.13: **246 PASS**;
+- CI run: `35918301023`.

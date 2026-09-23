@@ -181,9 +181,7 @@ def test_fake_servers_capture_both_sources_in_one_clock_domain_and_materialize(
             endpoint_hl = f"ws://127.0.0.1:{hl_port}"
             endpoint_bn = f"ws://127.0.0.1:{bn_port}"
 
-            base = load_dual_source_recorder_config(
-                "config/runtime/dual-source-smoke.json"
-            )
+            base = load_dual_source_recorder_config("config/runtime/dual-source-smoke.json")
             root = tmp_path / "capture"
             config = replace(
                 base,
@@ -245,14 +243,8 @@ def test_fake_servers_capture_both_sources_in_one_clock_domain_and_materialize(
         assert report.causal_domain_count == 1
         assert report.normalized_record_count >= 8
         assert not any(result.outcome is FrameOutcome.ERROR for result in normalized)
-        assert any(
-            result.source_id == HL_SOURCE_ID and result.events
-            for result in normalized
-        )
-        assert any(
-            result.source_id == BINANCE_SOURCE_ID and result.events
-            for result in normalized
-        )
+        assert any(result.source_id == HL_SOURCE_ID and result.events for result in normalized)
+        assert any(result.source_id == BINANCE_SOURCE_ID and result.events for result in normalized)
 
         materialized = materialize_research_dataset(
             normalized,

@@ -7,7 +7,7 @@ on:
       - ".github/workflows/task015-pyarrow-lock.yml"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   lock:
@@ -15,17 +15,23 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: task-015-deterministic-parquet-materialization
       - uses: astral-sh/setup-uv@v6
         with:
           version: "0.12.18"
       - run: uv python install 3.12
       - name: Resolve lock
         run: uv lock --python 3.12
-      - name: Report resolved PyArrow and lock
+      - name: Commit only uv.lock
         shell: bash
         run: |
-          uv tree --locked | grep -E '^pyarrow| pyarrow' || true
-          echo "LOCK_GZIP_BASE64_BEGIN"
-          gzip -n -9 -c uv.lock | base64 -w0
-          echo
-          echo "LOCK_GZIP_BASE64_END"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add uv.lock
+          if git diff --cached --quiet; then
+            echo "uv.lock already current"
+            exit 0
+          fi
+          git commit -m "build(task-015): lock PyArrow dependency"
+          git push origin HEAD:task-015-deterministic-parquet-materialization

@@ -2,7 +2,7 @@
 
 ## Status
 
-`IN REVIEW — IMPLEMENTED, GITHUB CI PENDING`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
@@ -225,4 +225,17 @@ No funding/reference/Parquet/feature/model/backtest/execution code is present.
 
 ## Validation status
 
-GitHub CI: **PENDING**.
+GitHub CI: **PASS** — run `35917274342`; 222 tests passed on Python 3.12 and Python 3.13; Ruff, formatter, and strict mypy passed.
+
+
+## Validation result
+
+GitHub CI run `35917274342` on head `9f5790cca55b6a24a823e3a3b714fc74f01824bf`:
+
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS — 44 source files;
+- pytest Python 3.12: **222 PASS**;
+- pytest Python 3.13: **222 PASS**.
+
+Default CI remains network-independent. The temporary trade probe workflow was removed before validation.

@@ -5,9 +5,9 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `main`
+- Current branch: `task-009-public-recorder-runtime`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-009 / S0-WP09 — Public recorder runtime, systemd template, and live smoke evidence**
+- Current work package: **TASK-009 / S0-WP09 — Public recorder runtime/systemd implemented offline; CI and real live smoke pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -225,9 +225,21 @@ Artifact: `artifacts/stage_0/recorder_smoke.json`.
 
 Read **[`tasks/TASK_009.md`](tasks/TASK_009.md)**.
 
-Objective: build the first runnable public-recorder process, add safe signal handling and a minimal systemd template, then obtain short real Hyperliquid public-feed smoke evidence without introducing credentials, normalization, strategy, or trading code.
+Implemented on the feature branch:
 
-If the current execution environment cannot reach the public Internet, complete all offline code/tests first and generate a self-contained live-smoke task for an Internet-enabled harness rather than weakening the gate.
+- strict labeled smoke/runtime config;
+- public-only executable runtime composition;
+- host/boot/run identity;
+- finite-duration mode;
+- graceful SIGINT/SIGTERM stop request;
+- final JSON summary and storage audit CLI;
+- systemd template and runbook;
+- fake-server and static tests;
+- live-smoke artifact intentionally left `NOT_RUN`.
+
+### Exact next action
+
+Open TASK-009 PR and require offline CI green. Then perform a real short Hyperliquid public-only smoke in an Internet-enabled environment. If the current sandbox cannot reach Hyperliquid, produce a self-contained harness task rather than weakening the gate.
 
 ## User actions currently required
 

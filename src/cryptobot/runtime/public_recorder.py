@@ -11,9 +11,10 @@ from collections.abc import AsyncIterator, Mapping
 from dataclasses import dataclass, field
 from enum import IntEnum, StrEnum
 from pathlib import Path, PurePosixPath
-from typing import Any, cast
+from typing import cast
 
 from cryptobot.adapters.hyperliquid.public import (
+    CapturedPublicFrame,
     FrameKind,
     HyperliquidPublicAdapter,
     MAINNET_WS_URL,
@@ -188,20 +189,17 @@ class _Observation:
     connection_ids: set[str] = field(default_factory=set)
     subscription_acks: set[SubscriptionKey] = field(default_factory=set)
 
-    def observe(self, frame: object) -> None:
-        if not hasattr(frame, "metadata") or not hasattr(frame, "kind"):
-            raise RuntimeError("runtime observer received incompatible frame")
-        public_frame = cast(Any, frame)
+    def observe(self, frame: CapturedPublicFrame) -> None:
         self.total_frames += 1
-        channel = public_frame.channel
+        channel = frame.channel
         if isinstance(channel, str):
             self.channel_counts[channel] = self.channel_counts.get(channel, 0) + 1
-        kind = public_frame.kind
+        kind = frame.kind
         if isinstance(kind, FrameKind):
             self.kind_counts[kind.value] = self.kind_counts.get(kind.value, 0) + 1
-        connection_id = public_frame.metadata.connection_id
+        connection_id = frame.metadata.connection_id
         self.connection_ids.add(connection_id)
-        ack = public_frame.acknowledged_subscription
+        ack = frame.acknowledged_subscription
         if isinstance(ack, SubscriptionKey):
             self.subscription_acks.add(ack)
 
@@ -555,9 +553,9 @@ def audit_public_recorder(config: PublicRecorderConfig) -> dict[str, object]:
 
 
 async def _observe_frames(
-    source: AsyncIterator[object],
+    source: AsyncIterator[CapturedPublicFrame],
     observation: _Observation,
-) -> AsyncIterator[object]:
+) -> AsyncIterator[CapturedPublicFrame]:
     async for frame in source:
         observation.observe(frame)
         yield frame

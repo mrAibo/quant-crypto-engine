@@ -72,7 +72,12 @@ Implement a separate public adapter, parallel to Hyperliquid:
 - raw source ID distinct from Hyperliquid;
 - normalization from immutable QCR1 raw frames.
 
-Prefer a single combined/public connection for the four streams unless current official behavior or measurement makes a smaller design safer.
+Current 2026 routing makes one connection incorrect for this stream set. Use exactly two public, unauthenticated connections:
+
+- `wss://fstream.binance.com/public/stream` for `btcusdt@bookTicker` and `ethusdt@bookTicker`;
+- `wss://fstream.binance.com/market/stream` for `btcusdt@aggTrade` and `ethusdt@aggTrade`.
+
+The split is a protocol requirement, not an optimization. JSON `SUBSCRIBE` request IDs must be unsigned integers as documented.
 
 ## Reference BBO normalization
 
@@ -243,3 +248,16 @@ No Binance private/account/execution/depth reconstruction code is present.
 ## Validation status
 
 GitHub CI: **PENDING**.
+
+
+## 2026 routing resolution
+
+Current official Binance USDⓈ-M documentation was re-verified before implementation:
+
+- `bookTicker` is mapped to the high-frequency `/public` route;
+- `aggTrade` is mapped to the regular `/market` route;
+- legacy unrouted connections no longer carry Market-route streams after the 2026 migration;
+- Binance recommends splitting connections by traffic class;
+- JSON stream subscription `id` is documented as an unsigned integer.
+
+TASK-013 therefore uses two unauthenticated connections and deterministic integer IDs `1301` (PUBLIC) and `1302` (MARKET).

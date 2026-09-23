@@ -443,6 +443,115 @@
       ],
       "reverify_after": null,
       "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.mainnet_endpoint",
+      "subject": "Hyperliquid mainnet WebSocket endpoint",
+      "claim": "The documented Hyperliquid mainnet WebSocket endpoint is wss://api.hyperliquid.xyz/ws.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket",
+      "source_retrieved_at": "2026-09-23T18:15:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-websocket-transport",
+      "limitations": "A documented endpoint does not establish availability, latency, or regional routing guarantees. Runtime health must be observed.",
+      "reverify_trigger": [
+        "BEFORE_RECORDER_IMPLEMENTATION",
+        "WEBSOCKET_DOC_CHANGE",
+        "ENDPOINT_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.subscription_ack",
+      "subject": "Hyperliquid WebSocket subscription request and acknowledgment envelope",
+      "claim": "The documented subscription request uses method=subscribe with a subscription object, and a successful example acknowledgment is delivered on channel subscriptionResponse with data containing method=subscribe and the echoed subscription.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket",
+      "source_retrieved_at": "2026-09-23T18:15:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-websocket-transport",
+      "limitations": "The adapter must preserve unexpected acknowledgment fields/messages rather than assuming the example is an exhaustive schema.",
+      "reverify_trigger": [
+        "BEFORE_RECORDER_IMPLEMENTATION",
+        "WEBSOCKET_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.public_message_envelopes",
+      "subject": "Hyperliquid public WebSocket top-level message envelopes",
+      "claim": "The official Hyperliquid Python SDK defines public messages with channel/data envelopes: l2Book carries book data, bbo carries BBO data, trades carries a list of trades, and activeAssetCtx carries coin plus asset-context data.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://github.com/hyperliquid-dex/hyperliquid-python-sdk/blob/2fdb18f9517675ea03695a0962bd19eece9c83f0/hyperliquid/utils/types.py",
+      "source_retrieved_at": "2026-09-23T18:15:00Z",
+      "source_hash": "2fdb18f9517675ea03695a0962bd19eece9c83f0",
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-websocket-message-envelopes",
+      "limitations": "TASK-007 relies only on minimal top-level routing fields and stores the original frame bytes unchanged. Inner business-field typing is not promoted into the raw adapter contract.",
+      "reverify_trigger": [
+        "BEFORE_RECORDER_IMPLEMENTATION",
+        "OFFICIAL_SDK_CHANGE",
+        "WEBSOCKET_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.heartbeat",
+      "subject": "Hyperliquid WebSocket idle timeout and application heartbeat",
+      "claim": "The official documentation states that the server closes a connection if it has not sent a message to the client in the last 60 seconds; clients may send {method: ping}, to which the server responds with channel pong.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/timeouts-and-heartbeats",
+      "source_retrieved_at": "2026-09-23T18:15:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-websocket-transport",
+      "limitations": "The documentation specifies the 60-second server condition and ping/pong shape but does not mandate an exact client ping interval. The official Python SDK currently sends application pings every 50 seconds.",
+      "reverify_trigger": [
+        "BEFORE_RECORDER_IMPLEMENTATION",
+        "WEBSOCKET_DOC_CHANGE",
+        "OFFICIAL_SDK_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.ip_limits",
+      "subject": "Hyperliquid IP-based WebSocket limits",
+      "claim": "The documented IP limits include at most 10 WebSocket connections, 30 new WebSocket connections per minute, 1000 WebSocket subscriptions, 2000 messages sent to Hyperliquid per minute across WebSocket connections, and 100 simultaneous inflight WebSocket post messages.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/rate-limits-and-user-limits",
+      "source_retrieved_at": "2026-09-23T18:15:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-websocket-limits",
+      "limitations": "TASK-007 is public-subscription capture and does not use post messages; reconnect logic must remain comfortably below the documented new-connection limit.",
+      "reverify_trigger": [
+        "BEFORE_RECORDER_IMPLEMENTATION",
+        "RATE_LIMIT_DOC_CHANGE",
+        "BEFORE_STAGE_5"
+      ],
+      "reverify_after": null,
+      "owner": "project"
     }
   ]
 }

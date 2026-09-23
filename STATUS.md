@@ -5,10 +5,10 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `task-011-hyperliquid-trade-normalization`
+- Current branch: `main`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-011 / S0-WP11 — Hyperliquid trade normalization validated; merge pending**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010**
+- Current work package: **TASK-012 / S0-WP12 — Hyperliquid activeAssetCtx funding/mark/oracle normalization**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
@@ -259,29 +259,34 @@ Delivered:
 - **193 tests PASS** on Python 3.12 and 3.13;
 - Ruff/format/strict mypy PASS.
 
+## Completed — TASK-011
+
+PR #11, merge commit `b5fc231ad0631eb442a3c881ee868dc72106ecfd`.
+
+Delivered:
+
+- official/current Hyperliquid public trade schema evidence;
+- measured Unix-millisecond wire timestamp unit;
+- measured reconnect recent-trade replay: initial 30-trade batches and duplicate stable identities across connections;
+- exact-Decimal 0..N Trade normalization;
+- native A/B side preservation with aggressor semantics intentionally UNKNOWN;
+- stable `trade_id=(time,coin,tid)`;
+- occurrence-specific deterministic event IDs;
+- complete raw QCR1 provenance;
+- structured all-or-nothing errors;
+- QCR1 replay/reconnect duplicate auditability;
+- **222 tests PASS** on Python 3.12 and 3.13;
+- Ruff/format/strict mypy PASS.
+
 ## Current task
 
-Read **[`tasks/TASK_011.md`](tasks/TASK_011.md)**.
+Read **[`tasks/TASK_012.md`](tasks/TASK_012.md)**.
 
-TASK-011 is validated on PR #11:
-
-- official/current public trade schema evidence;
-- measured Unix-millisecond wire timestamp unit;
-- measured reconnect recent-trade replay with overlapping native identities;
-- exact-Decimal multi-event normalization;
-- native A/B preservation with aggressor semantics intentionally UNKNOWN;
-- stable `trade_id=(time,coin,tid)`;
-- capture-specific deterministic event IDs;
-- complete raw provenance;
-- structured all-or-nothing parse failures;
-- QCR1 replay/reconnect duplicate auditability;
-- **222 tests PASS** on Python 3.12 and Python 3.13;
-- Ruff/format/strict mypy PASS;
-- CI run `35917274342`.
+Objective: normalize Hyperliquid `activeAssetCtx` into funding-rate, mark-price, and oracle-price observations without inventing timestamps or funding semantics that the source does not support.
 
 ### Exact next action
 
-Merge PR #11, close TASK-011 on main, define TASK-012 for Hyperliquid activeAssetCtx / funding / mark / oracle normalization, then re-verify the current official context schema before implementation.
+Re-verify the current official `activeAssetCtx` / `PerpsAssetCtx` and funding documentation. Resolve whether the v1 `FundingRateObservation` contract can represent the verified feed semantics exactly before implementing the parser.
 
 ## User actions currently required
 

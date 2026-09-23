@@ -1,0 +1,67 @@
+{
+  "task": "TASK-003",
+  "status": "IMPLEMENTED_CI_PENDING",
+  "schema_versions": {
+    "recorder_config": 1,
+    "instrument_registry": 1
+  },
+  "configured_sources": [
+    {
+      "source_id": "hyperliquid-mainnet-public",
+      "venue": "hyperliquid",
+      "environment": "MAINNET",
+      "channels": [
+        "l2Book",
+        "bbo",
+        "trades",
+        "activeAssetCtx"
+      ]
+    }
+  ],
+  "configured_instruments": [
+    {
+      "instrument_id": "hyperliquid.mainnet.perpetual.btc",
+      "role": "PRIMARY"
+    },
+    {
+      "instrument_id": "hyperliquid.mainnet.perpetual.eth",
+      "role": "REPLICATION"
+    }
+  ],
+  "reference_feed": {
+    "required": true,
+    "selected_source_id": null,
+    "status": "UNRESOLVED_BY_DESIGN"
+  },
+  "unresolved_metadata_fields": [
+    "hyperliquid.mainnet.perpetual.btc.quote_asset",
+    "hyperliquid.mainnet.perpetual.btc.settlement_asset",
+    "hyperliquid.mainnet.perpetual.btc.margin_asset",
+    "hyperliquid.mainnet.perpetual.btc.price_decimals",
+    "hyperliquid.mainnet.perpetual.btc.size_decimals",
+    "hyperliquid.mainnet.perpetual.btc.native_asset_id",
+    "hyperliquid.mainnet.perpetual.eth.quote_asset",
+    "hyperliquid.mainnet.perpetual.eth.settlement_asset",
+    "hyperliquid.mainnet.perpetual.eth.margin_asset",
+    "hyperliquid.mainnet.perpetual.eth.price_decimals",
+    "hyperliquid.mainnet.perpetual.eth.size_decimals",
+    "hyperliquid.mainnet.perpetual.eth.native_asset_id",
+    "recorder.buffering.queue_capacity",
+    "recorder.buffering.high_watermark_fraction",
+    "recorder.rollover.max_segment_bytes",
+    "recorder.rollover.max_segment_age_seconds",
+    "recorder.reconnect.base_delay_seconds",
+    "recorder.reconnect.max_delay_seconds",
+    "recorder.reconnect.jitter_fraction"
+  ],
+  "design_notes": [
+    "Instrument IDs are canonicalized from venue/environment/product/native symbol, so later metadata enrichment does not rename the instrument.",
+    "Reference feed is required by project scope but intentionally not selected in TASK-003.",
+    "Operational thresholds remain null until derived from evidence or implementation measurements.",
+    "No network or exchange-client code is introduced."
+  ],
+  "validation": {
+    "local": "NOT_RUN_IN_CURRENT_GITHUB_ONLY_PASS",
+    "github_ci": "PENDING"
+  }
+}

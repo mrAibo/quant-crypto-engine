@@ -5,7 +5,12 @@ import json
 
 import pytest
 
-from cryptobot.data.events import EventType, FundingObservationKind, Trade
+from cryptobot.data.events import (
+    EventType,
+    FundingObservationKind,
+    FundingRateObservation,
+    Trade,
+)
 from cryptobot.data.instruments import InstrumentRegistry, load_instrument_registry
 from cryptobot.data.normalization_pipeline import (
     BINANCE_SOURCE_ID,
@@ -167,22 +172,54 @@ def _binance_trade(*, aggregate_id: int = 9) -> bytes:
     ).encode()
 
 
-def _hl_frame(payload: bytes, **kwargs: object) -> RawFrame:
+def _hl_frame(
+    payload: bytes,
+    *,
+    mono: int = 100,
+    wall: int = 1_000,
+    host: str = "host-a",
+    boot: str = "boot-a",
+    segment: str = "segment-a",
+    offset: int = 0,
+    seq: int = 1,
+) -> RawFrame:
     return _raw(
         source=HL_SOURCE_ID,
         payload=payload,
+        mono=mono,
+        wall=wall,
+        host=host,
+        boot=boot,
+        segment=segment,
+        offset=offset,
+        seq=seq,
         channel_hint="hyperliquid",
-        **kwargs,
     )
 
 
-def _binance_frame(payload: bytes, **kwargs: object) -> RawFrame:
+def _binance_frame(
+    payload: bytes,
+    *,
+    mono: int = 100,
+    wall: int = 1_000,
+    host: str = "host-a",
+    boot: str = "boot-a",
+    segment: str = "segment-a",
+    offset: int = 0,
+    seq: int = 1,
+) -> RawFrame:
     return _raw(
         source=BINANCE_SOURCE_ID,
         payload=payload,
+        mono=mono,
+        wall=wall,
+        host=host,
+        boot=boot,
+        segment=segment,
+        offset=offset,
+        seq=seq,
         channel_hint="binance",
         flags=("BINANCE_PUBLIC", "LIVE_CAPTURE", "WS_PUBLIC"),
-        **kwargs,
     )
 
 
@@ -208,7 +245,8 @@ def test_dispatches_hyperliquid_book_trade_and_context() -> None:
         EventType.ORACLE_PRICE,
     ]
     funding = results[2].events[0]
-    assert getattr(funding, "kind") is FundingObservationKind.CURRENT
+    assert isinstance(funding, FundingRateObservation)
+    assert funding.kind is FundingObservationKind.CURRENT
 
 
 def test_dispatches_binance_reference_events() -> None:
@@ -363,22 +401,36 @@ def test_wall_clock_regression_is_reported_but_monotonic_order_wins() -> None:
 
 
 @pytest.mark.parametrize(
-    ("first_kwargs", "second_kwargs"),
+    ("first_host", "first_boot", "second_host", "second_boot"),
     [
-        ({"host": "host-a"}, {"host": "host-b"}),
-        ({"boot": "boot-a"}, {"boot": "boot-b"}),
+        ("host-a", "boot-a", "host-b", "boot-a"),
+        ("host-a", "boot-a", "host-a", "boot-b"),
     ],
 )
 def test_strict_merge_rejects_mixed_clock_domains(
-    first_kwargs: dict[str, str],
-    second_kwargs: dict[str, str],
+    first_host: str,
+    first_boot: str,
+    second_host: str,
+    second_boot: str,
 ) -> None:
     first = normalize_frame(
-        _hl_frame(_hl_bbo(), mono=100, offset=10, **first_kwargs),
+        _hl_frame(
+            _hl_bbo(),
+            mono=100,
+            offset=10,
+            host=first_host,
+            boot=first_boot,
+        ),
         _registry(),
     )
     second = normalize_frame(
-        _binance_frame(_binance_bbo(), mono=200, offset=20, **second_kwargs),
+        _binance_frame(
+            _binance_bbo(),
+            mono=200,
+            offset=20,
+            host=second_host,
+            boot=second_boot,
+        ),
         _registry(),
     )
 

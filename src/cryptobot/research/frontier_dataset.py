@@ -21,11 +21,13 @@ from cryptobot.research.frontier import (
     absolute_move_bps,
     dkw_required_sample_count,
     empirical_quantile_nearest_rank,
+    empirical_signed_quantile_nearest_rank,
     horizon_grid_125,
     minimum_duration_seconds_for_windows,
     next_horizon_125,
     non_overlapping_window_count,
     required_capture_fraction,
+    signed_return_bps,
     top_of_book_round_trip_friction_bps,
 )
 
@@ -42,6 +44,11 @@ _QUANTILES: tuple[tuple[str, Decimal], ...] = (
     ("q50", Decimal("0.50")),
     ("q75", Decimal("0.75")),
     ("q90", Decimal("0.90")),
+    ("q95", Decimal("0.95")),
+)
+_SIGNED_QUANTILES: tuple[tuple[str, Decimal], ...] = (
+    ("q05", Decimal("0.05")),
+    ("q50", Decimal("0.50")),
     ("q95", Decimal("0.95")),
 )
 _PRIMARY_EXPECTED_TYPES = (
@@ -99,7 +106,11 @@ class StreamCadenceAudit:
 @dataclass(frozen=True, slots=True)
 class FrontierDatasetAudit:
     causal_domain_count: int
+    raw_frame_count: int
     observed_duration_ns: int
+    observed_wall_duration_ns: int
+    frame_counts_by_source_outcome: tuple[tuple[str, str, int], ...]
+    frame_counts_by_source_channel: tuple[tuple[str, str | None, int], ...]
     event_counts_by_source_type: tuple[tuple[str, str, int], ...]
     primary_btc_event_counts: tuple[tuple[str, int], ...]
     reference_btc_event_counts: tuple[tuple[str, int], ...]
@@ -109,7 +120,25 @@ class FrontierDatasetAudit:
     def as_dict(self) -> dict[str, object]:
         return {
             "causal_domain_count": self.causal_domain_count,
+            "raw_frame_count": self.raw_frame_count,
             "observed_duration_ns": self.observed_duration_ns,
+            "observed_wall_duration_ns": self.observed_wall_duration_ns,
+            "frame_counts_by_source_outcome": [
+                {
+                    "source_id": source_id,
+                    "outcome": outcome,
+                    "count": count,
+                }
+                for source_id, outcome, count in self.frame_counts_by_source_outcome
+            ],
+            "frame_counts_by_source_channel": [
+                {
+                    "source_id": source_id,
+                    "channel_or_stream": channel,
+                    "count": count,
+                }
+                for source_id, channel, count in self.frame_counts_by_source_channel
+            ],
             "event_counts_by_source_type": [
                 {
                     "source_id": source_id,
@@ -132,6 +161,7 @@ class PilotHorizonResult:
     candidate_start_count: int
     movement_sample_count: int
     gap_excluded_count: int
+    signed_return_quantiles_bps: tuple[tuple[str, Decimal], ...]
     movement_quantiles_bps: tuple[tuple[str, Decimal], ...]
     median_known_friction_bps: Decimal
     q90_known_friction_bps: Decimal
@@ -144,6 +174,10 @@ class PilotHorizonResult:
             "candidate_start_count": self.candidate_start_count,
             "movement_sample_count": self.movement_sample_count,
             "gap_excluded_count": self.gap_excluded_count,
+            "signed_return_quantiles_bps": {
+                name: _decimal_string(value)
+                for name, value in self.signed_return_quantiles_bps
+            },
             "movement_quantiles_bps": {
                 name: _decimal_string(value) for name, value in self.movement_quantiles_bps
             },
@@ -256,8 +290,9 @@ def analyze_frontier_pilot_dataset(
 ) -> FrontierPilotReport:
     destination = Path(dataset_dir)
     bundle_sha, normalized_sha = _load_manifest_binding(destination)
+    frame_rows = _load_frame_rows(destination)
     event_rows = _load_event_rows(destination)
-    audit = _build_dataset_audit(event_rows)
+    audit = _build_dataset_audit(frame_rows, event_rows)
     observations = _load_primary_bbo(destination, event_rows)
 
     if len(observations) < 2:
@@ -361,7 +396,7 @@ def analyze_frontier_pilot_dataset(
 
     horizon_results: list[PilotHorizonResult] = []
     for horizon_seconds in horizon_grid_125(lower_seconds, upper_seconds):
-        moves, candidate_count, gap_excluded_count = _movement_samples(
+        signed_moves, moves, candidate_count, gap_excluded_count = _movement_samples(
             ordered,
             times,
             horizon_ns=horizon_seconds * _NS_PER_SECOND,
@@ -369,6 +404,7 @@ def analyze_frontier_pilot_dataset(
         )
         if not moves:
             continue
+        signed_quantiles = _signed_quantile_summary(signed_moves)
         movement_quantiles = _quantile_summary(moves)
         capture_fractions = tuple(
             (
@@ -388,6 +424,7 @@ def analyze_frontier_pilot_dataset(
                 candidate_start_count=candidate_count,
                 movement_sample_count=len(moves),
                 gap_excluded_count=gap_excluded_count,
+                signed_return_quantiles_bps=signed_quantiles,
                 movement_quantiles_bps=movement_quantiles,
                 median_known_friction_bps=friction_q50,
                 q90_known_friction_bps=friction_q90,
@@ -446,6 +483,23 @@ def _load_manifest_binding(dataset_dir: Path) -> tuple[str, str]:
     return bundle, normalized
 
 
+def _load_frame_rows(dataset_dir: Path) -> tuple[dict[str, object], ...]:
+    raw_rows = _READ_TABLE(
+        dataset_dir / "frames.parquet",
+        columns=[
+            "source_id",
+            "host_id",
+            "boot_id",
+            "recv_mono_ns",
+            "recv_wall_ns",
+            "channel_or_stream",
+            "outcome",
+        ],
+        use_threads=False,
+    ).to_pylist()
+    return tuple(cast(dict[str, object], row) for row in raw_rows)
+
+
 def _load_event_rows(dataset_dir: Path) -> tuple[dict[str, object], ...]:
     raw_rows = _READ_TABLE(
         dataset_dir / "events.parquet",
@@ -466,50 +520,83 @@ def _load_event_rows(dataset_dir: Path) -> tuple[dict[str, object], ...]:
 
 
 def _build_dataset_audit(
+    frame_rows: tuple[dict[str, object], ...],
     event_rows: tuple[dict[str, object], ...],
 ) -> FrontierDatasetAudit:
     domains: set[tuple[str, str]] = set()
     recv_mono_values: list[int] = []
+    recv_wall_values: list[int] = []
+    frame_outcomes: Counter[tuple[str, str]] = Counter()
+    frame_channels: Counter[tuple[str, str | None]] = Counter()
     event_counts: Counter[tuple[str, str]] = Counter()
     primary_counts: Counter[str] = Counter()
     reference_counts: Counter[str] = Counter()
+
+    for row in frame_rows:
+        source_id = row.get("source_id")
+        host_id = row.get("host_id")
+        boot_id = row.get("boot_id")
+        recv_mono_ns = row.get("recv_mono_ns")
+        recv_wall_ns = row.get("recv_wall_ns")
+        channel = row.get("channel_or_stream")
+        outcome = row.get("outcome")
+
+        if not all(isinstance(value, str) for value in (source_id, host_id, boot_id, outcome)):
+            raise FrontierValidationError("frame audit identity/outcome fields must be strings")
+        if channel is not None and not isinstance(channel, str):
+            raise FrontierValidationError("frame channel_or_stream must be null or a string")
+        if (
+            isinstance(recv_mono_ns, bool)
+            or not isinstance(recv_mono_ns, int)
+            or isinstance(recv_wall_ns, bool)
+            or not isinstance(recv_wall_ns, int)
+        ):
+            raise FrontierValidationError("frame receive timestamps must be integers")
+
+        source = cast(str, source_id)
+        domains.add((cast(str, host_id), cast(str, boot_id)))
+        recv_mono_values.append(recv_mono_ns)
+        recv_wall_values.append(recv_wall_ns)
+        frame_outcomes[(source, cast(str, outcome))] += 1
+        frame_channels[(source, cast(str | None, channel))] += 1
 
     for row in event_rows:
         source_id = row.get("source_id")
         event_type = row.get("event_type")
         instrument_id = row.get("instrument_id")
-        host_id = row.get("host_id")
-        boot_id = row.get("boot_id")
-        recv_mono_ns = row.get("recv_mono_ns")
-        if not all(
-            isinstance(value, str)
-            for value in (source_id, event_type, instrument_id, host_id, boot_id)
-        ):
+        if not all(isinstance(value, str) for value in (source_id, event_type, instrument_id)):
             raise FrontierValidationError("event audit identity fields must be strings")
-        if isinstance(recv_mono_ns, bool) or not isinstance(recv_mono_ns, int):
-            raise FrontierValidationError("event audit recv_mono_ns must be an integer")
 
         source = cast(str, source_id)
         event = cast(str, event_type)
         instrument = cast(str, instrument_id)
-        host = cast(str, host_id)
-        boot = cast(str, boot_id)
-
-        domains.add((host, boot))
-        recv_mono_values.append(recv_mono_ns)
         event_counts[(source, event)] += 1
         if source == _PRIMARY_SOURCE and instrument == _PRIMARY_INSTRUMENT:
             primary_counts[event] += 1
         if source == _REFERENCE_SOURCE and instrument == _REFERENCE_INSTRUMENT:
             reference_counts[event] += 1
 
-    duration = 0
-    if recv_mono_values:
-        duration = max(recv_mono_values) - min(recv_mono_values)
+    monotonic_duration = (
+        0 if not recv_mono_values else max(recv_mono_values) - min(recv_mono_values)
+    )
+    wall_duration = 0 if not recv_wall_values else max(recv_wall_values) - min(recv_wall_values)
 
     return FrontierDatasetAudit(
         causal_domain_count=len(domains),
-        observed_duration_ns=duration,
+        raw_frame_count=len(frame_rows),
+        observed_duration_ns=monotonic_duration,
+        observed_wall_duration_ns=wall_duration,
+        frame_counts_by_source_outcome=tuple(
+            (source, outcome, count)
+            for (source, outcome), count in sorted(frame_outcomes.items())
+        ),
+        frame_counts_by_source_channel=tuple(
+            (source, channel, count)
+            for (source, channel), count in sorted(
+                frame_channels.items(),
+                key=lambda item: (item[0][0], "" if item[0][1] is None else item[0][1]),
+            )
+        ),
         event_counts_by_source_type=tuple(
             (source, event, count) for (source, event), count in sorted(event_counts.items())
         ),
@@ -532,7 +619,6 @@ def _build_dataset_audit(
             event_type="L2_SNAPSHOT",
         ),
     )
-
 
 def _stream_cadence_audit(
     event_rows: tuple[dict[str, object], ...],
@@ -660,8 +746,9 @@ def _movement_samples(
     *,
     horizon_ns: int,
     maximum_overshoot_ns: int,
-) -> tuple[tuple[Decimal, ...], int, int]:
-    moves: list[Decimal] = []
+) -> tuple[tuple[Decimal, ...], tuple[Decimal, ...], int, int]:
+    signed_moves: list[Decimal] = []
+    absolute_moves: list[Decimal] = []
     candidate_count = 0
     gap_excluded_count = 0
 
@@ -677,9 +764,15 @@ def _movement_samples(
         if end.recv_mono_ns - target > maximum_overshoot_ns:
             gap_excluded_count += 1
             continue
-        moves.append(absolute_move_bps(start.mid, end.mid))
-    return tuple(moves), candidate_count, gap_excluded_count
-
+        signed = signed_return_bps(start.mid, end.mid)
+        signed_moves.append(signed)
+        absolute_moves.append(abs(signed))
+    return (
+        tuple(signed_moves),
+        tuple(absolute_moves),
+        candidate_count,
+        gap_excluded_count,
+    )
 
 def _q95_meets_friction(horizons: tuple[PilotHorizonResult, ...]) -> bool:
     for item in horizons:
@@ -734,6 +827,17 @@ def _evidence_window_plan(
             "overlap but does not prove independence. Serial dependence or gaps can only "
             "increase the required real evidence window."
         ),
+    )
+
+
+def _signed_quantile_summary(
+    values: tuple[Decimal, ...],
+) -> tuple[tuple[str, Decimal], ...]:
+    if not values:
+        return ()
+    return tuple(
+        (name, empirical_signed_quantile_nearest_rank(values, probability))
+        for name, probability in _SIGNED_QUANTILES
     )
 
 

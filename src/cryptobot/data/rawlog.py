@@ -4,10 +4,12 @@ import hashlib
 import json
 import os
 import struct
+from collections.abc import Iterator, Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
-from typing import BinaryIO, Iterator, Mapping, Self
+from types import TracebackType
+from typing import BinaryIO, Self, cast
 
 
 MAGIC = b"QCR1"
@@ -124,6 +126,7 @@ class RawFrameMetadata:
         flags = raw["capture_flags"]
         if not isinstance(flags, list) or not all(isinstance(flag, str) for flag in flags):
             raise RawLogCorruptionError("capture_flags must be an array of strings")
+        flag_values = cast(list[str], flags)
 
         try:
             return cls(
@@ -136,7 +139,7 @@ class RawFrameMetadata:
                 connection_id=_require_mapping_str(raw, "connection_id"),
                 ingest_seq=_require_mapping_int(raw, "ingest_seq"),
                 channel_hint=_require_mapping_optional_str(raw, "channel_hint"),
-                capture_flags=tuple(flags),
+                capture_flags=tuple(flag_values),
             )
         except RawLogError as exc:
             raise RawLogCorruptionError(str(exc)) from exc
@@ -251,7 +254,12 @@ class RawLog:
         self._require_open()
         return self
 
-    def __exit__(self, exc_type: object, exc: object, tb: object) -> None:
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc: BaseException | None,
+        tb: TracebackType | None,
+    ) -> None:
         self.close()
 
     def _require_open(self) -> None:
@@ -386,7 +394,11 @@ def _read_one(
     if checksum != expected:
         return _bad_tail(TailState.CORRUPT, offset)
 
-    metadata = _decode_raw_metadata(metadata_bytes)
+    try:
+        metadata = _decode_raw_metadata(metadata_bytes)
+    except RawLogCorruptionError:
+        return _bad_tail(TailState.CORRUPT, offset)
+
     ref = RawRef(
         segment_id=segment_id,
         offset=offset,
@@ -407,9 +419,12 @@ def _decode_raw_metadata(value: bytes) -> RawFrameMetadata:
         decoded = json.loads(value.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise RawLogCorruptionError("raw metadata is not valid canonical UTF-8 JSON") from exc
-    if not isinstance(decoded, dict):
-        raise RawLogCorruptionError("raw metadata must decode to an object")
-    return RawFrameMetadata.from_mapping(decoded)
+    if not isinstance(decoded, dict) or not all(
+        isinstance(key, str) for key in decoded
+    ):
+        raise RawLogCorruptionError("raw metadata must decode to a string-keyed object")
+    raw = cast(dict[str, object], decoded)
+    return RawFrameMetadata.from_mapping(raw)
 
 
 def _validate_lengths(metadata_length: int, payload_length: int) -> None:

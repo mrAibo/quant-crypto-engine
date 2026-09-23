@@ -102,9 +102,7 @@ def test_qcr1_context_replay_preserves_shared_raw_provenance_and_determinism(
             assert serialize_normalized_context(first.events) == serialize_normalized_context(
                 second.events
             )
-            assert len({event.envelope.event_id for event in first.events}) == len(
-                first.events
-            )
+            assert len({event.envelope.event_id for event in first.events}) == len(first.events)
             for event in first.events:
                 assert event.envelope.raw_segment_id == segment_id
                 assert event.envelope.raw_offset == frame.ref.offset

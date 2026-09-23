@@ -179,7 +179,7 @@ def test_frontier_pilot_rejects_multiple_causal_domains(tmp_path: Path) -> None:
     dataset = tmp_path / "dataset"
     _write_dataset(dataset, points=points)
 
-    with pytest.raises(FrontierValidationError, match="exactly one.*causal domain"):
+    with pytest.raises(FrontierValidationError, match=r"exactly one.*causal domain"):
         analyze_frontier_pilot_dataset(
             dataset,
             fee_scenario_bps_per_side=Decimal("4.5"),

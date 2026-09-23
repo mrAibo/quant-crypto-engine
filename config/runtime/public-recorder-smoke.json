@@ -3,7 +3,7 @@
   "parameters": {
     "source_id": {
       "value": "hyperliquid-mainnet-public",
-      "basis": "DOCUMENTED_CONSTRAINT"
+      "basis": "EXPERIMENTAL"
     },
     "endpoint": {
       "value": "wss://api.hyperliquid.xyz/ws",

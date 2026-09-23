@@ -108,7 +108,11 @@ class EventEnvelope:
     availability_kind: AvailabilityKind
 
     def __post_init__(self) -> None:
-        if self.schema_version != 1:
+        if (
+            isinstance(self.schema_version, bool)
+            or not isinstance(self.schema_version, int)
+            or self.schema_version != 1
+        ):
             raise EventValidationError("schema_version must be integer 1")
 
         for field_name, value in (
@@ -395,7 +399,7 @@ def _require_event_type(envelope: EventEnvelope, expected: EventType) -> None:
         )
 
 
-def _require_decimal(value: Decimal, field: str, *, strictly_positive: bool = false) -> None:
+def _require_decimal(value: Decimal, field: str, *, strictly_positive: bool = False) -> None:
     if not isinstance(value, Decimal):
         raise EventValidationError(f"{field} must be Decimal")
     try:
@@ -415,7 +419,8 @@ def _validate_bbo_side(
         raise EventValidationError(f"{side} price and size must be null together")
     if price is not None:
         _require_decimal(price, f"{side}_price", strictly_positive=True)
-        assert size is not None
+        if size is None:
+            raise EventValidationError(f"{side} size must be present with price")
         _require_decimal(size, f"{side}_size", strictly_positive=True)
 
 

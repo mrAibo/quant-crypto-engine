@@ -2,7 +2,7 @@
 
 ## Status
 
-`VALIDATED — MERGE PENDING`
+`COMPLETE`
 
 ## Objective
 
@@ -321,4 +321,4 @@ GitHub Actions run `35905174696`:
 - `uv lock --check` Python 3.13: **PASS**
 - pytest Python 3.13: **PASS — 161 tests**
 
-TASK-008 is ready for closeout CI and merge.
+Merged as PR #8 in commit `069bddf1f8ef9aed1fc210bb46e690bc564cbb22`. Final closeout CI run `35910694098` also passed.

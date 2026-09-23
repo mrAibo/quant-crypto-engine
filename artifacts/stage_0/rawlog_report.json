@@ -1,0 +1,58 @@
+{
+  "task": "TASK-005",
+  "status": "PASS",
+  "frame_version": 1,
+  "magic": "QCR1",
+  "layout": [
+    "4-byte magic",
+    "4-byte unsigned big-endian metadata length",
+    "8-byte unsigned big-endian payload length",
+    "canonical UTF-8 JSON metadata",
+    "unchanged payload bytes",
+    "32-byte SHA-256 checksum over all preceding frame bytes"
+  ],
+  "limits": {
+    "max_metadata_bytes": 1048576,
+    "max_payload_bytes": 268435456
+  },
+  "durability": {
+    "append": "written to Python/file buffers; does not claim fsync durability",
+    "sync": "flush + os.fsync; advances durable_length",
+    "close": "does not claim fsync durability beyond prior sync"
+  },
+  "recovery": {
+    "clean": "append permitted",
+    "incomplete_tail": "valid prefix may be truncated explicitly",
+    "corruption": "automatic truncation forbidden"
+  },
+  "test_matrix": [
+    "single/multiple frame roundtrip",
+    "deterministic metadata encoding",
+    "empty payload",
+    "1 MiB payload",
+    "checksum corruption",
+    "invalid magic",
+    "append after close",
+    "bytes-only payload",
+    "fsync invocation",
+    "open refuses unclean log",
+    "sorted capture flags",
+    "truncation in magic/lengths/metadata/payload/checksum",
+    "middle-frame corruption",
+    "garbage after valid frame"
+  ],
+  "validation": {
+    "github_ci_run": 35892543470,
+    "github_ruff_check": "PASS",
+    "github_ruff_format_check": "PASS",
+    "github_mypy_strict": "PASS",
+    "github_pytest_python_3_12": "PASS",
+    "github_pytest_python_3_13": "PASS"
+  },
+  "known_limitations": [
+    "No segment sealing/manifest yet.",
+    "No compression inside frames.",
+    "No recorder batching/fsync policy yet.",
+    "No venue/network integration."
+  ]
+}

@@ -5,9 +5,9 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `main`
+- Current branch: `task-005-raw-framed-writer`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-005 / S0-WP05 — Append-only raw framed writer**
+- Current work package: **TASK-005 / S0-WP05 — Append-only raw framed writer (validated; merge pending)**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -155,16 +155,23 @@ Artifact: `artifacts/stage_0/schema_v1.json`.
 
 Read **[`tasks/TASK_005.md`](tasks/TASK_005.md)**.
 
-Objective: implement the append-only raw framed writer that preserves exact source bytes and can recover safely from an incomplete tail.
+TASK-005 is validated:
 
-Planned outputs:
+- deterministic QCR1 raw frame format;
+- exact payload preservation;
+- explicit written-vs-durable semantics;
+- frame/payload checksums;
+- scan/replay;
+- safe torn-tail recovery;
+- hard refusal to auto-truncate middle corruption.
 
-- `src/cryptobot/data/rawlog.py`
-- `tests/unit/test_rawlog.py`
-- `tests/fault/test_rawlog_tail.py`
-- `artifacts/stage_0/rawlog_report.json`
+Green GitHub Actions run: `35892543470`.
 
-No WebSocket/venue parser, Parquet, normalization, strategy, or trading code belongs in TASK-005.
+### Exact next action
+
+Run one closeout CI after documentation/artifact changes, then merge PR #5.
+
+After merge, begin **[TASK-006 — raw segment sealing and manifest recovery](tasks/TASK_006.md)**.
 
 ## User actions currently required
 

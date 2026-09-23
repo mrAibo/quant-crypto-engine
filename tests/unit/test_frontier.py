@@ -18,6 +18,7 @@ from cryptobot.research.frontier import (
     bbo_spread_bps,
     dkw_required_sample_count,
     empirical_quantile_nearest_rank,
+    empirical_signed_quantile_nearest_rank,
     horizon_grid_125,
     horizon_support,
     minimum_duration_seconds_for_windows,
@@ -324,3 +325,17 @@ def test_dkw_sample_requirement_rejects_invalid_probability_inputs(
             confidence=confidence,
             maximum_cdf_error=cdf_error,
         )
+
+
+def test_signed_nearest_rank_quantile_preserves_negative_returns() -> None:
+    values = (
+        Decimal("-3"),
+        Decimal("-1"),
+        Decimal("0"),
+        Decimal("2"),
+        Decimal("5"),
+    )
+
+    assert empirical_signed_quantile_nearest_rank(values, "0.2") == Decimal("-3")
+    assert empirical_signed_quantile_nearest_rank(values, "0.5") == Decimal("0")
+    assert empirical_signed_quantile_nearest_rank(values, "0.95") == Decimal("5")

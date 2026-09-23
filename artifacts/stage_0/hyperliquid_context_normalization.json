@@ -1,0 +1,93 @@
+{
+  "task": "TASK-012",
+  "status": "IMPLEMENTED_CI_PENDING",
+  "parse_version": "hyperliquid-context-v1",
+  "official_schema": {
+    "channel": "activeAssetCtx",
+    "data": "WsActiveAssetCtx {coin, ctx: PerpsAssetCtx}",
+    "required_normalized_fields": [
+      "funding",
+      "markPx",
+      "oraclePx"
+    ],
+    "native_timestamp": "ABSENT",
+    "official_sdk_wire_types": {
+      "funding": "string",
+      "markPx": "string",
+      "oraclePx": "string"
+    }
+  },
+  "measured_wire": {
+    "workflow_run": 35917667508,
+    "top_keys": [
+      "coin",
+      "ctx"
+    ],
+    "has_top_time": false,
+    "has_ctx_time": false,
+    "scalar_types": "string",
+    "sampled_funding": "0.0000118657",
+    "sampled_mark": "84384.0",
+    "sampled_oracle": "84419.0"
+  },
+  "funding_semantics": {
+    "source_label": "current funding",
+    "normalized_kind": "CURRENT",
+    "rate_period_seconds": 3600,
+    "account_cashflow": false,
+    "effective_boundary_ns": null,
+    "contract_amendment": "FundingObservationKind.CURRENT added because PREDICTED/REALIZED would distort official source semantics"
+  },
+  "timestamp_policy": {
+    "exchange_ts_ns": null,
+    "exchange_ts_resolution_ns": null,
+    "exchange_ts_semantics": "UNKNOWN",
+    "quality_flag": "MISSING_EXCHANGE_TIME",
+    "causal_availability_clock": "recv_wall_ns"
+  },
+  "derived_events": [
+    "FundingRateObservation",
+    "MarkPrice",
+    "OraclePrice"
+  ],
+  "parser_policy": {
+    "source": "raw QCR1 payload bytes",
+    "exact_numeric": "Decimal strings only for funding/mark/oracle",
+    "malformed_target_policy": "all-or-nothing structured error",
+    "non_target_channel": "NOT_APPLICABLE",
+    "instrument_scope": [
+      "BTC",
+      "ETH"
+    ],
+    "event_id": "SHA-256(parse version,event type,raw segment,raw offset,raw SHA)",
+    "native_update_id": null,
+    "mark_method": null,
+    "oracle_id": null
+  },
+  "tests": [
+    "CURRENT funding contract",
+    "BTC three-event normalization",
+    "ETH mapping",
+    "missing native timestamp representation",
+    "MISSING_EXCHANGE_TIME quality flag",
+    "negative current funding",
+    "distinct deterministic event IDs",
+    "additive future fields",
+    "exact decimal serialization",
+    "structured error taxonomy",
+    "missing required field",
+    "raw SHA provenance",
+    "QCR1 context replay",
+    "capture-occurrence event identity"
+  ],
+  "validation": {
+    "github_ci": "PENDING"
+  },
+  "deliberately_out_of_scope": [
+    "FundingPayment account cash flows",
+    "external reference feed",
+    "Parquet",
+    "features/labels/models/backtest",
+    "trading/OMS/signing"
+  ]
+}

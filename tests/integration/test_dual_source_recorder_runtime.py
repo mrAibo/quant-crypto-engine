@@ -16,8 +16,8 @@ from cryptobot.data.instruments import load_instrument_registry
 from cryptobot.data.materialize import materialize_research_dataset
 from cryptobot.data.normalization_pipeline import (
     BINANCE_SOURCE_ID,
-    FrameOutcome,
     HL_SOURCE_ID,
+    FrameOutcome,
     build_pipeline_report,
     normalize_frames,
 )
@@ -28,7 +28,6 @@ from cryptobot.runtime.dual_source_recorder import (
     run_dual_source_recorder,
 )
 from cryptobot.runtime.public_recorder import RuntimeIdentity
-
 
 type _ReadTableFn = Callable[..., pa.Table]
 

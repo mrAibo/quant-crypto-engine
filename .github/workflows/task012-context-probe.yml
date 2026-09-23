@@ -1,0 +1,71 @@
+name: TASK-012 Context Probe
+
+on:
+  push:
+    branches: [task-012-hyperliquid-context-normalization]
+    paths:
+      - ".github/workflows/task012-context-probe.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  context-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.18"
+      - run: uv python install 3.12
+      - run: uv sync --locked --all-groups --python 3.12
+      - name: Probe activeAssetCtx wire shape
+        shell: bash
+        run: |
+          uv run --python 3.12 python - <<'PY'
+          import asyncio, json, time
+          from websockets.asyncio.client import connect
+
+          async def main():
+              async with connect(
+                  "wss://api.hyperliquid.xyz/ws",
+                  ping_interval=None,
+                  ping_timeout=None,
+                  compression=None,
+                  open_timeout=10,
+                  close_timeout=5,
+                  max_size=4_194_304,
+              ) as ws:
+                  await ws.send(json.dumps({
+                      "method":"subscribe",
+                      "subscription":{"type":"activeAssetCtx","coin":"BTC"},
+                  }))
+                  deadline=time.monotonic()+30
+                  while True:
+                      if time.monotonic()>deadline:
+                          raise TimeoutError("no activeAssetCtx observed")
+                      raw=await asyncio.wait_for(ws.recv(),timeout=10)
+                      msg=json.loads(raw)
+                      if msg.get("channel")!="activeAssetCtx":
+                          continue
+                      data=msg["data"]
+                      ctx=data["ctx"]
+                      out={
+                          "top_keys":sorted(data.keys()),
+                          "coin":data.get("coin"),
+                          "ctx_keys":sorted(ctx.keys()),
+                          "has_top_time":"time" in data,
+                          "has_ctx_time":"time" in ctx,
+                          "types":{k:type(ctx.get(k)).__name__ for k in sorted(ctx.keys())},
+                          "funding":ctx.get("funding"),
+                          "markPx":ctx.get("markPx"),
+                          "oraclePx":ctx.get("oraclePx"),
+                          "midPx_is_none":ctx.get("midPx") is None,
+                          "impactPxs_type":type(ctx.get("impactPxs")).__name__,
+                          "receive_wall_ms":time.time_ns()//1_000_000,
+                      }
+                      print(json.dumps(out,sort_keys=True))
+                      return
+          asyncio.run(main())
+          PY

@@ -514,8 +514,7 @@ def _build_dataset_audit(
             (source, event, count) for (source, event), count in sorted(event_counts.items())
         ),
         primary_btc_event_counts=tuple(
-            (event_type, primary_counts[event_type])
-            for event_type in _PRIMARY_EXPECTED_TYPES
+            (event_type, primary_counts[event_type]) for event_type in _PRIMARY_EXPECTED_TYPES
         ),
         reference_btc_event_counts=tuple(
             (event_type, reference_counts[event_type])

@@ -1,0 +1,30 @@
+{
+  "task": "TASK-002",
+  "status": "PASS",
+  "checked_at": "2026-09-23T00:00:00Z",
+  "schema_version": 1,
+  "total_facts": 21,
+  "verified_facts": 13,
+  "unknown_facts": 8,
+  "reverification_due": 0,
+  "due_fact_ids": [],
+  "verified_without_source_hash_count": 13,
+  "format": "JSON-compatible YAML 1.2",
+  "validation": {
+    "local_unit_tests": "PASS (10/10)",
+    "local_compileall": "PASS",
+    "github_lock_check_python_3_12": "PASS",
+    "github_ruff_check": "PASS",
+    "github_ruff_format_check": "PASS",
+    "github_mypy_strict": "PASS",
+    "github_pytest_python_3_12": "PASS",
+    "github_lock_check_python_3_13": "PASS",
+    "github_pytest_python_3_13": "PASS",
+    "github_ci_run": 35879128871
+  },
+  "notes": [
+    "Missing retained source hashes are intentionally reported, not hidden.",
+    "Documented protocol facts are distinct from account-specific or observed execution facts.",
+    "Live latency, slippage, IOC distributions, account fee rates and credential capability boundaries remain UNKNOWN until measured or specifically verified."
+  ]
+}

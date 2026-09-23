@@ -2,7 +2,7 @@
 
 ## Status
 
-`IN REVIEW — IMPLEMENTED, GITHUB CI PENDING`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
@@ -197,4 +197,17 @@ No user/account funding payments, reference feed, Parquet, feature/model/backtes
 
 ## Validation status
 
-GitHub CI: **PENDING**.
+GitHub CI: **PASS** — run `35918301023`; 246 tests passed on Python 3.12 and Python 3.13; Ruff, formatter, and strict mypy passed.
+
+
+## Validation result
+
+GitHub CI run `35918301023` on head `4a1291274f5ebaed4f333c2e1b7553e5f4c48344`:
+
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS — 47 source files;
+- pytest Python 3.12: **246 PASS**;
+- pytest Python 3.13: **246 PASS**.
+
+Default CI remains network-independent. The temporary activeAssetCtx probe workflow was removed before validation.

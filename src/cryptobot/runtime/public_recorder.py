@@ -17,7 +17,6 @@ from cryptobot.adapters.hyperliquid.public import (
     CapturedPublicFrame,
     FrameKind,
     HyperliquidPublicAdapter,
-    MAINNET_WS_URL,
     ReconnectPolicy,
     SubscriptionKey,
     TransportSettings,

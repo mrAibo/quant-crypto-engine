@@ -1,0 +1,18 @@
+{
+  "task": "TASK-009",
+  "status": "IMPLEMENTED_OFFLINE_VALIDATION_PENDING",
+  "offline_validation": {
+    "status": "PENDING"
+  },
+  "live_observation": {
+    "status": "NOT_RUN",
+    "note": "Must be populated only from an Internet-enabled real Hyperliquid public WebSocket smoke."
+  },
+  "constraints": {
+    "public_only": true,
+    "credentials_required": false,
+    "trading_code": false,
+    "normalization_code": false,
+    "ci_network_dependency": false
+  }
+}

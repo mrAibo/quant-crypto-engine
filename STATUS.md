@@ -5,10 +5,10 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `task-006-segment-manifest`
+- Current branch: `main`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-006 / S0-WP06 — Raw segment sealing and manifest recovery (validated; merge pending)**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005**
+- Current work package: **TASK-007 / S0-WP07 — Hyperliquid raw public WebSocket adapter**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
@@ -168,27 +168,30 @@ Delivered:
 
 Artifact: `artifacts/stage_0/rawlog_report.json`.
 
+## Completed — TASK-006
+
+PR #6, merge commit `725e79e930534d3396bc399f2c7d4fa73af25bcc`.
+
+Delivered:
+
+- crash-safe raw segment sealing;
+- checksum/length/frame/derived-metadata manifest integrity;
+- atomic manifest publication;
+- deterministic storage audit/recovery states;
+- fault injection around every commit boundary;
+- final green CI run `35893879796`.
+
+Artifact: `artifacts/stage_0/storage_recovery_report.json`.
+
 ## Current task
 
-Read **[`tasks/TASK_006.md`](tasks/TASK_006.md)**.
+Read **[`tasks/TASK_007.md`](tasks/TASK_007.md)**.
 
-TASK-006 is validated:
+Objective: implement the first live Hyperliquid public WebSocket raw-capture adapter.
 
-- CLEAN-only raw segment sealing;
-- whole-file checksum + derived metadata parity;
-- atomic segment rename + directory fsync;
-- atomic canonical manifest replacement + directory fsync;
-- deterministic recovery states;
-- safe incomplete-open recovery;
-- crash-point fault matrix.
+Mandatory first action: re-verify the current official endpoint, subscription/ack formats, message envelopes, keepalive behavior, and documented limits from official Hyperliquid sources before writing network behavior.
 
-Green GitHub Actions run: `35893691800` with **116 tests passing**.
-
-### Exact next action
-
-Run one closeout CI after documentation/artifact changes, then merge PR #6.
-
-After merge, begin **[TASK-007 — Hyperliquid raw public WebSocket adapter](tasks/TASK_007.md)**, starting with official API re-verification.
+No normalization, feature logic, strategy, execution, or trading code belongs in TASK-007.
 
 ## User actions currently required
 

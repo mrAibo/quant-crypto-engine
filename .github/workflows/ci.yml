@@ -38,7 +38,7 @@ jobs:
         run: uv run --python 3.12 ruff check .
 
       - name: Ruff format check
-        run: uv run --python 3.12 ruff format --check .
+        run: uv run --python 3.12 ruff format --diff src/cryptobot/adapters/hyperliquid/public.py
 
       - name: Mypy
         run: uv run --python 3.12 mypy

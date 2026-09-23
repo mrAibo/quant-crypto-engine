@@ -585,8 +585,7 @@ def _build_dataset_audit(
         observed_duration_ns=monotonic_duration,
         observed_wall_duration_ns=wall_duration,
         frame_counts_by_source_outcome=tuple(
-            (source, outcome, count)
-            for (source, outcome), count in sorted(frame_outcomes.items())
+            (source, outcome, count) for (source, outcome), count in sorted(frame_outcomes.items())
         ),
         frame_counts_by_source_channel=tuple(
             (source, channel, count)

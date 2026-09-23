@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`VALIDATED — FINAL NETWORK-INDEPENDENT CI PENDING`
 
 ## Gate finding that created this task
 
@@ -167,3 +167,61 @@ A temporary GitHub Actions mainnet smoke workflow is allowed for evidence collec
 - maker logic;
 - Jev/GPT/LLM runtime;
 - profitability claims.
+
+
+## Implementation status
+
+Implemented:
+
+- strict frozen dual-source runtime config;
+- one shared Clock for Hyperliquid and Binance adapters;
+- bounded async source multiplexer;
+- one RecorderSupervisor / one mixed-source QCR1 segment;
+- per-source frame/kind/connection accounting;
+- Hyperliquid 8-ACK accounting;
+- Binance 1301/1302 ACK accounting;
+- clock-domain and manifest-source validation;
+- explicit runtime exit codes;
+- source-failure propagation and peer cancellation tests;
+- fake-server mixed-source capture → QCR1 → TASK-014 normalization → TASK-015 Parquet integration test;
+- initial `artifacts/stage_0/data_gate.json` remains BLOCKED until real-mainnet evidence exists.
+
+## Validation status
+
+Network-independent GitHub CI before smoke: **PASS** — run `35930329166`, 306 tests on Python 3.12 and 3.13; Ruff/format/strict mypy PASS.
+
+Real bounded mainnet dual-source smoke: **PASS** — run `35930416414`.
+
+
+## Real mainnet Data Gate result
+
+Workflow `35930416414` captured both frozen public sources concurrently without credentials.
+
+Measured evidence:
+
+- recorder: **CLEAN_DURABLE / COMPLETE**;
+- storage audit: **VALID**;
+- raw frames: **24,106**;
+- durable bytes: **14,949,703**;
+- Hyperliquid raw frames: **464** (456 market + 8 subscription ACK);
+- Binance raw frames: **23,642** (23,640 market + ACK IDs 1301/1302);
+- Hyperliquid subscription ACKs: **8/8**;
+- causal domains: **1**;
+- clock-order anomalies: **0**;
+- normalized events: **24,345**;
+- normalization errors: **0**;
+- Hyperliquid normalized events: **705**;
+- Binance normalized events: **23,640**;
+- Parquet raw-frame count: **24,106**;
+- Parquet normalized-event count: **24,345**;
+- Parquet bundle SHA-256: `529d4ce5a252ff4d66f50d35133b91b5f8b7a31f6128f9259aade7bd1657990d`.
+
+All 12 real-smoke acceptance criteria passed.
+
+### Gate decision
+
+**Stage-0 Data Gate: PASS.**
+
+This PASS validates the prospective dual-source evidence pipeline only. It does **not** establish alpha, positive expectancy, live execution quality, or production readiness.
+
+The temporary mainnet workflow is removed before merge and the PR must pass one final network-independent CI run.

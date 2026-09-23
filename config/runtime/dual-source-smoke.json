@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "hyperliquid": {
+    "source_id": "hyperliquid-mainnet-public",
+    "endpoint": "wss://api.hyperliquid.xyz/ws",
+    "coins": ["BTC", "ETH"],
+    "channels": ["l2Book", "bbo", "trades", "activeAssetCtx"],
+    "reconnect": {
+      "base_delay_seconds": 2.0,
+      "max_delay_seconds": 30.0,
+      "jitter_fraction": 0.2
+    },
+    "transport": {
+      "heartbeat_idle_seconds": 45.0,
+      "max_message_bytes": 4194304,
+      "receive_queue_high_water": 64,
+      "open_timeout_seconds": 10.0,
+      "close_timeout_seconds": 5.0
+    }
+  },
+  "binance": {
+    "source_id": "binance-usdm-reference-public",
+    "public_endpoint": "wss://fstream.binance.com/public/stream",
+    "market_endpoint": "wss://fstream.binance.com/market/stream",
+    "reconnect": {
+      "base_delay_seconds": 2.0,
+      "max_delay_seconds": 30.0,
+      "jitter_fraction": 0.2
+    },
+    "transport": {
+      "max_message_bytes": 4194304,
+      "receive_queue_high_water": 64,
+      "open_timeout_seconds": 10.0,
+      "close_timeout_seconds": 5.0
+    }
+  },
+  "recorder": {
+    "queue_capacity": 8192,
+    "sync_every_frames": 128,
+    "shutdown_drain_timeout_seconds": 20.0,
+    "seal_on_shutdown": true
+  },
+  "storage_root": "data/dual-source-smoke",
+  "manifest_path": "data/dual-source-smoke/raw-manifest.json",
+  "run_duration_seconds": 30.0
+}

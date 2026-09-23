@@ -5,9 +5,9 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `task-014-causal-normalization-pipeline`
-- Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-014 / S0-WP14 — causal raw-to-normalized pipeline implemented; CI pending**
+- Current branch: `task-016-dual-source-data-gate`
+- Current phase: **Stage 0 — Data Gate passed; final TASK-016 CI pending**
+- Current work package: **TASK-016 / Stage-0 Data Gate — PASS from real dual-source mainnet evidence; final CI pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -351,11 +351,28 @@ Delivered:
 
 Read **[`tasks/TASK_016.md`](tasks/TASK_016.md)**.
 
-Data Gate audit found one remaining Stage-0 blocker: the runnable recorder is Hyperliquid-only, so simultaneous Hyperliquid + Binance capture under one host/boot clock domain has not yet been proven prospectively.
+TASK-016 has passed its real-mainnet evidence gate:
+
+- pre-smoke network-independent CI `35930329166`: **306 PASS** on Python 3.12 and 3.13; Ruff/format/strict mypy PASS;
+- dual-source public mainnet smoke `35930416414`: **PASS**;
+- **24,106** raw frames / **14,949,703** durable bytes;
+- Hyperliquid: **464** raw frames, **8/8** ACKs;
+- Binance: **23,642** raw frames, ACK IDs **1301/1302**;
+- one host/boot causal domain;
+- **24,345** normalized events;
+- **0** normalization errors;
+- Parquet counts reconcile exactly;
+- temporary network workflow removed.
+
+### Gate decision
+
+**Stage-0 Data Gate: PASS.**
+
+This proves the prospective dual-source evidence pipeline works end to end. It does not prove alpha or profitability.
 
 ### Exact next action
 
-Implement a reusable dual-source public recorder using the existing Hyperliquid/Binance adapters, one shared clock and one RecorderSupervisor. Validate with fake servers, then run one bounded real-mainnet smoke through raw capture → normalization → Parquet before deciding the Stage-0 Data Gate.
+Run the final network-independent PR CI after removal of the temporary network workflow. If green, merge PR #16, mark TASK-016 complete, and advance `STATUS.md` to Stage 0.5 / TASK-017 profitability-frontier design.
 
 ## User actions currently required
 

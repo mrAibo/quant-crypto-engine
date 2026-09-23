@@ -38,9 +38,7 @@ _REFERENCE_FIELDS = frozenset({"required", "selected_source_id"})
 _STORAGE_FIELDS = frozenset({"root", "raw_path", "normalized_path", "artifact_path"})
 _BUFFERING_FIELDS = frozenset({"queue_capacity", "high_watermark_fraction"})
 _ROLLOVER_FIELDS = frozenset({"max_segment_bytes", "max_segment_age_seconds"})
-_RECONNECT_FIELDS = frozenset(
-    {"base_delay_seconds", "max_delay_seconds", "jitter_fraction"}
-)
+_RECONNECT_FIELDS = frozenset({"base_delay_seconds", "max_delay_seconds", "jitter_fraction"})
 _CLOCK_FIELDS = frozenset({"record"})
 
 
@@ -236,9 +234,7 @@ def _parse_source(raw: Any, index: int, registry: InstrumentRegistry) -> Recorde
     )
 
 
-def _parse_reference_feed(
-    raw: Any, sources: tuple[RecorderSource, ...]
-) -> ReferenceFeedConfig:
+def _parse_reference_feed(raw: Any, sources: tuple[RecorderSource, ...]) -> ReferenceFeedConfig:
     if not isinstance(raw, dict):
         raise RecorderConfigError("reference_feed must be an object")
     _require_exact_fields(raw, _REFERENCE_FIELDS, "reference_feed")

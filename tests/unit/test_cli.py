@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import json
 
+import pytest
+
 from cryptobot.cli import main
 
 
 def test_validate_recorder_runtime_cli_is_network_free_and_machine_readable(
-    capsys,
+    capsys: pytest.CaptureFixture[str],
 ) -> None:
     result = main(
         [

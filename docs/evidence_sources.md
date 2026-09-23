@@ -279,3 +279,61 @@ Measured mainnet context probe:
 
 Decision: TASK-012 parses these values as exact Decimal strings and leaves exchange timestamp absent.
 
+
+
+## Binance USD-M reference feed
+
+Frozen Stage-0 reference source: **Binance USDⓈ-M Futures**, BTCUSDT and ETHUSDT only.
+
+Primary official sources re-verified on 2026-09-23:
+
+- <https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/websocket-market-streams/Connect>
+- <https://developers.binance.info/en/docs/catalog/core-trading-derivatives-trading-usd-s-m-futures/api/ws-streams/public>
+- <https://developers.binance.info/docs/derivatives/usds-margined-futures/websocket-market-streams/All-Market-Mini-Tickers-Stream>
+
+Current transport contract:
+
+- Base host: `wss://fstream.binance.com`.
+- Order-book high-frequency streams use the `/public` route.
+- Regular market streams such as `aggTrade` use the `/market` route.
+- TASK-013 therefore uses **two independent connections**:
+  - `wss://fstream.binance.com/public/stream` for BTCUSDT/ETHUSDT `bookTicker`;
+  - `wss://fstream.binance.com/market/stream` for BTCUSDT/ETHUSDT `aggTrade`.
+- Subscription is sent through the documented `SUBSCRIBE` control message.
+- A connection is documented as valid for 24 hours.
+- Server ping frames arrive every 3 minutes; a pong is required within 10 minutes.
+- Inbound client messages are limited to 10/s and a connection supports up to 1024 streams.
+
+Current `bookTicker` contract:
+
+- real-time updates;
+- `u` update ID;
+- `E` event time;
+- `T` transaction time;
+- `s` symbol;
+- `ps` pair after CM migration;
+- `b/B` best bid price/quantity;
+- `a/A` best ask price/quantity;
+- `st=1` USD-M, `st=2` COIN-M after CM migration;
+- RPI orders are excluded from the displayed BBO.
+
+Current `aggTrade` contract:
+
+- approximately 100 ms aggregation for market fills with the same price and taking side;
+- `E` event time and `T` trade time;
+- `a` aggregate trade ID;
+- exact string `p` price and `q` total quantity;
+- `nq` normal quantity excluding RPI-involved quantity;
+- `f/l` first/last underlying trade IDs;
+- `m` = buyer is market maker;
+- `st=1` USD-M after CM migration.
+
+Normalization decisions:
+
+- `ReferenceBBO.exchange_ts` uses documented event time `E`, semantic `EVENT_TIME`.
+- `ReferenceTrade.exchange_ts` uses documented trade time `T`, semantic `TRADE_TIME`.
+- `m=true` means buyer is maker, therefore seller is the taker/aggressor → normalized `SELL`.
+- `m=false` means buyer is the taker/aggressor → normalized `BUY`.
+- Local receive wall time on the shared recorder host remains the primary cross-venue availability axis.
+- No Binance execution/account/private API is permitted in TASK-013.
+

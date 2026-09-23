@@ -1,9 +1,9 @@
 {
   "task": "TASK-016",
   "gate": "Stage-0 Data Gate",
-  "decision": "BLOCKED",
-  "status": "IMPLEMENTED_LOCAL_CI_PENDING_LIVE_SMOKE_PENDING",
-  "blocking_reason": "Prospective simultaneous Hyperliquid + Binance capture under one shared host/boot clock domain has not yet been demonstrated on real mainnet.",
+  "decision": "PASS",
+  "status": "PASS_REAL_MAINNET_EVIDENCE_FINAL_CI_PENDING",
+  "blocking_reason": null,
   "prerequisites": {
     "tasks_001_through_015": "VALIDATED",
     "immutable_qcr1": "PASS",
@@ -27,8 +27,8 @@
       1301,
       1302
     ],
-    "fake_server_e2e": "IMPLEMENTED_CI_PENDING",
-    "real_mainnet_smoke": "PENDING"
+    "fake_server_e2e": "PASS",
+    "real_mainnet_smoke": "PASS"
   },
   "live_smoke_acceptance": [
     "CLEAN_DURABLE recorder",
@@ -46,11 +46,91 @@
   ],
   "residual_unknowns": [
     "long-run feed completeness",
-    "long-run venue uptime",
-    "latency distributions",
-    "clock offset/uncertainty beyond host monotonic ordering",
-    "economic usefulness or alpha",
-    "future project-account fees/slippage/impact"
+    "long-run venue uptime and reconnect behavior distributions",
+    "latency distributions and tails",
+    "clock offset/uncertainty beyond same-host monotonic ordering",
+    "economic usefulness or predictive alpha",
+    "future project-account fee tier",
+    "real taker slippage and own-order impact",
+    "maker fill probability and adverse selection"
   ],
-  "promotion_rule": "PASS permits Stage 0.5 economic-feasibility/frontier work only; it does not establish predictive edge or profitability."
+  "promotion_rule": "PASS permits Stage 0.5 profitability/economic-frontier research only. It does not establish predictive edge, positive expectancy, or production-trading readiness.",
+  "live_smoke_evidence": {
+    "workflow_run": 35930416414,
+    "result": "PASS",
+    "public_only": true,
+    "credentials_used": false,
+    "configured_duration_seconds": 30,
+    "observed_runtime_seconds": 35.618773009,
+    "recorder": {
+      "state": "COMPLETE",
+      "shutdown_outcome": "CLEAN_DURABLE",
+      "raw_frame_count": 24106,
+      "durable_frame_count": 24106,
+      "durable_bytes": 14949703,
+      "queue_high_watermark": 1,
+      "storage_audit": "VALID",
+      "manifest_source_ids": [
+        "binance-usdm-reference-public",
+        "hyperliquid-mainnet-public"
+      ]
+    },
+    "sources": {
+      "hyperliquid-mainnet-public": {
+        "raw_frames": 464,
+        "market_frames": 456,
+        "subscription_acks": 8,
+        "expected_subscription_acks": 8
+      },
+      "binance-usdm-reference-public": {
+        "raw_frames": 23642,
+        "market_frames": 23640,
+        "subscription_ack_ids": [
+          1301,
+          1302
+        ]
+      }
+    },
+    "causal_domain_count": 1,
+    "clock_order_anomaly_count": 0,
+    "normalization": {
+      "raw_frames": 24106,
+      "normalized_events": 24345,
+      "error_frames": 0,
+      "not_applicable_frames": 10,
+      "hyperliquid_normalized_events": 705,
+      "binance_normalized_events": 23640,
+      "normalized_records_sha256": "26459c1b4e93c19b782f79fb2703a643fe02a387e9aa6c9c7a72dfd05378ec20"
+    },
+    "event_type_counts": {
+      "BBO": 322,
+      "FUNDING_RATE_OBSERVATION": 60,
+      "L2_SNAPSHOT": 12,
+      "MARK_PRICE": 60,
+      "ORACLE_PRICE": 60,
+      "REFERENCE_BBO": 22935,
+      "REFERENCE_TRADE": 705,
+      "TRADE": 191
+    },
+    "parquet": {
+      "raw_frame_count": 24106,
+      "normalized_event_count": 24345,
+      "causal_domain_count": 1,
+      "bundle_sha256": "529d4ce5a252ff4d66f50d35133b91b5f8b7a31f6128f9259aade7bd1657990d",
+      "source_report_sha256": "32a354900896f88a1cb0e165dd88ba6341a373fd639ce55a78796c0a28b4f17e"
+    },
+    "acceptance_all_passed": true
+  },
+  "validation": {
+    "pre_smoke_network_independent_ci": {
+      "workflow_run": 35930329166,
+      "ruff": "PASS",
+      "ruff_format": "PASS",
+      "mypy_strict": "PASS",
+      "pytest_python_3_12": "PASS_306",
+      "pytest_python_3_13": "PASS_306"
+    },
+    "real_mainnet_smoke_workflow_run": 35930416414,
+    "final_network_independent_ci": "PENDING"
+  }
 }

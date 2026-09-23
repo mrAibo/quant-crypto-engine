@@ -2,7 +2,7 @@
 
 ## Status
 
-`IN REVIEW — IMPLEMENTED, GITHUB CI PENDING`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
@@ -348,4 +348,18 @@ No features, labels, resampling, backtest, deduplication, gap backfill, executio
 
 ## Validation status
 
-GitHub CI: **PENDING**.
+GitHub CI: **PASS** — run `35927351683`; 299 tests passed on Python 3.12 and Python 3.13; Ruff, formatter, and strict mypy passed.
+
+
+## Validation result
+
+GitHub CI run `35927351683` on head `d12fb38fcc89cec6974031f553277bece35f1abb`:
+
+- lock verification: PASS;
+- Ruff: PASS;
+- Ruff format: PASS — 76 files;
+- strict mypy: PASS — 58 source files;
+- pytest Python 3.12: **299 PASS**;
+- pytest Python 3.13: **299 PASS**.
+
+Default CI remains network-independent. PyArrow `24.0.0` is resolved in `uv.lock`.

@@ -5,6 +5,7 @@ import json
 import os
 import shutil
 from dataclasses import dataclass
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -13,6 +14,8 @@ import pyarrow.parquet as pq
 
 from cryptobot.data.events import (
     BBO,
+    BookLevel,
+    EventEnvelope,
     FundingRateObservation,
     L2Snapshot,
     MarkPrice,
@@ -458,7 +461,7 @@ def _frame_row(result: FrameResult) -> dict[str, object]:
 def _event_row(
     result: FrameResult,
     ordinal: int,
-    envelope: Any,
+    envelope: EventEnvelope,
 ) -> dict[str, object]:
     return {
         "host_id": result.host_id,
@@ -488,7 +491,7 @@ def _event_row(
     }
 
 
-def _validate_event_matches_frame(result: FrameResult, envelope: Any) -> None:
+def _validate_event_matches_frame(result: FrameResult, envelope: EventEnvelope) -> None:
     mismatches: list[str] = []
     comparisons = (
         ("source", envelope.source, result.source_id),
@@ -625,7 +628,7 @@ def _l2_level_row(
     event_id: str,
     side: str,
     ordinal: int,
-    level: Any,
+    level: BookLevel,
 ) -> dict[str, object]:
     return {
         "event_id": event_id,
@@ -637,7 +640,7 @@ def _l2_level_row(
     }
 
 
-def _decimal_or_none(value: Any) -> str | None:
+def _decimal_or_none(value: Decimal | None) -> str | None:
     if value is None:
         return None
     return serialize_exact_decimal(value)

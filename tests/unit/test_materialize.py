@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+from collections.abc import Callable
 from dataclasses import dataclass, replace
 from decimal import Decimal
 from pathlib import Path
@@ -36,6 +37,9 @@ from cryptobot.data.materialize import (
     materialize_research_dataset,
     read_manifest,
 )
+type _ReadTableFn = Callable[..., pa.Table]
+_READ_TABLE = cast(_ReadTableFn, pq.read_table)
+
 from cryptobot.data.normalization_pipeline import (
     BINANCE_SOURCE_ID,
     HL_SOURCE_ID,
@@ -211,19 +215,16 @@ def _fixture_results() -> tuple[FrameResult, ...]:
         transaction_hash="0x" + "a" * 64,
     )
 
-    context_common = {
-        "source": HL_SOURCE_ID,
-        "recv_mono_ns": 500,
-        "recv_wall_ns": 1_500,
-        "raw_offset": 50,
-        "ingest_seq": 5,
-        "exchange_ts_ns": None,
-    }
     funding = FundingRateObservation(
         envelope=_envelope(
             EventType.FUNDING_RATE_OBSERVATION,
             "event-funding",
-            **context_common,
+            source=HL_SOURCE_ID,
+            recv_mono_ns=500,
+            recv_wall_ns=1_500,
+            raw_offset=50,
+            ingest_seq=5,
+            exchange_ts_ns=None,
         ),
         rate=Decimal("0.0000118657"),
         rate_period_seconds=3600,
@@ -231,12 +232,30 @@ def _fixture_results() -> tuple[FrameResult, ...]:
         effective_boundary_ns=None,
     )
     mark = MarkPrice(
-        envelope=_envelope(EventType.MARK_PRICE, "event-mark", **context_common),
+        envelope=_envelope(
+            EventType.MARK_PRICE,
+            "event-mark",
+            source=HL_SOURCE_ID,
+            recv_mono_ns=500,
+            recv_wall_ns=1_500,
+            raw_offset=50,
+            ingest_seq=5,
+            exchange_ts_ns=None,
+        ),
         price=Decimal("100.1250"),
         method=None,
     )
     oracle = OraclePrice(
-        envelope=_envelope(EventType.ORACLE_PRICE, "event-oracle", **context_common),
+        envelope=_envelope(
+            EventType.ORACLE_PRICE,
+            "event-oracle",
+            source=HL_SOURCE_ID,
+            recv_mono_ns=500,
+            recv_wall_ns=1_500,
+            raw_offset=50,
+            ingest_seq=5,
+            exchange_ts_ns=None,
+        ),
         price=Decimal("100.00"),
         oracle_id=None,
     )
@@ -392,7 +411,8 @@ def _fixture_results() -> tuple[FrameResult, ...]:
 
 
 def _table(path: Path, name: str) -> list[dict[str, object]]:
-    return pq.read_table(path / name, use_threads=False).to_pylist()
+    rows = _READ_TABLE(path / name, use_threads=False).to_pylist()
+    return cast(list[dict[str, object]], rows)
 
 
 def _file_hashes(path: Path) -> dict[str, str]:
@@ -509,7 +529,7 @@ def test_empty_dataset_writes_every_schema_correct_table(tmp_path: Path) -> None
     assert result.manifest.causal_domain_count == 0
     assert len(result.manifest.tables) == 11
     for name, schema in dataset_schemas():
-        table = pq.read_table(result.output_dir / name, use_threads=False)
+        table = _READ_TABLE(result.output_dir / name, use_threads=False)
         assert table.num_rows == 0
         assert table.schema.equals(schema, check_metadata=True)
 

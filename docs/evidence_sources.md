@@ -188,3 +188,12 @@ Timestamp caution:
 
 The reviewed official WebSocket schema defines `time: number` for both book and BBO, but does not explicitly label that field's semantic meaning as publication time, block time, or event time. TASK-010 therefore preserves this uncertainty and must not claim `BOOK_PUBLICATION_TIME` solely from the field name. Any unit conversion or semantic promotion requires separate documented or measured evidence.
 
+Measured unit probe:
+
+- One-shot public-only GitHub Actions run: <https://github.com/mrAibo/quant-crypto-engine/actions/runs/35913361944>
+- BTC `bbo.data.time = 1790193801866`; local receive wall milliseconds `1790193802192`; difference 326 ms.
+- BTC `l2Book.data.time = 1790193801460`; local receive wall milliseconds `1790193802127`; difference 667 ms.
+- Both values were JSON integers.
+
+Decision: TASK-010 may convert the observed wire `time` as Unix epoch milliseconds to nanoseconds with 1 ms resolution, while retaining `ExchangeTimestampSemantics.UNKNOWN`. The measurement does not justify relabeling the timestamp as block or publication time.
+

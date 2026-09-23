@@ -32,7 +32,6 @@ from cryptobot.data.numeric import (
 )
 from cryptobot.data.rawlog import RawFrame
 
-
 PARSE_VERSION = "hyperliquid-book-v1"
 _TIMESTAMP_RESOLUTION_NS = 1_000_000
 _TARGET_CHANNELS = frozenset({"l2Book", "bbo"})

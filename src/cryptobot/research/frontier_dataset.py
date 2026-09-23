@@ -174,8 +174,7 @@ class PilotHorizonResult:
             "movement_sample_count": self.movement_sample_count,
             "gap_excluded_count": self.gap_excluded_count,
             "signed_return_quantiles_bps": {
-                name: _decimal_string(value)
-                for name, value in self.signed_return_quantiles_bps
+                name: _decimal_string(value) for name, value in self.signed_return_quantiles_bps
             },
             "movement_quantiles_bps": {
                 name: _decimal_string(value) for name, value in self.movement_quantiles_bps

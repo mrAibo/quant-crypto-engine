@@ -334,11 +334,26 @@ Delivered:
 
 Read **[`tasks/TASK_015.md`](tasks/TASK_015.md)**.
 
-Objective: materialize TASK-014 evidence into a deterministic typed Parquet research dataset while keeping QCR1 raw data authoritative and preserving exact provenance.
+TASK-015 is validated on PR #15:
+
+- PyArrow 24.0.0 locked in `uv.lock`;
+- eleven explicit Parquet schemas plus deterministic manifest;
+- exact fixed-point string market numerics; no binary-float market columns;
+- deterministic row ordering;
+- frame/control/error visibility;
+- strict event/frame provenance agreement;
+- duplicate stable trade identities preserved;
+- schema-correct empty datasets;
+- fixed writer contract and deterministic file/schema/source-report/bundle hashes;
+- non-overwriting sibling-temp atomic publication;
+- QCR1 → TASK-014 normalize → Parquet → readback integration replay;
+- **299 tests PASS** on Python 3.12 and Python 3.13;
+- Ruff/format/strict mypy PASS;
+- CI run `35927351683`.
 
 ### Exact next action
 
-Create a TASK-015 feature branch, add a locked PyArrow dependency, implement the explicit schemas/materializer/manifest first, then add round-trip and byte-determinism tests before opening the PR.
+Require final PR-head CI after validation-document commits, merge PR #15, then run a separate Stage-0 Data Gate audit before implementing Stage 0.5 economic-frontier or any feature/backtest code.
 
 ## User actions currently required
 

@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
@@ -320,3 +320,46 @@ Construct two-source QCR1 data, replay through TASK-014, materialize, read back,
 - gap backfill;
 - live execution/OMS/signing;
 - AI/Jev/GPT logic.
+
+
+## Implementation status
+
+Implemented:
+
+- PyArrow dependency locked at `24.0.0`;
+- fixed explicit schemas for all eleven Parquet tables;
+- exact market numerics persisted as canonical strings, never binary floats;
+- deterministic frame/event/payload ordering;
+- complete frame/control/error visibility;
+- envelope-to-frame provenance consistency checks;
+- all normalized payload types materialized without event-ID rewriting;
+- L2 BID/ASK level order and ordinals preserved;
+- duplicate stable trade IDs preserved as separate event rows;
+- fixed Parquet writer contract;
+- deterministic per-file/schema/report/bundle hashes;
+- schema-correct empty tables;
+- deterministic manifest without wall-clock/host/path build metadata;
+- sibling-temp validation followed by non-overwriting atomic publish;
+- unit tests covering every supported payload family and failure semantics;
+- end-to-end QCR1 → TASK-014 normalize → Parquet → readback test;
+- `artifacts/stage_0/parquet_materialization.json`.
+
+No features, labels, resampling, backtest, deduplication, gap backfill, execution, or AI logic is present.
+
+## Validation status
+
+GitHub CI: **PASS** — run `35927351683`; 299 tests passed on Python 3.12 and Python 3.13; Ruff, formatter, and strict mypy passed.
+
+
+## Validation result
+
+GitHub CI run `35927351683` on head `d12fb38fcc89cec6974031f553277bece35f1abb`:
+
+- lock verification: PASS;
+- Ruff: PASS;
+- Ruff format: PASS — 76 files;
+- strict mypy: PASS — 58 source files;
+- pytest Python 3.12: **299 PASS**;
+- pytest Python 3.13: **299 PASS**.
+
+Default CI remains network-independent. PyArrow `24.0.0` is resolved in `uv.lock`.

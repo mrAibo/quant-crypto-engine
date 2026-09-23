@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
@@ -168,3 +168,41 @@ Prove:
 - features/signals/models;
 - backtest;
 - trading/OMS/signing.
+
+
+## Implementation status
+
+Implemented:
+
+- official/current L2/BBO schema re-verification;
+- explicit UNKNOWN timestamp semantic plus measured Unix-millisecond wire unit;
+- deterministic raw-frame normalizer;
+- exact Decimal price/size parsing;
+- strict BTC/ETH canonical instrument mapping;
+- raw segment/offset/SHA provenance in normalized envelopes;
+- deterministic event IDs;
+- explicit additive-field compatibility policy;
+- structured parse errors and NOT_APPLICABLE results;
+- crossed/unsorted source preservation with SUSPECT quality flag;
+- canonical normalized serialization;
+- QCR1 replay tests;
+- `artifacts/stage_0/hyperliquid_book_normalization.json`.
+
+No trade/funding/reference/Parquet/feature/strategy/execution code is present.
+
+## Validation status
+
+GitHub CI: **PASS** — run `35914447469`; 193 tests passed on Python 3.12 and Python 3.13; Ruff, formatter, and strict mypy passed.
+
+
+## Validation result
+
+GitHub CI run `35914447469` on head `07342619ed5ad90299e8f1e08054534f1ff71912`:
+
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS — 41 source files;
+- pytest Python 3.12: **193 PASS**;
+- pytest Python 3.13: **193 PASS**.
+
+No default-CI network dependency was introduced.

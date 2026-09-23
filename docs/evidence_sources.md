@@ -160,3 +160,40 @@ The following are **not** silently inferred from documentation:
 - completeness of any historical period actually imported for research.
 
 These remain `UNKNOWN` in `config/evidence.yaml` until their verification trigger is satisfied.
+
+
+## Hyperliquid L2/BBO normalization
+
+Primary official source:
+
+- <https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/subscriptions>
+- <https://hyperliquid.gitbook.io/Hyperliquid-docs/for-developers/api/info-endpoint>
+
+Official SDK reference implementation pinned at:
+
+- <https://github.com/hyperliquid-dex/hyperliquid-python-sdk/tree/2fdb18f9517675ea03695a0962bd19eece9c83f0>
+
+Re-verified on 2026-09-23 before TASK-010 parser implementation:
+
+- `WsBook = { coin: string; levels: [Array<WsLevel>, Array<WsLevel>]; time: number }`.
+- The documentation calls `WsBook` an order-book **snapshot** feed; it is not documented as a delta stream.
+- `WsLevel = { px: string; sz: string; n: number }`, with `n` documented as number of orders.
+- `WsBbo = { coin: string; time: number; bbo: [WsLevel | null, WsLevel | null] }`.
+- BBO updates are documented as being sent only when the BBO changes on a block.
+- `l2Book` documents optional `nSigFigs` and `mantissa`; the info API documents `nSigFigs` 2/3/4/5 or null/full precision, and `mantissa` 1/2/5 only with `nSigFigs=5`.
+- The current project subscription supplies neither aggregation option, so TASK-010 records aggregation/depth metadata as null rather than inferring it.
+- The official Python SDK master remains commit `2fdb18f9517675ea03695a0962bd19eece9c83f0` as checked for TASK-010 and routes `l2Book` / `bbo` by the message data coin.
+
+Timestamp caution:
+
+The reviewed official WebSocket schema defines `time: number` for both book and BBO, but does not explicitly label that field's semantic meaning as publication time, block time, or event time. TASK-010 therefore preserves this uncertainty and must not claim `BOOK_PUBLICATION_TIME` solely from the field name. Any unit conversion or semantic promotion requires separate documented or measured evidence.
+
+Measured unit probe:
+
+- One-shot public-only GitHub Actions run: <https://github.com/mrAibo/quant-crypto-engine/actions/runs/35913361944>
+- BTC `bbo.data.time = 1790193801866`; local receive wall milliseconds `1790193802192`; difference 326 ms.
+- BTC `l2Book.data.time = 1790193801460`; local receive wall milliseconds `1790193802127`; difference 667 ms.
+- Both values were JSON integers.
+
+Decision: TASK-010 may convert the observed wire `time` as Unix epoch milliseconds to nanoseconds with 1 ms resolution, while retaining `ExchangeTimestampSemantics.UNKNOWN`. The measurement does not justify relabeling the timestamp as block or publication time.
+

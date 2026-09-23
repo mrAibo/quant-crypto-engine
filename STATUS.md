@@ -5,9 +5,9 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `main`
+- Current branch: `task-010-hyperliquid-book-normalization`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-010 / S0-WP10 — Hyperliquid L2/BBO normalization from raw capture**
+- Current work package: **TASK-010 / S0-WP10 — Hyperliquid L2/BBO normalization validated; merge pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -245,13 +245,23 @@ Artifact: `artifacts/stage_0/live_capture_smoke.json`.
 
 Read **[`tasks/TASK_010.md`](tasks/TASK_010.md)**.
 
-Objective: normalize Hyperliquid raw `l2Book` and `bbo` frames into the existing v1 event contracts with exact decimals, strict instrument mapping, deterministic event IDs, complete raw provenance, and structured parse failures.
+TASK-010 is validated on PR #10:
 
-### Mandatory first action
+- official/current L2/BBO schema evidence recorded;
+- measured wire timestamp unit, semantic intentionally UNKNOWN;
+- exact-Decimal normalization;
+- deterministic event IDs and serialization;
+- raw provenance and strict instrument mapping;
+- structured parse errors / NOT_APPLICABLE;
+- crossed/unsorted data preserved and marked SUSPECT;
+- QCR1 replay determinism;
+- **193 tests PASS** on Python 3.12 and Python 3.13;
+- Ruff/format/strict mypy PASS;
+- CI run `35914447469`.
 
-Re-verify the current official Hyperliquid `l2Book` / `bbo` message schemas, timestamp semantics, level fields, snapshot-vs-delta behavior, and optional aggregation/depth parameters before writing parser behavior. Record verified facts; leave undocumented semantics UNKNOWN.
+### Exact next action
 
-No trade/funding/reference/feature/strategy code belongs in TASK-010.
+Merge PR #10, advance `STATUS.md` to TASK-011, then re-verify current official Hyperliquid `trades` schema before implementing trade normalization.
 
 ## User actions currently required
 

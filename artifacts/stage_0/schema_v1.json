@@ -87,5 +87,20 @@
     "final_github_ci_run": 35891870831
   },
   "merged_pr": 4,
-  "merge_commit": "dbc08c6a6f721b9f7e0f0cc0b5afb2e91c948659"
+  "merge_commit": "dbc08c6a6f721b9f7e0f0cc0b5afb2e91c948659",
+  "funding_observation_kinds": [
+    "CURRENT",
+    "PREDICTED",
+    "REALIZED"
+  ],
+  "amendments": [
+    {
+      "id": "TASK-012-CURRENT-FUNDING",
+      "date": "2026-09-23",
+      "type": "additive-enum-semantic-correction",
+      "change": "FundingObservationKind adds CURRENT",
+      "reason": "Official Hyperliquid asset context describes its funding field as current funding; mapping it to PREDICTED or REALIZED would distort source semantics.",
+      "compatibility": "Existing serialized enum values unchanged; strict exhaustive consumers must accept the new additive value."
+    }
+  ]
 }

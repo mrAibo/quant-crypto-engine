@@ -5,10 +5,10 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `task-007-hyperliquid-public-ws`
+- Current branch: `main`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-007 / S0-WP07 — Hyperliquid raw public WebSocket adapter (validated; merge pending)**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006**
+- Current work package: **TASK-008 / S0-WP08 — Recorder supervisor and raw-writer integration**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
@@ -183,28 +183,38 @@ Delivered:
 
 Artifact: `artifacts/stage_0/storage_recovery_report.json`.
 
+## Completed — TASK-007
+
+PR #7, merge commit `2182268783293bc01b2d1ac5608e3f01de9877f1`.
+
+Delivered:
+
+- verified Hyperliquid public WebSocket protocol evidence;
+- pinned `websockets==17.0.1`;
+- exact raw application payload-byte capture;
+- subscription/channel/heartbeat classification;
+- bounded reconnect behavior;
+- fake-server integration tests;
+- third-party reuse register;
+- final green CI run `35904060906`;
+- **140 tests PASS** on Python 3.12 and 3.13.
+
+Artifact: `artifacts/stage_0/hl_capture_probe.json`.
+
 ## Current task
 
-Read **[`tasks/TASK_007.md`](tasks/TASK_007.md)**.
+Read **[`tasks/TASK_008.md`](tasks/TASK_008.md)**.
 
-TASK-007 is validated:
+Objective: compose TASK-007 network capture with TASK-005 raw storage and TASK-006 sealing/manifest publication behind a bounded recorder supervisor.
 
-- official Hyperliquid WebSocket protocol facts re-verified;
-- pinned/reproducible `websockets==17.0.1`;
-- exact raw application payload-byte capture;
-- minimal ACK/channel/heartbeat classification;
-- explicit reconnect policy;
-- fake-server reconnect/resubscribe/heartbeat tests;
-- third-party reuse register;
-- **140 tests PASS** on Python 3.12 and 3.13;
-- Ruff, format and strict mypy PASS;
-- GitHub Actions run `35903825794`.
+Planned outputs:
 
-### Exact next action
+- `src/cryptobot/data/recorder.py`
+- `src/cryptobot/cli.py`
+- unit/integration/fault tests
+- `artifacts/stage_0/recorder_smoke.json`
 
-Run one closeout CI after documentation/artifact changes, then merge PR #7.
-
-After merge, begin **[TASK-008 — Recorder Supervisor and Raw-Writer Integration](tasks/TASK_008.md)**.
+No normalization, Parquet, reference venue, strategy, or trading logic belongs in TASK-008.
 
 ## User actions currently required
 

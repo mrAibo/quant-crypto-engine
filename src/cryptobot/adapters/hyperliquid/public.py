@@ -254,9 +254,7 @@ class HyperliquidPublicAdapter:
         max_sessions: int | None = None,
     ) -> AsyncIterator[CapturedPublicFrame]:
         if max_sessions is not None and (
-            isinstance(max_sessions, bool)
-            or not isinstance(max_sessions, int)
-            or max_sessions <= 0
+            isinstance(max_sessions, bool) or not isinstance(max_sessions, int) or max_sessions <= 0
         ):
             raise HyperliquidPublicError("max_sessions must be null or a positive integer")
 

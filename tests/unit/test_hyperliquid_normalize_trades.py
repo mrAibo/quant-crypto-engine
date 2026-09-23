@@ -213,10 +213,7 @@ def test_repeated_normalization_is_byte_deterministic() -> None:
     first = normalize_trade_frame(frame, _registry())
     second = normalize_trade_frame(frame, _registry())
 
-    assert (
-        serialize_normalized_trades(first.events)
-        == serialize_normalized_trades(second.events)
-    )
+    assert serialize_normalized_trades(first.events) == serialize_normalized_trades(second.events)
     assert [event.envelope.event_id for event in first.events] == [
         event.envelope.event_id for event in second.events
     ]

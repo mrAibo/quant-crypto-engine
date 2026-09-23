@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`IN REVIEW — IMPLEMENTED, GITHUB CI PENDING`
 
 ## Objective
 
@@ -200,3 +200,29 @@ Create `artifacts/stage_0/hyperliquid_trade_normalization.json` with:
 - backtest;
 - strategy/models;
 - OMS/signing/trading.
+
+
+## Implementation status
+
+Implemented:
+
+- official/current `WsTrade[]` schema re-verification;
+- official `tid` identity and `users=[buyer,seller]` evidence;
+- native side A/B preservation with normalized aggressor side intentionally UNKNOWN;
+- measured Unix-millisecond trade timestamp unit;
+- measured reconnect replay/duplicate behavior;
+- exact-Decimal multi-event normalizer;
+- stable vendor-style `trade_id=(time,coin,tid)`;
+- occurrence-specific deterministic `event_id`;
+- strict BTC/ETH mapping;
+- complete raw provenance;
+- structured all-or-nothing target parse errors;
+- deterministic serialization;
+- QCR1 replay and reconnect-duplicate tests;
+- `artifacts/stage_0/hyperliquid_trade_normalization.json`.
+
+No funding/reference/Parquet/feature/model/backtest/execution code is present.
+
+## Validation status
+
+GitHub CI: **PENDING**.

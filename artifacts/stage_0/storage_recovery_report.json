@@ -1,0 +1,62 @@
+{
+  "task": "TASK-006",
+  "status": "PASS",
+  "manifest_schema_version": 1,
+  "publication_model": [
+    "OPEN",
+    "SEALED_PENDING_MANIFEST",
+    "PUBLISHED"
+  ],
+  "commit_sequence": [
+    "require CLEAN raw-log scan",
+    "flush+fsync open segment through writable descriptor",
+    "compute byte length + whole-file SHA-256 + derived raw metadata stats",
+    "atomic os.replace(open, sealed)",
+    "fsync sealed-file parent directory",
+    "canonical manifest temp write",
+    "flush+fsync manifest temp",
+    "atomic os.replace(temp, manifest)",
+    "fsync manifest parent directory"
+  ],
+  "audit_states": [
+    "VALID",
+    "MISSING",
+    "MISMATCH",
+    "ORPHAN_COMPLETE",
+    "OPEN_RECOVERABLE",
+    "OPEN_INCOMPLETE_RECOVERABLE",
+    "CORRUPT",
+    "STALE_MANIFEST_TEMP",
+    "MANIFEST_CORRUPT"
+  ],
+  "recovery_principles": [
+    "No orphan or mismatched bytes are silently deleted.",
+    "Incomplete open tail may reuse TASK-005 safe truncation.",
+    "Corrupt open segments are blocked.",
+    "Manifest validity requires file hash/size/frame count and derived metadata parity."
+  ],
+  "fault_phases": [
+    "before_segment_fsync",
+    "after_segment_fsync",
+    "after_segment_rename",
+    "after_segment_dir_fsync",
+    "before_manifest_temp_write",
+    "after_manifest_temp_write",
+    "after_manifest_temp_fsync",
+    "after_manifest_replace",
+    "after_manifest_dir_fsync"
+  ],
+  "validation": {
+    "github_ci_run": 35893691800,
+    "github_ruff_check": "PASS",
+    "github_ruff_format_check": "PASS",
+    "github_mypy_strict": "PASS",
+    "github_pytest_python_3_12": "PASS",
+    "github_pytest_python_3_13": "PASS",
+    "tests_total": 116
+  },
+  "known_limitations": [
+    "Power-loss durability is modeled through ordered fsync/rename operations and injected process-failure phases; CI cannot emulate sudden physical power loss.",
+    "No network ingest, normalization, Parquet, retention, or object-storage backup exists yet."
+  ]
+}

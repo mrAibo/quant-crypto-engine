@@ -2,197 +2,91 @@
 
 ## Status
 
-`PENDING`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
 Add crash-safe segment publication and a durable manifest around the TASK-005 raw frame log.
 
-TASK-006 turns an appendable raw segment into an immutable, checksum-addressed sealed artifact and makes restart recovery deterministic across crashes around close, rename, manifest commit, and orphan-file discovery.
-
-It does not add network ingest, normalization, Parquet, retention, or backup.
-
-## Planned files
+## Delivered
 
 - `src/cryptobot/data/manifest.py`
 - `tests/unit/test_manifest.py`
 - `tests/fault/test_manifest_commit.py`
 - `artifacts/stage_0/storage_recovery_report.json`
 
-## Segment lifecycle
+## Publication contract
 
-States:
+Segment publication sequence:
 
-1. `OPEN`
-2. `SEALED_PENDING_MANIFEST`
-3. `PUBLISHED`
+1. require CLEAN raw scan;
+2. flush/fsync the open segment;
+3. derive byte length, SHA-256, frame count, receive-time range, ingest-sequence range and source IDs;
+4. atomically rename open → sealed;
+5. fsync sealed-file parent directory;
+6. canonical manifest temp write;
+7. flush/fsync temp manifest;
+8. atomic replace temp → canonical manifest;
+9. fsync manifest parent directory.
 
-A sealed segment is immutable. Publication is complete only when both the final file and durable manifest entry agree.
+Manifest validity requires both sealed-file content integrity and derived metadata parity.
 
-## Naming
+## Recovery states
 
-Use deterministic IDs and explicit suffixes.
+- VALID
+- MISSING
+- MISMATCH
+- ORPHAN_COMPLETE
+- OPEN_RECOVERABLE
+- OPEN_INCOMPLETE_RECOVERABLE
+- CORRUPT
+- STALE_MANIFEST_TEMP
+- MANIFEST_CORRUPT
 
-Example:
+No orphan/mismatched bytes are silently deleted or accepted.
 
-- open/temp: `segment-<id>.raw.open`
-- sealed final: `segment-<id>.raw`
+## Fault injection
 
-Do not infer state from filename alone; the manifest and file checksum must agree.
+Crash boundaries covered:
 
-## Seal contract
+- before/after segment fsync;
+- after segment rename;
+- after segment directory fsync;
+- before/after manifest temp write;
+- after manifest temp fsync;
+- after manifest replace;
+- after manifest directory fsync.
 
-Sealing must:
+## Validation
 
-1. require a CLEAN raw-log scan;
-2. sync/close the raw writer before publication;
-3. compute whole-file SHA-256 and byte length;
-4. atomically rename temp/open path to final path;
-5. fsync the parent directory;
-6. create a manifest record;
-7. durably commit the manifest;
-8. never mutate the sealed raw file afterwards.
+GitHub Actions run `35893691800`:
 
-## Manifest record
-
-At minimum:
-
-- manifest schema version;
-- segment ID;
-- relative final path;
-- byte length;
-- SHA-256;
-- raw frame version;
-- valid frame count;
-- min/max receive wall ns if derivable from raw metadata;
-- min/max ingest sequence;
-- source IDs observed;
-- created/sealed timestamps supplied by injected caller/clock value;
-- recorder/schema version identifiers if available;
-- publication status.
-
-No business/market parsing is allowed.
-
-## Manifest storage
-
-Use a simple deterministic local manifest format suitable for Stage 0.
-
-Recommended:
-
-- one canonical JSON file containing immutable segment records, or
-- append-only JSONL plus a deterministic compacted view.
-
-Whichever is chosen must support atomic/durable replacement or append and crash recovery without silently dropping an already published segment.
-
-Do not introduce a database.
-
-## Atomic commit requirements
-
-For file replacement:
-
-- write `.tmp`;
-- flush + fsync temp file;
-- `os.replace` to canonical manifest path;
-- fsync parent directory.
-
-For segment publication:
-
-- final rename must be atomic on the same filesystem;
-- parent directory fsync required.
-
-Cross-filesystem moves are forbidden.
-
-## Recovery cases
-
-On startup/recovery, classify:
-
-1. manifest entry + matching sealed file → valid;
-2. manifest entry + missing file → CORRUPT/BLOCKED;
-3. manifest entry + checksum/length mismatch → CORRUPT;
-4. sealed file with no manifest entry → ORPHAN_COMPLETE;
-5. `.open` file with CLEAN log → OPEN_RECOVERABLE;
-6. `.open` file with INCOMPLETE tail → truncate via TASK-005 helper, then OPEN_RECOVERABLE;
-7. `.open` file with CORRUPT middle → CORRUPT/BLOCKED;
-8. stale manifest temp file → recover or discard only according to deterministic rules based on canonical manifest validity.
-
-No automatic deletion of unknown/orphaned bytes.
-
-## Public API
-
-Define small, explicit types/functions such as:
-
-- `SegmentManifestRecord`
-- `SegmentManifest`
-- `seal_segment(...)`
-- `load_manifest(...)`
-- `commit_manifest(...)`
-- `audit_storage(...)`
-- `recover_open_segment(...)`
-
-Exact naming may differ, but state/result types must be explicit.
-
-## Tests
-
-### Unit
-
-- manifest canonical serialization;
-- deterministic record ordering;
-- duplicate segment ID rejection;
-- path traversal/absolute path rejection;
-- checksum and size verification;
-- seal only CLEAN raw log;
-- frame count/min/max metadata derivation;
-- immutable final file expectation;
-- manifest reload equality.
-
-### Fault / crash points
-
-Inject failures:
-
-- before segment fsync;
-- after segment fsync, before rename;
-- after rename, before directory fsync;
-- after rename, before manifest temp write;
-- during manifest temp write;
-- after manifest temp fsync, before replace;
-- after manifest replace, before parent-directory fsync.
-
-After each simulated crash, recovery must reach one deterministic classification without losing or silently replacing bytes.
-
-Also test:
-
-- orphan sealed file;
-- missing manifest-referenced file;
-- checksum mismatch;
-- incomplete open segment recoverable;
-- corrupt open segment blocked.
-
-## Completion artifact
-
-`artifacts/stage_0/storage_recovery_report.json` records:
-
-- manifest schema version;
-- segment state model;
-- atomic commit sequence;
-- recovery matrix;
-- fault-injection coverage;
-- CI status;
-- known limitations.
+- Ruff lint: **PASS**
+- Ruff format: **PASS**
+- strict mypy: **PASS**
+- pytest Python 3.12: **PASS**
+- pytest Python 3.13: **PASS**
+- repository tests: **116 PASS**
 
 ## Definition of Done
 
-1. Clean raw segments seal to immutable checksum-addressed files.
-2. Manifest commit is atomic/durable at Stage 0 scope.
-3. Restart recovery classifies every supported crash state deterministically.
-4. Orphans/mismatches are never silently deleted or accepted.
-5. Python 3.12/3.13 tests green.
-6. Ruff/format/strict mypy/full pytest green.
-7. `STATUS.md` advances to TASK-007.
+1. Clean raw segments seal to checksum-addressed immutable artifacts. **PASS**
+2. Manifest commit is atomic/durable at Stage 0 scope. **PASS**
+3. Supported crash states classify deterministically. **PASS**
+4. Orphans/mismatches are never silently deleted or accepted. **PASS**
+5. Python 3.12/3.13 tests green. **PASS**
+6. Ruff/format/strict-mypy/full pytest green. **PASS**
+7. TASK-007 defined before merge. **PASS**
+
+## Next task
+
+`TASK-007 — Hyperliquid raw public WebSocket adapter`.
+
+Before implementing network code, re-verify current Hyperliquid public WebSocket endpoints and subscription schemas against official documentation and update the evidence contract if needed.
 
 ## Do Not Build
 
-- WebSocket clients.
-- normalization.
-- Parquet.
-- retention/object-storage backup.
-- strategy/trading code.
+- normalization
+- Parquet
+- reference-venue adapter
+- strategy/trading code

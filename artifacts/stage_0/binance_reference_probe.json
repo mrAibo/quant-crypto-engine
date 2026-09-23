@@ -22,7 +22,12 @@
     "server_ping_minutes": 3,
     "pong_timeout_minutes": 10,
     "max_inbound_messages_per_second": 10,
-    "max_streams_per_connection": 1024
+    "max_streams_per_connection": 1024,
+    "subscription_request_ids": {
+      "public": 1301,
+      "market": 1302,
+      "type": "unsigned integer"
+    }
   },
   "normalization": {
     "bookTicker": {
@@ -95,5 +100,30 @@
   ],
   "validation": {
     "github_ci": "PENDING"
+  },
+  "final_adapter_probe": {
+    "status": "PASS",
+    "workflow_run": 35922113843,
+    "duration_seconds": 7.281970006999998,
+    "subscription_ack_ids": [
+      1301,
+      1302
+    ],
+    "market_frames_observed": 313,
+    "observed_streams": [
+      "btcusdt@bookTicker",
+      "ethusdt@bookTicker",
+      "btcusdt@aggTrade",
+      "ethusdt@aggTrade"
+    ],
+    "routes": {
+      "bookTicker": "PUBLIC",
+      "aggTrade": "MARKET"
+    },
+    "symbol_type_values": [
+      1
+    ],
+    "credentials_used": false,
+    "purpose": "Validate final adapter code after correcting SUBSCRIBE IDs to documented unsigned integers."
   }
 }

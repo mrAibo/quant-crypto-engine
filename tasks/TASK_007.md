@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`IN REVIEW — IMPLEMENTED, GITHUB CI PENDING`
 
 ## Objective
 
@@ -159,3 +159,30 @@ Captured public fixtures used in ordinary tests must be small, redacted where ap
 - reference-venue adapter
 - Parquet materialization
 - strategy/features/trading
+
+
+## Implementation status
+
+Implemented:
+
+- official Hyperliquid WebSocket protocol facts re-verified and added to evidence contract;
+- pinned `websockets==17.0.1` with reproducible lock metadata and PyPI SHA-256 hashes;
+- minimal public adapter for `l2Book`, `bbo`, `trades`, and `activeAssetCtx`;
+- raw inbound application payload captured as bytes via `recv(decode=False)`;
+- only top-level channel/subscription-ack inspection;
+- application-level idle ping using the documented `{"method":"ping"}` / `pong` protocol;
+- explicit reconnect policy with a floor derived from the documented 30-new-connections/minute limit;
+- per-connection IDs and per-connection ingest sequence;
+- preservation/classification of malformed and unknown frames;
+- fake-server tests for ACK accounting, exact payload bytes, heartbeat, reconnect/resubscribe, and binary/malformed input;
+- third-party reuse/provenance register.
+
+No normalization, Parquet, strategy, execution, or trading code is present.
+
+## Validation status
+
+GitHub CI: **PENDING**.
+
+## Next task after merge
+
+`TASK-008 — Recorder supervisor and raw-writer integration`.

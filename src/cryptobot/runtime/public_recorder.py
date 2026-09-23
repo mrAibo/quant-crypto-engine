@@ -21,7 +21,7 @@ from cryptobot.adapters.hyperliquid.public import (
     SubscriptionKey,
     TransportSettings,
 )
-from cryptobot.data.clock import Clock, ClockSample, SystemClock, elapsed_ns
+from cryptobot.data.clock import Clock, SystemClock, elapsed_ns
 from cryptobot.data.manifest import StorageAuditItem, audit_storage
 from cryptobot.data.recorder import (
     RecorderRuntimeSettings,
@@ -328,11 +328,11 @@ def load_public_recorder_config(path: str | Path) -> PublicRecorderConfig:
         bases.append(ParameterBasisRecord(name=name, basis=basis))
 
     duration_raw = values["run_duration_seconds"]
-    duration: float | None
-    if duration_raw is None:
-        duration = None
-    else:
-        duration = _number(duration_raw, "run_duration_seconds")
+    duration = (
+        None
+        if duration_raw is None
+        else _number(duration_raw, "run_duration_seconds")
+    )
 
     return PublicRecorderConfig(
         schema_version=schema_version,
@@ -390,7 +390,7 @@ def derive_runtime_identity(
     host_source = machine_id or (hostname if hostname is not None else socket.gethostname())
     if not host_source.strip():
         raise RuntimeConfigError("cannot derive non-empty host identity")
-    host_id = "host-" + hashlib.sha256(host_source.encode("utf-8")).hexdigest()[:16]
+    host_id = "host-" + hashlib.sha256(host_source.encode()).hexdigest()[:16]
 
     boot_source = _read_optional_text(boot_id_path)
     if boot_source is None:

@@ -155,22 +155,22 @@ class _Observation:
             hl_classification = classify_public_payload(frame.payload)
             key = f"{meta.source_id}:{hl_classification.kind.value}"
             self.kind_counts[key] = self.kind_counts.get(key, 0) + 1
-            ack = hl_classification.acknowledged_subscription
-            if ack is not None:
-                self.hl_acks.add(ack)
+            hl_ack = hl_classification.acknowledged_subscription
+            if hl_ack is not None:
+                self.hl_acks.add(hl_ack)
             return
 
         if meta.source_id == binance_source_id:
             binance_classification = classify_binance_payload(frame.payload)
             key = f"{meta.source_id}:{binance_classification.kind.value}"
             self.kind_counts[key] = self.kind_counts.get(key, 0) + 1
-            ack = binance_classification.subscription_ack_id
+            binance_ack = binance_classification.subscription_ack_id
             if (
                 binance_classification.kind is BinanceFrameKind.SUBSCRIPTION_ACK
-                and isinstance(ack, int)
-                and not isinstance(ack, bool)
+                and isinstance(binance_ack, int)
+                and not isinstance(binance_ack, bool)
             ):
-                self.binance_ack_ids.add(ack)
+                self.binance_ack_ids.add(binance_ack)
             return
 
         key = f"{meta.source_id}:UNKNOWN_SOURCE"

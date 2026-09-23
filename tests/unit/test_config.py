@@ -6,10 +6,10 @@ from pathlib import Path
 import pytest
 
 from cryptobot.config import RecorderConfigError, load_recorder_config
-from cryptobot.data.instruments import load_instrument_registry
+from cryptobot.data.instruments import InstrumentRegistry, load_instrument_registry
 
 
-def _registry():
+def _registry() -> InstrumentRegistry:
     return load_instrument_registry(Path("config/instruments.yaml"))
 
 

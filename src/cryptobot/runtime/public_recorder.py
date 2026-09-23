@@ -291,9 +291,7 @@ class PublicRecorderSummary:
                 "malformed_frames": dict(self.kind_counts).get(FrameKind.MALFORMED.value, 0),
                 "unknown_frames": dict(self.kind_counts).get(FrameKind.UNKNOWN.value, 0),
             },
-            "parameter_bases": {
-                record.name: record.basis.value for record in self.parameter_bases
-            },
+            "parameter_bases": {record.name: record.basis.value for record in self.parameter_bases},
         }
 
     def to_json(self) -> str:

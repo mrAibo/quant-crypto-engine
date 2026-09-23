@@ -1,0 +1,97 @@
+name: TASK-013 Binance Reference Probe
+
+on:
+  push:
+    branches: [task-013-binance-reference-feed]
+    paths:
+      - ".github/workflows/task013-binance-probe.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  reference-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.18"
+      - run: uv python install 3.12
+      - run: uv sync --locked --all-groups --python 3.12
+      - name: Run public-only Binance USD-M reference probe
+        shell: bash
+        run: |
+          uv run --python 3.12 python - <<'PY'
+          import asyncio, json, time
+          from cryptobot.adapters.binance.public import (
+              BinanceFrameKind,
+              BinanceReferenceAdapter,
+              BinanceTransportSettings,
+          )
+          from cryptobot.data.clock import SystemClock
+
+          async def main():
+              adapter=BinanceReferenceAdapter(
+                  clock=SystemClock(host_id="gha", boot_id="task013"),
+                  transport=BinanceTransportSettings(
+                      max_message_bytes=4_194_304,
+                      receive_queue_high_water=128,
+                      open_timeout_seconds=10,
+                      close_timeout_seconds=5,
+                  ),
+              )
+              stream=adapter.session_frames()
+              ack_ids=set()
+              observed={}
+              counts={}
+              start=time.monotonic()
+              try:
+                  while time.monotonic()-start < 25:
+                      frame=await asyncio.wait_for(anext(stream), timeout=10)
+                      counts[frame.kind.value]=counts.get(frame.kind.value,0)+1
+                      if frame.kind is BinanceFrameKind.SUBSCRIPTION_ACK:
+                          ack_ids.add(str(frame.subscription_ack_id))
+                          continue
+                      if frame.kind is not BinanceFrameKind.MARKET_DATA:
+                          continue
+                      msg=json.loads(frame.payload)
+                      data=msg["data"]
+                      key=(data.get("e"),data.get("s"))
+                      recv_ms=frame.metadata.recv_wall_ns//1_000_000
+                      observed[key]={
+                          "route":frame.route.value,
+                          "stream":frame.stream,
+                          "keys":sorted(data.keys()),
+                          "st":data.get("st"),
+                          "event_lag_ms": recv_ms-data["E"] if isinstance(data.get("E"),int) else None,
+                          "trade_lag_ms": recv_ms-data["T"] if isinstance(data.get("T"),int) else None,
+                          "price_type":type(data.get("p",data.get("b"))).__name__,
+                          "qty_type":type(data.get("q",data.get("B"))).__name__,
+                          "maker_type":type(data.get("m")).__name__ if "m" in data else None,
+                      }
+                      wanted={
+                          ("bookTicker","BTCUSDT"),("bookTicker","ETHUSDT"),
+                          ("aggTrade","BTCUSDT"),("aggTrade","ETHUSDT"),
+                      }
+                      if set(observed)>=wanted and ack_ids=={"task013-public","task013-market"}:
+                          break
+              finally:
+                  await stream.aclose()
+              wanted={
+                  ("bookTicker","BTCUSDT"),("bookTicker","ETHUSDT"),
+                  ("aggTrade","BTCUSDT"),("aggTrade","ETHUSDT"),
+              }
+              missing=sorted([list(x) for x in wanted-set(observed)])
+              if missing:
+                  raise RuntimeError(f"missing expected reference streams: {missing}")
+              print(json.dumps({
+                  "ack_ids":sorted(ack_ids),
+                  "counts":counts,
+                  "observed":{"|".join(k):v for k,v in sorted(observed.items())},
+                  "duration_seconds":time.monotonic()-start,
+                  "credentials_used":False,
+              },sort_keys=True))
+          asyncio.run(main())
+          PY

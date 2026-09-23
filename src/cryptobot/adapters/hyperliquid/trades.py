@@ -208,9 +208,7 @@ def _parse_trade(
     registry: InstrumentRegistry,
     availability: AvailabilityKind,
 ) -> Trade | TradeParseError:
-    if not isinstance(raw_trade, dict) or not all(
-        isinstance(key, str) for key in raw_trade
-    ):
+    if not isinstance(raw_trade, dict) or not all(isinstance(key, str) for key in raw_trade):
         return _parse_error(
             frame,
             trade_index,

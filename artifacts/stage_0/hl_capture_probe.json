@@ -1,0 +1,52 @@
+{
+  "task": "TASK-007",
+  "status": "IMPLEMENTED_CI_PENDING",
+  "protocol_evidence": {
+    "mainnet_endpoint": "wss://api.hyperliquid.xyz/ws",
+    "channels": [
+      "l2Book",
+      "bbo",
+      "trades",
+      "activeAssetCtx"
+    ],
+    "subscription_ack_channel": "subscriptionResponse",
+    "application_ping": "{\"method\":\"ping\"}",
+    "pong_channel": "pong",
+    "documented_server_idle_seconds": 60,
+    "documented_ip_limits": {
+      "websocket_connections": 10,
+      "new_connections_per_minute": 30,
+      "subscriptions": 1000,
+      "outbound_messages_per_minute": 2000,
+      "inflight_posts": 100
+    }
+  },
+  "transport": {
+    "library": "websockets",
+    "version": "17.0.1",
+    "license": "BSD-3-Clause",
+    "upstream_commit": "fd3f16cc4f57ace08e323a7806f1432e957cb75e",
+    "raw_receive_mode": "recv(decode=False)"
+  },
+  "design": [
+    "Persist/forward inbound application payload bytes without business-field normalization.",
+    "Inspect only top-level channel and subscription acknowledgment routing fields.",
+    "Keep application heartbeat distinct from market-channel freshness.",
+    "Reconnect policy is explicit and bounded by documented connection-rate constraints.",
+    "Unknown/malformed frames are preserved and classified rather than silently dropped."
+  ],
+  "tests": [
+    "deterministic subscription request",
+    "channel/ack/pong/malformed classification",
+    "transport and reconnect validation",
+    "fake-server exact payload preservation",
+    "pending subscription accounting",
+    "application ping/pong",
+    "reconnect and resubscribe",
+    "new connection ID and ingest-sequence reset",
+    "binary/malformed payload preservation"
+  ],
+  "validation": {
+    "github_ci": "PENDING"
+  }
+}

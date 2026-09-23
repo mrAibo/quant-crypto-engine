@@ -249,3 +249,18 @@ GitHub CI run `35924328402` on head `16e524d08a37db9e08f8e523c8365b094719a55c`:
 - pytest Python 3.13: **288 PASS**.
 
 Default CI remains network-independent.
+
+
+## Merge provenance
+
+Merged as PR #14 in commit `e6a4d2d2af6a14adbb23687e41183932731d6f4e`.
+
+Final PR-head validation run `35925671994`:
+
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS;
+- pytest Python 3.12: **288 PASS**;
+- pytest Python 3.13: **288 PASS**.
+
+The deterministic causal pipeline remains read-only and network-independent.

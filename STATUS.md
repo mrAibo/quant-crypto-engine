@@ -5,10 +5,10 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `task-004-event-time-contracts`
+- Current branch: `main`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-004 / S0-WP04 — Immutable event envelope, exact numeric rules, and clock abstraction (validated; merge pending)**
-- Completed: **TASK-001, TASK-002, TASK-003**
+- Current work package: **TASK-005 / S0-WP05 — Append-only raw framed writer**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
@@ -135,26 +135,36 @@ Delivered:
 
 Artifact: `artifacts/stage_0/config_report.json`.
 
+## Completed — TASK-004
+
+PR #4, merge commit `dbc08c6a6f721b9f7e0f0cc0b5afb2e91c948659`.
+
+Delivered:
+
+- immutable normalized event envelope;
+- 12 event-domain types;
+- exact Decimal persistence policy;
+- scaled-integer helpers;
+- host/boot-safe clock abstraction;
+- event/numeric/clock unit tests;
+- final green CI run `35891870831`.
+
+Artifact: `artifacts/stage_0/schema_v1.json`.
+
 ## Current task
 
-Read **[`tasks/TASK_004.md`](tasks/TASK_004.md)**.
+Read **[`tasks/TASK_005.md`](tasks/TASK_005.md)**.
 
-TASK-004 is validated:
+Objective: implement the append-only raw framed writer that preserves exact source bytes and can recover safely from an incomplete tail.
 
-- immutable event envelope;
-- normalized event-domain types;
-- exact Decimal policy;
-- host/boot-safe clock abstraction;
-- deterministic serialization;
-- no venue parser/network/writer/trading code.
+Planned outputs:
 
-Green GitHub Actions run: `35891685346`.
+- `src/cryptobot/data/rawlog.py`
+- `tests/unit/test_rawlog.py`
+- `tests/fault/test_rawlog_tail.py`
+- `artifacts/stage_0/rawlog_report.json`
 
-### Exact next action
-
-Run one closeout CI after documentation/artifact changes, then merge PR #4.
-
-After merge, begin **[TASK-005 — append-only raw framed writer](tasks/TASK_005.md)**.
+No WebSocket/venue parser, Parquet, normalization, strategy, or trading code belongs in TASK-005.
 
 ## User actions currently required
 

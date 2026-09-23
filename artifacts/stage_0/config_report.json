@@ -1,6 +1,8 @@
 {
   "task": "TASK-003",
   "status": "PASS",
+  "merged_pr": 3,
+  "merge_commit": "9dd9145342430ed3a09b1e1e90f2a9d9f02af304",
   "schema_versions": {
     "recorder_config": 1,
     "instrument_registry": 1
@@ -10,12 +12,7 @@
       "source_id": "hyperliquid-mainnet-public",
       "venue": "hyperliquid",
       "environment": "MAINNET",
-      "channels": [
-        "l2Book",
-        "bbo",
-        "trades",
-        "activeAssetCtx"
-      ]
+      "channels": ["l2Book", "bbo", "trades", "activeAssetCtx"]
     }
   ],
   "configured_instruments": [
@@ -33,29 +30,8 @@
     "selected_source_id": null,
     "status": "UNRESOLVED_BY_DESIGN"
   },
-  "unresolved_metadata_fields": [
-    "hyperliquid.mainnet.perpetual.btc.quote_asset",
-    "hyperliquid.mainnet.perpetual.btc.settlement_asset",
-    "hyperliquid.mainnet.perpetual.btc.margin_asset",
-    "hyperliquid.mainnet.perpetual.btc.price_decimals",
-    "hyperliquid.mainnet.perpetual.btc.size_decimals",
-    "hyperliquid.mainnet.perpetual.btc.native_asset_id",
-    "hyperliquid.mainnet.perpetual.eth.quote_asset",
-    "hyperliquid.mainnet.perpetual.eth.settlement_asset",
-    "hyperliquid.mainnet.perpetual.eth.margin_asset",
-    "hyperliquid.mainnet.perpetual.eth.price_decimals",
-    "hyperliquid.mainnet.perpetual.eth.size_decimals",
-    "hyperliquid.mainnet.perpetual.eth.native_asset_id",
-    "recorder.buffering.queue_capacity",
-    "recorder.buffering.high_watermark_fraction",
-    "recorder.rollover.max_segment_bytes",
-    "recorder.rollover.max_segment_age_seconds",
-    "recorder.reconnect.base_delay_seconds",
-    "recorder.reconnect.max_delay_seconds",
-    "recorder.reconnect.jitter_fraction"
-  ],
   "validation": {
-    "github_ci_run": 35890454291,
+    "final_github_ci_run": 35890625489,
     "github_ruff_check": "PASS",
     "github_ruff_format_check": "PASS",
     "github_mypy_strict": "PASS",

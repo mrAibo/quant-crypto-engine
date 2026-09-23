@@ -62,7 +62,8 @@
     "raw SHA provenance validation",
     "deterministic event IDs and serialization",
     "exact non-float serialization",
-    "QCR1 raw replay determinism and provenance"
+    "QCR1 raw replay determinism and provenance",
+    "empty L2 side preservation"
   ],
   "validation": {
     "github_ci": "PENDING"

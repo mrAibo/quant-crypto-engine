@@ -5,6 +5,7 @@ import json
 from collections.abc import Callable
 from dataclasses import dataclass
 from decimal import Decimal
+from itertools import pairwise
 from pathlib import Path
 from typing import cast
 
@@ -183,7 +184,7 @@ def analyze_frontier_pilot_dataset(
     )
     deltas = tuple(
         current.recv_mono_ns - previous.recv_mono_ns
-        for previous, current in zip(ordered, ordered[1:], strict=False)
+        for previous, current in pairwise(ordered)
         if current.recv_mono_ns > previous.recv_mono_ns
     )
     if not deltas:

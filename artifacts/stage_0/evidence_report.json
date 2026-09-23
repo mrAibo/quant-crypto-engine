@@ -1,0 +1,30 @@
+{
+  "task": "TASK-002",
+  "status": "PASS_LOCAL_VALIDATION",
+  "checked_at": "2026-09-23T00:00:00Z",
+  "schema_version": 1,
+  "total_facts": 21,
+  "verified_facts": 13,
+  "unknown_facts": 8,
+  "reverification_due": 0,
+  "due_fact_ids": [],
+  "verified_without_source_hash": [
+    "hyperliquid.fees.perps.base_tier",
+    "hyperliquid.fees.maker_rebate_threshold",
+    "hyperliquid.funding.payment_interval",
+    "hyperliquid.funding.payment_formula",
+    "hyperliquid.websocket.public_channels",
+    "hyperliquid.websocket.l2book.snapshot_semantics",
+    "hyperliquid.websocket.bbo_semantics",
+    "hyperliquid.orders.cloid_format",
+    "hyperliquid.orders.tif_semantics",
+    "hyperliquid.safety.schedule_cancel",
+    "hyperliquid.api_wallets.signing_identity",
+    "hyperliquid.nonces.per_signer",
+    "hyperliquid.historical.archive_limits"
+  ],
+  "format": "JSON-compatible YAML 1.2",
+  "source_snapshot_hash_policy": "Documented facts may initially have null source_hash; validator reports them and re-verification triggers remain mandatory.",
+  "local_tests": "10 passed",
+  "local_compileall": "PASS"
+}

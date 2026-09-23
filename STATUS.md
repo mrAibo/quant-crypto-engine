@@ -1,14 +1,14 @@
 # Project Status
 
-> **Continuation entry point:** Read this file first in every new chat/session. Then read the referenced current task. Do not reconstruct project state from memory alone when this repository is available.
+> **Continuation entry point:** Read this file first in every new chat/session. Then read the referenced current task.
 
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
+- Current branch: `task-002-evidence-contract`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-002 / S0-WP02 — Implement the Evidence Contract**
+- Current work package: **TASK-002 / S0-WP02 — Evidence Contract**
 - Previous work package: **TASK-001 COMPLETE**
-- TASK-001 merge commit: `ed9adb0fe868baeed955302bc3d50deaaa1cb7ca`
 - Economic status: **UNPROVEN**
 - Live-trading status: **FORBIDDEN**
 - Production execution work before Gate 1: **FORBIDDEN**
@@ -17,144 +17,142 @@
 
 Determine, as cheaply and scientifically as possible, whether an automated cryptocurrency strategy can produce reproducible **positive net expectancy after all real costs**. If the evidence survives, evolve the same core architecture toward unattended 24/7 trading.
 
-A win rate above 50% is desirable only as a descriptive characteristic; it is not the objective. Positive net expectancy, risk control, and operational safety are mandatory.
+A win rate above 50% is descriptive only, not the optimization objective.
 
 ## Settled scope
 
-- Crypto only for now; do not add equities or other asset classes.
+- Crypto only for now.
 - Hyperliquid is the current execution candidate, not an assumption of profitability.
-- BTC is primary.
-- ETH is replication/generalization and is reported separately.
-- One external major-market reference feed will be selected/frozen during Stage 0.
-- Python 3.12+.
-- Layered/modular monolith through research and initial production.
-- Taker-only for the first economic validation.
-- Maker economics are a later, separate live-measurement workstream.
-- Deterministic rules first, then regularized logistic regression, then LightGBM only if justified.
+- BTC primary; ETH replication/generalization.
+- One external reference feed will be selected/frozen during Stage 0.
+- Python 3.12+ layered/modular monolith.
+- Taker-only first economic validation.
+- Maker execution is a later live-measurement branch.
+- Deterministic rules → regularized logistic regression → optional LightGBM.
 - GPT has no runtime role in v1.
-- Jev is optional. Its only initial hypothesis is whether it ranks/vetoes bad candidate trades better than deterministic and classical controls.
+- Jev gets only one initial bounded veto/ranking hypothesis.
 - No autonomous self-modification.
-- Human approval remains required for strategy releases, capital increases, hard-risk-limit changes, and reset of a latched halt.
+- Human approval is required for strategy releases, capital increases, hard-risk changes, and reset of a latched halt.
 
-## Settled architecture / safety principles
+## Binding project principles
 
 1. First deliverable is a trustworthy evidence system, not a trading bot.
-2. Raw market data is immutable and replayable.
+2. Raw market data must be immutable and replayable.
 3. Point-in-time availability and missingness are explicit.
 4. Core strategy/risk logic contains no exchange/network/filesystem I/O.
-5. Research, replay, shadow, paper, and live should reuse the same strategy/risk/ledger contracts.
-6. Spread/depth/latency/funding/fees must never be double-counted.
+5. Research/replay/shadow/paper/live reuse stable strategy/risk/ledger contracts.
+6. Costs are accounted once; no double-counting of spread/depth/latency/funding/fees.
 7. No production signer/OMS/watchdog deployment before Gate 1.
-8. Later production intent must be durable before transmission.
-9. Later ambiguous order writes must never be blindly retransmitted.
+8. Later live order intent is durable before transmission.
+9. Ambiguous writes are never blindly retransmitted.
 10. Reconciled exchange evidence is authoritative for orders/fills/positions/cash.
-11. Emergency exit/cancel paths may not depend on Jev, GPT, or any optional model.
-12. Production restart begins in recovery, not RUNNING.
-13. Automatic scale-down/halt is allowed; automatic scale-up is forbidden.
-14. A separate independent watchdog is mandatory before unattended live operation.
+11. Emergency paths do not depend on optional AI/models.
+12. Production restart begins in recovery.
+13. Automatic scale-down is allowed; automatic scale-up is forbidden.
+14. Independent watchdog required before unattended live operation.
 
-## Master stage sequence
+## Stage sequence
 
-1. **Stage 0:** evidence contract + recorder.
-2. **Stage 0.5:** economic/profitability frontier.
-3. **Stage 1:** minimal shared simulator.
-4. **Stage 2:** quant falsification + untouched confirmation.
-5. **Gate 1:** first major economic GO/NO-GO.
-6. **Stage 3:** replay parity.
-7. **Stage 4:** prospective shadow/paper.
-8. **Stage 5:** durable OMS/reconciliation/recovery.
-9. **Stage 6:** independent watchdog/testnet chaos.
-10. **Stage 7:** risk-derived micro-live.
-11. **Stage 8:** optional Jev experiment.
-12. **Stage 9:** optional maker experiment.
-13. **Stage 10:** human-approved scaling/autonomous production.
+Stage 0 → Stage 0.5 → Stage 1 → Stage 2 → **Gate 1** → Replay → Shadow/Paper → OMS/Recovery → Watchdog/Chaos → Micro-live → optional Jev/Maker → controlled scaling.
 
-## Important conclusions from external adversarial reviews
+## Completed
 
-Independent reviews from Google, Qwen, GLM, DeepSeek, Claude/Fable and GPT Astra converged on the following:
+### TASK-001 — repository bootstrap
 
-- The biggest risk is building infrastructure before proving executable edge.
-- Short-horizon BTC/ETH taker economics are difficult; horizons must be derived from measured movement, costs, latency, and signal decay rather than guessed.
-- Cross-venue information may matter; a reference feed is justified as a measured feature source, not an assumed edge.
-- Maker backtests are especially vulnerable to queue/adverse-selection optimism; start with taker truth and measure maker fills live later.
-- Full Quant/Jev/GPT factorial ablation is unnecessary initially and increases multiple-testing risk.
-- A failed pure-quant microstructure hypothesis is not automatically rescued by AI using the same data.
-- Testnet proves plumbing/recovery, not profitability.
-- Paper/shadow prove prospective behavior/operations, not actual fill economics.
-- Micro-live is the first stage that can validate real-money execution economics.
-- Unattended autonomy requires reconciliation, durable state, fault drills, and an independent external watchdog—not merely an automatic strategy loop.
+Merged PR #1.
 
-## Resolved disagreements
+Validated:
 
-- **Prediction horizons:** derive in Stage 0.5; do not hard-code them.
-- **Evidence duration:** derive from effective sample size, power, regime coverage, evidence rate and budget; no magic 14/30/90-day gates.
-- **Maker execution:** no initial queue simulator; live-measure later if justified.
-- **GPT:** no runtime v1.
-- **Jev:** one bounded veto/ranking hypothesis only; not a directional engine.
-- **Unknown orders:** an `unknown` observation is not proof an order never existed without full reconciliation evidence.
-- **Market-data cadence:** measure observed cadence/gaps; do not turn an undocumented cadence assumption into architecture.
-- **Production key topology:** intentionally deferred until Gate 1. Later design must separate ordinary strategy authorization from independent cleanup authority and prevent split-brain exposure creation.
-
-## TASK-001 — completed
-
-Implemented and merged:
-
-- reproducible Python package skeleton;
-- Python 3.12 primary and Python 3.13 compatibility validation;
-- `uv` with committed `uv.lock`;
-- Ruff lint and format checks;
+- committed `uv.lock`;
+- Python 3.12 and 3.13 compatibility;
+- Ruff lint/format;
 - strict mypy;
 - pytest;
-- GitHub Actions CI with read-only repository permission;
-- master architecture/evidence/gate documentation;
-- Stage 0/0.5/1/2 stage documents;
-- TASK-001 and TASK-002 specifications;
-- `STATUS.md` as the cross-chat continuation source of truth.
+- read-only GitHub Actions CI.
 
-Validation is recorded in `artifacts/stage_0/bootstrap_report.json`.
+See `artifacts/stage_0/bootstrap_report.json`.
 
-The local sandbox had no external DNS, so the first lock file was generated by GitHub Actions. This was handled transparently; no external harness was required. The temporary workflow write permission used solely to bootstrap the lock was removed, and the final read-only CI passed.
+## Current TASK-002 implementation
 
-## Current task — TASK-002
+Implemented:
 
-Read **[`tasks/TASK_002.md`](tasks/TASK_002.md)**.
+- strict evidence data model and validator;
+- JSON-compatible YAML 1.2 configuration with zero new parser dependency;
+- human-readable source/provenance notes;
+- evidence audit report;
+- 10 unit tests;
+- 21 initial facts:
+  - 13 VERIFIED documented facts;
+  - 8 intentionally UNKNOWN facts.
 
-Objective: implement a machine-readable evidence contract so that economic/safety facts are never silently promoted from assumption to verified input.
+Important preserved UNKNOWNs include:
 
-Planned outputs:
+- actual future project-account fee rates;
+- mainnet submit-to-ACK latency;
+- IOC partial-fill/rejection distributions;
+- realized slippage/own-order impact;
+- API-wallet transfer/withdrawal capability boundaries;
+- external reference-feed selection and timestamp/completeness guarantees;
+- actual completeness of any imported historical period.
 
-- `config/evidence.yaml`
-- `src/cryptobot/evidence/contract.py`
-- `docs/evidence_sources.md`
-- `tests/unit/test_evidence.py`
-- `artifacts/stage_0/evidence_report.json`
+This is intentional: the project must not turn review-model assumptions or generic documentation into observed production facts.
 
-Do **not** start Hyperliquid recorder code before TASK-002 is reviewed, tested, and merged.
+### Local tests
+
+- TASK-002 unit tests: **10/10 PASS**
+- compileall: **PASS**
+- GitHub Ruff/mypy/full pytest: **PENDING PR CI**
+
+## Current verified documentation baseline
+
+Checked against official Hyperliquid documentation on 2026-09-23:
+
+- base perps fee schedule 0.045% taker / 0.015% maker;
+- first maker rebate tier above 0.5% weighted maker volume;
+- funding paid hourly with documented oracle-price-based payment formula;
+- public `l2Book`, `trades`, `bbo`, `activeAssetCtx` subscriptions;
+- `WsBook` documented as snapshot feed, but actual cadence must still be measured;
+- `cloid`, ALO/IOC/GTC, `scheduleCancel` documented;
+- API wallets sign for an account but account queries use the actual account/subaccount address;
+- nonces are per signer;
+- historical archive may be delayed/missing and cannot replace native receive-time capture.
+
+Human-readable provenance is in `docs/evidence_sources.md`.
+
+## Exact next action
+
+Open/review TASK-002 PR and require full GitHub CI green.
+
+After merge, current work package becomes:
+
+**TASK-003 — strict recorder configuration and instrument registry.**
+
+Recorder network code must not start before TASK-003 is complete.
 
 ## User actions currently required
 
 **None.**
 
-If a future blocker cannot be bypassed safely with the connected GitHub tooling, provide the user a complete self-contained task prompt for another harness (for example DeepSeek) rather than silently lowering test/quality requirements.
+If a blocker cannot be bypassed safely with the connected tooling, provide a complete self-contained prompt for another harness (e.g. DeepSeek) instead of lowering the quality/test bar.
 
-## Open decisions — intentionally deferred
+## Open decisions intentionally deferred
 
-- Final external reference venue/feed after Stage 0 fit-for-purpose review.
-- VM/provider/region for long-running recorder.
-- Production signing-key topology and remote submit-gate design, deferred until Gate 1.
-- Exact operational thresholds (staleness, timeouts, disk reserve, watchdog TTL), derived from measured distributions later.
-- Capital amounts and scale ladder, derived later from loss budget, depth, slippage, and exit evidence.
-- Project software license. Repository is public but no open-source license has been approved; do not copy third-party code merely because it is visible.
+- external reference venue/feed;
+- recorder VM/provider/region;
+- production signing-key topology;
+- operational threshold values;
+- capital amounts/scaling ladder;
+- software license.
 
-## Rules for future coding sessions
+## Rules for future sessions
 
 1. Read `STATUS.md` first.
 2. Read the current task file.
-3. Do not skip gates because later infrastructure is interesting.
-4. Every coding task requires tests.
-5. Run relevant tests before committing.
-6. Update `STATUS.md` with every completed task/gate and material architecture decision.
-7. Record failed experiments and rejected decisions; do not rewrite history.
-8. Never add trading credentials/secrets to Git, logs, examples, or fixtures.
-9. If a task reveals an architectural conflict, stop at a safe boundary, document it here, and resolve it before building around the conflict.
-10. Prefer a small correct commit over broad speculative implementation.
+3. Every coding task needs tests.
+4. Run relevant tests before merge.
+5. Update `STATUS.md` on material progress/decisions.
+6. Preserve failed experiments and UNKNOWN facts.
+7. Never commit secrets or credentials.
+8. Do not skip economic/safety gates.
+9. Stop and document architectural conflicts before coding around them.
+10. Prefer small correct commits over speculative breadth.

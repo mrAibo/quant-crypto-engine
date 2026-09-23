@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+import json
+import re
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import StrEnum
-import json
 from pathlib import Path
-import re
-from typing import Any, Mapping, TypeVar
+from typing import Any
 
 
 class EvidenceValidationError(ValueError):
@@ -31,9 +32,6 @@ class EvidenceEnvironment(StrEnum):
     MAINNET = "MAINNET"
     TESTNET = "TESTNET"
     REFERENCE = "REFERENCE"
-
-
-EnumT = TypeVar("EnumT", bound=StrEnum)
 
 
 _FACT_ID_RE = re.compile(r"^[a-z0-9]+(?:[._-][a-z0-9]+)*$")
@@ -84,9 +82,7 @@ class EvidenceFact:
         current = _require_aware_datetime(now, "now")
         if self.reverify_after is not None and current >= self.reverify_after:
             return True
-        if self.effective_to is not None and current > self.effective_to:
-            return True
-        return False
+        return self.effective_to is not None and current > self.effective_to
 
 
 @dataclass(frozen=True, slots=True)
@@ -327,7 +323,7 @@ def _optional_string(value: Any, field: str) -> str | None:
     return value.strip()
 
 
-def _parse_enum(enum_type: type[EnumT], value: Any, field: str) -> EnumT:
+def _parse_enum[EnumT: StrEnum](enum_type: type[EnumT], value: Any, field: str) -> EnumT:
     if not isinstance(value, str):
         raise EvidenceValidationError(f"{field} must be a string")
     try:

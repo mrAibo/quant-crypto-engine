@@ -5,9 +5,9 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `main`
+- Current branch: `task-006-segment-manifest`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-006 / S0-WP06 — Raw segment sealing and manifest recovery**
+- Current work package: **TASK-006 / S0-WP06 — Raw segment sealing and manifest recovery (implemented; CI pending)**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -172,16 +172,23 @@ Artifact: `artifacts/stage_0/rawlog_report.json`.
 
 Read **[`tasks/TASK_006.md`](tasks/TASK_006.md)**.
 
-Objective: make raw segment publication crash-safe through sealing, atomic rename, durable manifest commit, and deterministic restart classification.
+Implemented on the feature branch:
 
-Planned outputs:
+- atomic raw-segment sealing;
+- whole-file checksum and derived metadata verification;
+- canonical manifest records;
+- atomic durable manifest replacement;
+- deterministic storage audit/recovery states;
+- safe recovery of incomplete open tails;
+- explicit blocking of corrupt/missing/mismatched state;
+- crash-point fault injection;
+- `artifacts/stage_0/storage_recovery_report.json`.
 
-- `src/cryptobot/data/manifest.py`
-- `tests/unit/test_manifest.py`
-- `tests/fault/test_manifest_commit.py`
-- `artifacts/stage_0/storage_recovery_report.json`
+### Exact next action
 
-No WebSocket/venue parser, normalization, Parquet, retention, strategy, or trading code belongs in TASK-006.
+Open TASK-006 PR and require full GitHub CI green.
+
+After merge, move to **TASK-007 — Hyperliquid raw public adapter**.
 
 ## User actions currently required
 

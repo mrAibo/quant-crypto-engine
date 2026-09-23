@@ -5,10 +5,10 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `task-003-recorder-config`
+- Current branch: `main`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-003 / S0-WP03 — Strict recorder configuration and instrument registry (validated; merge pending)**
-- Completed: **TASK-001, TASK-002**
+- Current work package: **TASK-004 / S0-WP04 — Immutable event envelope, exact numeric rules, and clock abstraction**
+- Completed: **TASK-001, TASK-002, TASK-003**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
@@ -118,36 +118,40 @@ Checked against official Hyperliquid docs on 2026-09-23 and captured in the evid
 
 Human-readable provenance: `docs/evidence_sources.md`.
 
-## Current task
+## Completed — TASK-003
 
-Read **[`tasks/TASK_003.md`](tasks/TASK_003.md)**.
+PR #3, merge commit `9dd9145342430ed3a09b1e1e90f2a9d9f02af304`.
 
-TASK-003 implementation now exists on the feature branch:
+Delivered:
 
-- strict recorder configuration parser;
-- strict instrument registry;
-- canonical instrument IDs;
-- Hyperliquid BTC PRIMARY / ETH REPLICATION registry;
+- strict recorder configuration;
+- canonical instrument registry;
+- BTC PRIMARY / ETH REPLICATION project roles;
 - explicit nulls for unverified metadata;
 - required-but-unselected reference feed;
 - explicit nulls for unmeasured operational thresholds;
-- config and registry unit tests;
-- `artifacts/stage_0/config_report.json`.
+- 33-test repository suite at the TASK-003 gate;
+- final green CI run `35890625489`.
 
-No network or trading code has been added.
+Artifact: `artifacts/stage_0/config_report.json`.
 
-### Validation
+## Current task
 
-TASK-003 passed GitHub Actions run `35890454291`:
-Ruff, Ruff-format, strict mypy, pytest Python 3.12, and pytest Python 3.13 are all green.
+Read **[`tasks/TASK_004.md`](tasks/TASK_004.md)**.
 
-### Exact next action
+Objective: define the immutable normalized event envelope, exact decimal persistence policy, and clock/time invariants **before any live WebSocket adapter or raw writer exists**.
 
-Run one closeout CI after documentation/artifact changes, then merge PR #3.
+Planned outputs:
 
-After merge, begin **[TASK-004 — immutable event envelope, exact numeric rules, and clock abstraction](tasks/TASK_004.md)**.
+- `src/cryptobot/data/events.py`
+- `src/cryptobot/data/numeric.py`
+- `src/cryptobot/data/clock.py`
+- `tests/unit/test_events.py`
+- `tests/unit/test_numeric.py`
+- `tests/unit/test_clock.py`
+- `artifacts/stage_0/schema_v1.json`
 
-Do not implement a Hyperliquid WebSocket client until TASK-004 passes.
+Do not implement Hyperliquid or reference-feed network clients until TASK-004 passes.
 
 ## User actions currently required
 

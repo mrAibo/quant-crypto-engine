@@ -129,8 +129,10 @@ def normalize_binance_reference_frame(
         )
     stream = obj.get("stream")
     data = obj.get("data")
-    if not isinstance(stream, str) or not isinstance(data, dict) or not all(
-        isinstance(k, str) for k in data
+    if (
+        not isinstance(stream, str)
+        or not isinstance(data, dict)
+        or not all(isinstance(k, str) for k in data)
     ):
         return _error(
             frame,

@@ -2,7 +2,7 @@
 
 ## Status
 
-`VALIDATED — MERGE PENDING`
+`COMPLETE`
 
 ## Objective
 
@@ -288,3 +288,18 @@ GitHub CI run `35923067510` on head `702e9e9294e20b5d30d9589c67d0049adfcca61a`:
 - pytest Python 3.13: **271 PASS**.
 
 Default CI is network-independent. Final live adapter verification was separately completed in public-only workflow `35922113843` and its temporary workflow was removed before this CI run.
+
+
+## Merge provenance
+
+Merged as PR #13 in commit `d850f2d54d02f47b05bfeab0d881ff76ab3275d7`.
+
+Final PR-head validation run `35923167765` on head `ae9250e12fd5fc82fa6aa04269fe52c72c774f43`:
+
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS;
+- pytest Python 3.12: **271 PASS**;
+- pytest Python 3.13: **271 PASS**.
+
+Public-only final adapter probe: `35922113843`.

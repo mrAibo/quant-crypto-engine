@@ -156,7 +156,7 @@ def test_book_walk_rejects_unsorted_levels() -> None:
         DepthLevel(Decimal("100"), Decimal("1")),
     )
 
-    with pytest.raises(FrontierValidationError, match="asks.*ascending"):
+    with pytest.raises(FrontierValidationError, match="ask levels must be sorted ascending"):
         walk_book(asks, requested_size="1", side=BookWalkSide.BUY)
 
 
@@ -185,7 +185,11 @@ def test_horizon_support_exposes_insufficient_cells_instead_of_hiding_them() -> 
         minimum_non_overlapping_windows=3,
     )
 
-    assert [(item.horizon_seconds, item.non_overlapping_windows, item.included) for item in result] == [
+    observed = [
+        (item.horizon_seconds, item.non_overlapping_windows, item.included)
+        for item in result
+    ]
+    assert observed == [
         (10, 10, True),
         (20, 5, True),
         (50, 2, False),

@@ -564,9 +564,7 @@ def _stream_cadence_audit(
 
     ordered = sorted(usable)
     deltas = tuple(
-        current - previous
-        for previous, current in pairwise(ordered)
-        if current > previous
+        current - previous for previous, current in pairwise(ordered) if current > previous
     )
     return StreamCadenceAudit(
         event_type=event_type,

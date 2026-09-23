@@ -51,12 +51,8 @@ def test_subscription_request_rejects_non_unsigned_integer_id() -> None:
 
 def test_payload_classifier_handles_ack_market_unknown_and_malformed() -> None:
     ack = classify_binance_payload(b'{"result":null,"id":1301}')
-    bbo = classify_binance_payload(
-        b'{"stream":"btcusdt@bookTicker","data":{"e":"bookTicker"}}'
-    )
-    trade = classify_binance_payload(
-        b'{"stream":"btcusdt@aggTrade","data":{"e":"aggTrade"}}'
-    )
+    bbo = classify_binance_payload(b'{"stream":"btcusdt@bookTicker","data":{"e":"bookTicker"}}')
+    trade = classify_binance_payload(b'{"stream":"btcusdt@aggTrade","data":{"e":"aggTrade"}}')
     unknown = classify_binance_payload(
         b'{"stream":"btcusdt@markPrice","data":{"e":"markPriceUpdate"}}'
     )

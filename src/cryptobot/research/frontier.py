@@ -124,12 +124,8 @@ class FrontierCell:
     def as_dict(self) -> dict[str, object]:
         return {
             "horizon_seconds": self.horizon_seconds,
-            "movement_quantile_bps": _serialize_optional_decimal(
-                self.movement_quantile_bps
-            ),
-            "known_friction_floor_bps": _serialize_optional_decimal(
-                self.known_friction_floor_bps
-            ),
+            "movement_quantile_bps": _serialize_optional_decimal(self.movement_quantile_bps),
+            "known_friction_floor_bps": _serialize_optional_decimal(self.known_friction_floor_bps),
             "required_capture_fraction": _serialize_optional_decimal(
                 self.required_capture_fraction
             ),
@@ -176,9 +172,7 @@ class FrontierReport:
             "report_version": self.report_version,
             "source_dataset_bundle_sha256": self.source_dataset_bundle_sha256,
             "source_normalized_records_sha256": self.source_normalized_records_sha256,
-            "fee_scenario_bps_per_side": serialize_exact_decimal(
-                self.fee_scenario_bps_per_side
-            ),
+            "fee_scenario_bps_per_side": serialize_exact_decimal(self.fee_scenario_bps_per_side),
             "fee_evidence_class": self.fee_evidence_class.value,
             "latency_evidence_class": self.latency_evidence_class.value,
             "funding_boundary_evidence_class": self.funding_boundary_evidence_class.value,
@@ -373,11 +367,7 @@ def horizon_support(
     for horizon in grid:
         windows = non_overlapping_window_count(observed_duration_ns, horizon)
         included = windows >= minimum_non_overlapping_windows
-        reason = (
-            "SUPPORTED_BY_WINDOW_COUNT"
-            if included
-            else "INSUFFICIENT_NON_OVERLAPPING_WINDOWS"
-        )
+        reason = "SUPPORTED_BY_WINDOW_COUNT" if included else "INSUFFICIENT_NON_OVERLAPPING_WINDOWS"
         result.append(
             HorizonSupport(
                 horizon_seconds=horizon,

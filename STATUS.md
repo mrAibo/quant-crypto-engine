@@ -316,24 +316,26 @@ Delivered:
 
 Read **[`tasks/TASK_014.md`](tasks/TASK_014.md)**.
 
-Implemented on the feature branch:
+TASK-014 is validated on PR #14:
 
-- frozen-source dispatcher across Hyperliquid and Binance USDⓈ-M reference data;
-- explicit EVENTS / EMPTY / NOT_APPLICABLE / ERROR frame outcomes;
-- parser reuse without venue semantic duplication;
-- same-host/boot monotonic causal ordering;
-- deterministic equal-monotonic tie-break;
-- mixed clock-domain strict rejection;
+- frozen-source dispatcher for Hyperliquid + Binance reference;
+- explicit EVENTS / EMPTY / NOT_APPLICABLE / ERROR outcomes;
+- parser reuse without duplicated venue semantics;
+- same-host/boot causal ordering by receive monotonic time;
+- deterministic non-semantic tie-break;
+- mixed-domain strict rejection;
 - wall-clock regression anomaly reporting;
 - raw occurrence and parser event-ID preservation;
-- duplicate stable trade-ID counting without deduplication;
-- deterministic causal-record/report serialization and digest;
-- unit and two-venue QCR1 replay tests;
-- `artifacts/stage_0/causal_normalization_pipeline.json`.
+- stable trade duplicate counting without deduplication;
+- deterministic causal-record/report serialization and SHA-256 digest;
+- two-venue QCR1 replay;
+- **288 tests PASS** on Python 3.12 and 3.13;
+- Ruff/format/strict mypy PASS;
+- CI run `35924328402`.
 
 ### Exact next action
 
-Open PR #14 and require network-independent CI green. Fix any Ruff/format/strict-mypy/pytest failures without weakening causal-domain or raw-provenance guarantees. Then merge and advance to TASK-015 (deterministic Parquet/materialized research tables).
+Merge PR #14, close TASK-014 on main, define TASK-015 for deterministic materialized research tables / Parquet, then implement it on a separate feature branch without adding features, labels, or backtest logic.
 
 ## User actions currently required
 

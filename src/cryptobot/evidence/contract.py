@@ -164,9 +164,7 @@ def load_evidence_contract(path: str | Path) -> EvidenceContract:
     return EvidenceContract(schema_version=schema_version, facts=facts)
 
 
-def validate_evidence(
-    path: str | Path, *, now: datetime | None = None
-) -> EvidenceReport:
+def validate_evidence(path: str | Path, *, now: datetime | None = None) -> EvidenceReport:
     contract = load_evidence_contract(path)
     current = now or datetime.now(UTC)
     current = _require_aware_datetime(current, "now")
@@ -248,9 +246,7 @@ def _parse_fact(raw: Any, index: int) -> EvidenceFact:
 
     raw_triggers = raw["reverify_trigger"]
     if not isinstance(raw_triggers, list) or not raw_triggers:
-        raise EvidenceValidationError(
-            f"facts[{index}].reverify_trigger must be a non-empty array"
-        )
+        raise EvidenceValidationError(f"facts[{index}].reverify_trigger must be a non-empty array")
     triggers: list[str] = []
     for trigger_index, trigger in enumerate(raw_triggers):
         if not isinstance(trigger, str) or not trigger.strip():

@@ -1,0 +1,16 @@
+{
+  "task": "TASK-001",
+  "status": "PENDING_CI",
+  "local_validation": {
+    "python": "3.13.5",
+    "compileall": "PASS",
+    "pytest": "PASS (1 test)",
+    "ruff": "PENDING_GITHUB_CI (tool unavailable in sandbox without network)",
+    "mypy": "PENDING_GITHUB_CI (tool unavailable in sandbox without network)",
+    "uv_lock": "PENDING_GITHUB_CI (sandbox has no external DNS)"
+  },
+  "notes": [
+    "No trading logic or exchange client code is present.",
+    "GitHub CI is configured to generate uv.lock as an artifact, verify lint/type/tests, and fail until the generated lock is committed."
+  ]
+}

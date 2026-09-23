@@ -235,16 +235,27 @@ def test_trade_and_reference_trade_preserve_side_semantics() -> None:
     assert reference.aggressor_side is TradeSide.SELL
 
 
-def test_funding_rate_observation_keeps_predicted_vs_realized_kind() -> None:
+def test_funding_rate_observation_keeps_explicit_current_kind() -> None:
     observation = FundingRateObservation(
         envelope=_envelope(EventType.FUNDING_RATE_OBSERVATION),
         rate=Decimal("-0.0001"),
         rate_period_seconds=3600,
-        kind=FundingObservationKind.PREDICTED,
+        kind=FundingObservationKind.CURRENT,
         effective_boundary_ns=None,
     )
 
-    assert observation.kind is FundingObservationKind.PREDICTED
+    assert observation.kind is FundingObservationKind.CURRENT
+
+
+def test_funding_rate_observation_rejects_non_enum_kind() -> None:
+    with pytest.raises(EventValidationError, match="kind must be FundingObservationKind"):
+        FundingRateObservation(
+            envelope=_envelope(EventType.FUNDING_RATE_OBSERVATION),
+            rate=Decimal("-0.0001"),
+            rate_period_seconds=3600,
+            kind="CURRENT",  # type: ignore[arg-type]
+            effective_boundary_ns=None,
+        )
 
 
 def test_price_event_types_smoke() -> None:

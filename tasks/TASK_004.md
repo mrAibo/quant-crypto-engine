@@ -2,15 +2,13 @@
 
 ## Status
 
-`PENDING`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
-Define the recorder-independent domain contracts for market events, exact numeric persistence, and time/clock handling before any live feed adapter or raw writer is implemented.
+Define recorder-independent domain contracts for normalized events, exact persisted market numerics, and time/clock handling before any live feed adapter or raw writer exists.
 
-This task must make event availability, timestamp meaning, raw provenance, ordering, and monetary precision explicit enough that later recorder/replay code cannot silently invent time or precision.
-
-## Planned files
+## Delivered
 
 - `src/cryptobot/data/events.py`
 - `src/cryptobot/data/numeric.py`
@@ -20,149 +18,64 @@ This task must make event availability, timestamp meaning, raw provenance, order
 - `tests/unit/test_clock.py`
 - `artifacts/stage_0/schema_v1.json`
 
-## Event-envelope contract
+## Contract decisions
 
-Every persisted normalized event must carry, at minimum:
-
-- `schema_version`
-- `event_id`
-- `event_type`
-- `source`
-- `instrument_id`
-- `native_symbol`
-- nullable `exchange_ts_ns`
-- nullable/explicit `exchange_ts_resolution_ns`
-- `exchange_ts_semantics`
-- `recv_wall_ns`
-- `recv_mono_ns`
-- `host_id`
-- `boot_id`
-- `connection_id`
-- `ingest_seq`
-- nullable `native_sequence`
-- nullable `native_update_id`
-- `raw_segment_id`
-- `raw_offset`
-- `raw_sha256`
-- `parse_version`
-- `quality_flags`
-- `availability_kind`
-
-No field may imply precision the venue did not publish.
-
-## Event types to define
-
-Define schema types only; do not implement parsing yet:
-
-- `L2Snapshot`
-- `BBO`
-- `Trade`
-- `FundingRateObservation`
-- `FundingPayment`
-- `MarkPrice`
-- `OraclePrice`
-- `ReferenceBBO`
-- `ReferenceTrade`
-- `FeedStatus`
-- `Gap`
-- `ClockHealth`
-
-A raw payload may later produce multiple normalized events sharing the same raw reference.
-
-## Time model
-
-### Required concepts
-
-- Exchange/native event time: nullable and semantic-tagged.
-- Local receive wall clock: UTC nanoseconds.
-- Local monotonic receive clock: nanoseconds valid only within the same host/boot.
-- Capture order: explicit `ingest_seq`; timestamps are not the journal/order key.
-- Exchange/local apparent lag: allowed only when exchange time is present and with clear naming that it is **not** one-way network latency.
-- No wall-clock calls inside pure event/domain logic.
-
-### Clock abstraction
-
-Define a small injected clock protocol suitable for later recorder/runtime use:
-
-- wall UTC nanoseconds;
-- monotonic nanoseconds;
-- paired sample method if useful to reduce skew between reads.
-
-The clock implementation in this task may wrap the standard library only. No NTP/chrony shell integration yet.
-
-## Exact numeric rules
-
-Define reusable helpers/types for exact persisted market numerics:
-
-- decimal-string parsing for price/size/rate/cash values;
-- rejection of NaN/Infinity;
-- no binary-float input for values persisted as money/size;
-- canonical decimal serialization without silent exponent/precision loss;
-- optional instrument-scaled integer helpers may be included only if their contract is fully deterministic.
-
-Feature/model floats are a later concern and must remain separate from persisted monetary values.
-
-## Validation requirements
-
-- Event envelope immutable after construction.
-- Required identifiers non-empty and structurally validated.
-- Nanosecond fields are integers, not floats.
-- Nullable exchange time remains nullable.
-- Exchange timestamp resolution must not exist without exchange time.
-- `recv_wall_ns` and `recv_mono_ns` non-negative.
-- `ingest_seq`, `raw_offset` non-negative.
-- SHA-256 field strict.
-- Quality flags deterministic and serializable.
-- Availability kind strict enum.
-- Same event serializes deterministically.
-- Decimal round trips exactly.
-- Float money input rejected.
-- Scientific notation accepted only if it round-trips canonically and without loss.
+- Normalized events are immutable.
+- Exchange timestamps are nullable.
+- Exchange timestamp resolution is explicit and never invented.
+- Local receive wall/monotonic times are nanosecond integers.
+- Monotonic elapsed time may be compared only inside the same host/boot identity.
+- Apparent exchange-to-local lag is explicitly not claimed as one-way network latency.
+- Persisted market monetary/size/rate values use exact `Decimal`.
+- Binary float inputs for persisted exact numerics are rejected.
 - NaN/Infinity rejected.
-- Monotonic durations never compare different boot IDs silently.
-- Apparent exchange lag returns unknown when exchange timestamp is absent.
-- No network/filesystem access in unit tests.
+- Canonical fixed-point decimal serialization and exact scaled-integer helpers are provided.
+- No venue parser/network/writer logic was introduced.
 
-## Suggested event semantics enums
+## Supported event-domain types
 
-Define strict enums rather than free text for:
+- L2 snapshot
+- BBO
+- trade
+- funding-rate observation
+- funding payment
+- mark price
+- oracle price
+- reference BBO
+- reference trade
+- feed status
+- gap
+- clock health
 
-- event type;
-- exchange timestamp semantics;
-- availability kind;
-- feed status;
-- quality flags where a bit/enum representation is appropriate.
+## Validation
 
-Do not invent venue-specific sequence guarantees.
+GitHub Actions run `35891685346`:
 
-## Completion artifact
-
-`artifacts/stage_0/schema_v1.json` must describe:
-
-- schema version;
-- event-envelope fields and nullability;
-- supported event types;
-- timestamp semantics;
-- numeric policy;
-- serialization policy;
-- known limitations;
-- validation/CI result.
+- lock verification Python 3.12: **PASS**
+- Ruff lint: **PASS**
+- Ruff format: **PASS**
+- strict mypy: **PASS**
+- pytest Python 3.12: **PASS**
+- lock verification Python 3.13: **PASS**
+- pytest Python 3.13: **PASS**
 
 ## Definition of Done
 
-1. Immutable typed event envelope exists.
-2. Supported event-domain payload types exist without parser/network code.
-3. Exact decimal policy is implemented and tested.
-4. Clock abstraction and time invariants are implemented and tested.
-5. Tests pass on Python 3.12 and 3.13.
-6. Ruff/format/strict mypy/full pytest CI is green.
-7. `STATUS.md` advances to TASK-005.
+1. Immutable typed event envelope exists. **PASS**
+2. Event payload types exist without parser/network code. **PASS**
+3. Exact Decimal policy implemented and tested. **PASS**
+4. Clock abstraction/time invariants implemented and tested. **PASS**
+5. Python 3.12/3.13 tests green. **PASS**
+6. Ruff/format/strict-mypy/full pytest green. **PASS**
+7. TASK-005 defined before merge. **PASS**
+
+## Next task
+
+`TASK-005 — Append-only raw framed writer`.
 
 ## Do Not Build
 
-- Hyperliquid WebSocket client.
-- Reference-venue client.
-- Raw framed writer.
-- Parquet writer.
-- Strategy/features/backtester.
-- Exchange execution/OMS.
+- WebSocket clients.
+- Parquet materialization.
+- strategy/features/backtester.
+- exchange execution/OMS.

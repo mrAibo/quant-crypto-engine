@@ -5,9 +5,9 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `main`
+- Current branch: `task-004-event-time-contracts`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-004 / S0-WP04 — Immutable event envelope, exact numeric rules, and clock abstraction**
+- Current work package: **TASK-004 / S0-WP04 — Immutable event envelope, exact numeric rules, and clock abstraction (validated; merge pending)**
 - Completed: **TASK-001, TASK-002, TASK-003**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -139,19 +139,22 @@ Artifact: `artifacts/stage_0/config_report.json`.
 
 Read **[`tasks/TASK_004.md`](tasks/TASK_004.md)**.
 
-Objective: define the immutable normalized event envelope, exact decimal persistence policy, and clock/time invariants **before any live WebSocket adapter or raw writer exists**.
+TASK-004 is validated:
 
-Planned outputs:
+- immutable event envelope;
+- normalized event-domain types;
+- exact Decimal policy;
+- host/boot-safe clock abstraction;
+- deterministic serialization;
+- no venue parser/network/writer/trading code.
 
-- `src/cryptobot/data/events.py`
-- `src/cryptobot/data/numeric.py`
-- `src/cryptobot/data/clock.py`
-- `tests/unit/test_events.py`
-- `tests/unit/test_numeric.py`
-- `tests/unit/test_clock.py`
-- `artifacts/stage_0/schema_v1.json`
+Green GitHub Actions run: `35891685346`.
 
-Do not implement Hyperliquid or reference-feed network clients until TASK-004 passes.
+### Exact next action
+
+Run one closeout CI after documentation/artifact changes, then merge PR #4.
+
+After merge, begin **[TASK-005 — append-only raw framed writer](tasks/TASK_005.md)**.
 
 ## User actions currently required
 

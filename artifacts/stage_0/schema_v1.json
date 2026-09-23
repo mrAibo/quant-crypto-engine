@@ -1,0 +1,88 @@
+{
+  "task": "TASK-004",
+  "status": "PASS",
+  "schema_version": 1,
+  "event_envelope": {
+    "immutable": true,
+    "fields": {
+      "schema_version": "int, required, exactly 1",
+      "event_id": "string, required",
+      "event_type": "EventType enum",
+      "source": "string, required",
+      "instrument_id": "string, required",
+      "native_symbol": "string, required",
+      "exchange_ts_ns": "int|null",
+      "exchange_ts_resolution_ns": "positive int|null; requires exchange_ts_ns",
+      "exchange_ts_semantics": "ExchangeTimestampSemantics enum",
+      "recv_wall_ns": "non-negative int",
+      "recv_mono_ns": "non-negative int",
+      "host_id": "string, required",
+      "boot_id": "string, required",
+      "connection_id": "string, required",
+      "ingest_seq": "non-negative int",
+      "native_sequence": "non-negative int|null",
+      "native_update_id": "string|null",
+      "raw_segment_id": "string, required",
+      "raw_offset": "non-negative int",
+      "raw_sha256": "64 lowercase hex chars",
+      "parse_version": "string, required",
+      "quality_flags": "QualityFlag bitmask",
+      "availability_kind": "AvailabilityKind enum"
+    }
+  },
+  "supported_event_types": [
+    "L2_SNAPSHOT",
+    "BBO",
+    "TRADE",
+    "FUNDING_RATE_OBSERVATION",
+    "FUNDING_PAYMENT",
+    "MARK_PRICE",
+    "ORACLE_PRICE",
+    "REFERENCE_BBO",
+    "REFERENCE_TRADE",
+    "FEED_STATUS",
+    "GAP",
+    "CLOCK_HEALTH"
+  ],
+  "timestamp_policy": {
+    "exchange_time_nullable": true,
+    "exchange_precision_never_invented": true,
+    "receive_wall_time_unit": "nanoseconds",
+    "receive_monotonic_time_unit": "nanoseconds",
+    "capture_order_field": "ingest_seq",
+    "cross_boot_monotonic_comparison": "forbidden",
+    "exchange_to_local_metric_name": "apparent_exchange_lag_ns",
+    "one_way_network_latency_claim": "forbidden"
+  },
+  "numeric_policy": {
+    "persisted_market_values": "decimal.Decimal",
+    "accepted_exact_inputs": [
+      "string",
+      "integer",
+      "Decimal"
+    ],
+    "binary_float_input": "rejected",
+    "nan_infinity": "rejected",
+    "serialization": "deterministic fixed-point string",
+    "scaled_integer_helpers": true
+  },
+  "serialization_policy": {
+    "envelope_to_dict": "deterministic enum values + quality bitmask",
+    "money_float_serialization": "forbidden"
+  },
+  "known_limitations": [
+    "No venue parser exists yet.",
+    "No raw writer exists yet.",
+    "No Parquet schema exists yet.",
+    "No sequence guarantee is inferred for venues that do not publish one.",
+    "System clock wrapper does not perform NTP/chrony health checks."
+  ],
+  "validation": {
+    "github_ci_run": 35891685346,
+    "github_ruff_check": "PASS",
+    "github_ruff_format_check": "PASS",
+    "github_mypy_strict": "PASS",
+    "github_pytest_python_3_12": "PASS",
+    "github_pytest_python_3_13": "PASS"
+  }
+}

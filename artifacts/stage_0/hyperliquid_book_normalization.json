@@ -1,0 +1,78 @@
+{
+  "task": "TASK-010",
+  "status": "IMPLEMENTED_CI_PENDING",
+  "parse_version": "hyperliquid-book-v1",
+  "official_schema": {
+    "l2Book": {
+      "channel": "l2Book",
+      "data": "WsBook {coin:string, levels:[WsLevel[], WsLevel[]], time:number}",
+      "semantics": "snapshot",
+      "full_snapshot": true
+    },
+    "bbo": {
+      "channel": "bbo",
+      "data": "WsBbo {coin:string, time:number, bbo:[WsLevel|null, WsLevel|null]}",
+      "update_semantics": "sent only if BBO changes on a block"
+    },
+    "level": {
+      "shape": "WsLevel {px:string, sz:string, n:number}",
+      "n_semantics": "number of orders"
+    },
+    "aggregation": {
+      "nSigFigs": "optional 2/3/4/5 or null/full precision",
+      "mantissa": "optional 1/2/5 only with nSigFigs=5",
+      "project_subscription": "no aggregation options supplied",
+      "normalized_aggregation": null,
+      "normalized_depth_limit": null
+    }
+  },
+  "timestamp": {
+    "wire_type": "integer",
+    "observed_unit": "Unix epoch milliseconds",
+    "measurement_workflow_run": 35913361944,
+    "measured_bbo_recv_minus_source_ms": 326,
+    "measured_l2Book_recv_minus_source_ms": 667,
+    "normalized_resolution_ns": 1000000,
+    "semantic": "UNKNOWN",
+    "limitation": "Unit was measured; publication/block/event semantic was not documented and remains UNKNOWN."
+  },
+  "parser_policy": {
+    "source": "raw QCR1 payload bytes",
+    "exact_numeric": "Decimal only; binary float not accepted for px/sz",
+    "additive_unknown_fields": "ignored explicitly for forward compatibility",
+    "required_fields": "strict",
+    "unsupported_coin": "structured error",
+    "non_target_channel": "NOT_APPLICABLE",
+    "crossed_or_unsorted": "preserved in source order and marked SUSPECT",
+    "raw_sha_mismatch": "structured provenance error",
+    "event_id": "SHA-256 of parse version, event type, raw segment, raw offset, raw payload SHA"
+  },
+  "target_events": [
+    "L2Snapshot",
+    "BBO"
+  ],
+  "tests": [
+    "exact L2 normalization",
+    "BBO null side",
+    "crossed BBO suspect flag",
+    "unsorted L2 preserved and suspect",
+    "additive future fields",
+    "non-target NOT_APPLICABLE",
+    "structured parse error taxonomy",
+    "raw SHA provenance validation",
+    "deterministic event IDs and serialization",
+    "exact non-float serialization",
+    "QCR1 raw replay determinism and provenance"
+  ],
+  "validation": {
+    "github_ci": "PENDING"
+  },
+  "deliberately_out_of_scope": [
+    "trades",
+    "funding/mark/oracle",
+    "external reference feed",
+    "Parquet",
+    "features/models/backtest",
+    "trading/OMS/signing"
+  ]
+}

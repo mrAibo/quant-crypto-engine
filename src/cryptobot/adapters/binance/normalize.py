@@ -117,8 +117,10 @@ def normalize_binance_reference_frame(
         )
     if not isinstance(decoded, dict) or not all(isinstance(k, str) for k in decoded):
         return _error(
-            frame, None, BinanceReferenceParseErrorCode.INVALID_ENVELOPE,
-            "top-level message must be a string-keyed object"
+            frame,
+            None,
+            BinanceReferenceParseErrorCode.INVALID_ENVELOPE,
+            "top-level message must be a string-keyed object",
         )
     obj = cast(dict[str, object], decoded)
     if "result" in obj and "id" in obj:

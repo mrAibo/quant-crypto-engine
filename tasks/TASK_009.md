@@ -2,7 +2,7 @@
 
 ## Status
 
-`VALIDATED — MERGE PENDING`
+`COMPLETE`
 
 ## Objective
 
@@ -314,3 +314,19 @@ These are smoke observations only, not a feed-completeness or capacity guarantee
 ## Next task
 
 `TASK-010 — Hyperliquid L2/BBO Normalization from Raw Capture`.
+
+
+## Merge provenance
+
+Merged as PR #9 in commit `4470202c8030ab07acbf031d14968ff72bda2969`.
+
+Final network-independent closeout CI run `35912786539` passed:
+
+- lock/install: PASS;
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS;
+- pytest Python 3.12: PASS;
+- pytest Python 3.13: PASS.
+
+The temporary one-shot live-network workflow was removed before merge.

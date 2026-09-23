@@ -1,0 +1,96 @@
+name: TASK-013 Final Binance Probe
+
+on:
+  push:
+    branches: [task-013-binance-reference-feed]
+    paths:
+      - ".github/workflows/task013-final-binance-probe.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  reference-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.18"
+      - run: uv python install 3.12
+      - run: uv sync --locked --all-groups --python 3.12
+      - name: Validate current adapter on public Binance routes
+        shell: bash
+        run: |
+          uv run --python 3.12 python - <<'PY'
+          import asyncio, json, time
+          from cryptobot.adapters.binance.public import (
+              BinanceFrameKind,
+              BinanceReferenceAdapter,
+              BinanceTransportSettings,
+          )
+          from cryptobot.data.clock import SystemClock
+
+          async def main():
+              adapter=BinanceReferenceAdapter(
+                  clock=SystemClock(host_id="gha-probe",boot_id="gha-probe"),
+                  transport=BinanceTransportSettings(
+                      max_message_bytes=4_194_304,
+                      receive_queue_high_water=256,
+                      open_timeout_seconds=10,
+                      close_timeout_seconds=5,
+                  ),
+                  connection_id_factory=lambda route: f"probe-{route}",
+              )
+              acks=set()
+              observed={}
+              counts={}
+              started=time.monotonic()
+              stream=adapter.session_frames()
+              try:
+                  while time.monotonic()-started < 30:
+                      frame=await asyncio.wait_for(anext(stream),timeout=10)
+                      counts[frame.kind.value]=counts.get(frame.kind.value,0)+1
+                      if frame.kind is BinanceFrameKind.SUBSCRIPTION_ACK:
+                          acks.add(frame.subscription_ack_id)
+                      if frame.kind is BinanceFrameKind.MARKET_DATA:
+                          msg=json.loads(frame.payload)
+                          data=msg["data"]
+                          key=(frame.event_type,data.get("s"))
+                          observed[key]={
+                              "route":frame.route.value,
+                              "stream":frame.stream,
+                              "st":data.get("st"),
+                              "keys":sorted(data.keys()),
+                              "recv_wall_ns":frame.metadata.recv_wall_ns,
+                          }
+                      wanted={
+                          ("bookTicker","BTCUSDT"),("bookTicker","ETHUSDT"),
+                          ("aggTrade","BTCUSDT"),("aggTrade","ETHUSDT"),
+                      }
+                      if wanted.issubset(observed) and acks=={1301,1302}:
+                          break
+              finally:
+                  await stream.aclose()
+
+              wanted={
+                  ("bookTicker","BTCUSDT"),("bookTicker","ETHUSDT"),
+                  ("aggTrade","BTCUSDT"),("aggTrade","ETHUSDT"),
+              }
+              if acks != {1301,1302}:
+                  raise AssertionError(f"unexpected ACK ids: {sorted(acks, key=str)}")
+              if not wanted.issubset(observed):
+                  raise AssertionError(f"missing streams: {sorted(wanted-set(observed))}")
+              if any(item["st"] != 1 for item in observed.values()):
+                  raise AssertionError("non-USD-M st observed")
+              print(json.dumps({
+                  "ack_ids":sorted(acks),
+                  "observed":{"|".join(k):v for k,v in sorted(observed.items())},
+                  "counts":counts,
+                  "duration_seconds":time.monotonic()-started,
+                  "credentials_used":False,
+              },sort_keys=True))
+
+          asyncio.run(main())
+          PY

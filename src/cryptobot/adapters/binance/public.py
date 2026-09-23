@@ -324,9 +324,7 @@ def classify_binance_payload(payload: bytes) -> BinancePayloadClassification:
         ack_id = obj.get("id")
         if isinstance(ack_id, bool) or not isinstance(ack_id, str | int):
             return BinancePayloadClassification(BinanceFrameKind.UNKNOWN, None, None, None)
-        return BinancePayloadClassification(
-            BinanceFrameKind.SUBSCRIPTION_ACK, None, None, ack_id
-        )
+        return BinancePayloadClassification(BinanceFrameKind.SUBSCRIPTION_ACK, None, None, ack_id)
 
     stream = obj.get("stream")
     data = obj.get("data")
@@ -335,16 +333,10 @@ def classify_binance_payload(payload: bytes) -> BinancePayloadClassification:
     data_obj = cast(dict[str, object], data)
     event_type = data_obj.get("e")
     if not isinstance(event_type, str):
-        return BinancePayloadClassification(
-            BinanceFrameKind.UNKNOWN, stream, None, None
-        )
+        return BinancePayloadClassification(BinanceFrameKind.UNKNOWN, stream, None, None)
     if event_type not in {"bookTicker", "aggTrade"}:
-        return BinancePayloadClassification(
-            BinanceFrameKind.UNKNOWN, stream, event_type, None
-        )
-    return BinancePayloadClassification(
-        BinanceFrameKind.MARKET_DATA, stream, event_type, None
-    )
+        return BinancePayloadClassification(BinanceFrameKind.UNKNOWN, stream, event_type, None)
+    return BinancePayloadClassification(BinanceFrameKind.MARKET_DATA, stream, event_type, None)
 
 
 def _message_to_bytes(message: str | bytes) -> bytes:

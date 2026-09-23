@@ -285,55 +285,75 @@ Decision: TASK-012 parses these values as exact Decimal strings and leaves excha
 
 Frozen Stage-0 reference source: **Binance USDⓈ-M Futures**, BTCUSDT and ETHUSDT only.
 
-Primary official sources re-verified on 2026-09-23:
+Current official sources re-verified on 2026-09-23:
 
-- <https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/websocket-market-streams/Connect>
-- <https://developers.binance.info/en/docs/catalog/core-trading-derivatives-trading-usd-s-m-futures/api/ws-streams/public>
-- <https://developers.binance.info/docs/derivatives/usds-margined-futures/websocket-market-streams/All-Market-Mini-Tickers-Stream>
+- Connect / transport rules: <https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/websocket-market-streams/Connect>
+- 2026 routed-endpoint migration and stream mapping: <https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/websocket-market-streams/Important-WebSocket-Change-Notice>
+- Live SUBSCRIBE control messages: <https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/websocket-market-streams/Live-Subscribing-Unsubscribing-to-streams>
+- Exact currently observed post-migration wire shape: <https://github.com/mrAibo/quant-crypto-engine/actions/runs/35919551313>
 
-Current transport contract:
+### Documented transport contract
 
 - Base host: `wss://fstream.binance.com`.
-- Order-book high-frequency streams use the `/public` route.
+- High-frequency public order-book streams use the `/public` route.
 - Regular market streams such as `aggTrade` use the `/market` route.
-- TASK-013 therefore uses **two independent connections**:
+- Individual-symbol `bookTicker` is explicitly mapped to Public; `aggTrade` is explicitly mapped to Market.
+- TASK-013 therefore uses **two independent unauthenticated connections**:
   - `wss://fstream.binance.com/public/stream` for BTCUSDT/ETHUSDT `bookTicker`;
   - `wss://fstream.binance.com/market/stream` for BTCUSDT/ETHUSDT `aggTrade`.
-- Subscription is sent through the documented `SUBSCRIBE` control message.
+- JSON `SUBSCRIBE` remains supported. Its `id` is documented as an **unsigned integer**; the implementation uses deterministic IDs `1301` and `1302`.
 - A connection is documented as valid for 24 hours.
 - Server ping frames arrive every 3 minutes; a pong is required within 10 minutes.
-- Inbound client messages are limited to 10/s and a connection supports up to 1024 streams.
+- Client-to-server messages are limited to 10/s and one connection supports at most 1024 streams.
+- Combined stream payloads are wrapped as `{"stream":"<streamName>","data":<rawPayload>}`.
 
-Current `bookTicker` contract:
+### Measured current wire contract
 
-- real-time updates;
+Public-only mainnet probe `35919551313` successfully received both subscription acknowledgements and all four frozen streams without credentials.
+
+Observed `bookTicker` fields for BTCUSDT and ETHUSDT:
+
+- `e="bookTicker"`;
 - `u` update ID;
 - `E` event time;
 - `T` transaction time;
 - `s` symbol;
-- `ps` pair after CM migration;
+- `ps` pair;
 - `b/B` best bid price/quantity;
 - `a/A` best ask price/quantity;
-- `st=1` USD-M, `st=2` COIN-M after CM migration;
-- RPI orders are excluded from the displayed BBO.
+- `st=1`;
+- price/quantity fields arrived as strings.
 
-Current `aggTrade` contract:
+Observed `aggTrade` fields for BTCUSDT and ETHUSDT:
 
-- approximately 100 ms aggregation for market fills with the same price and taking side;
-- `E` event time and `T` trade time;
+- `e="aggTrade"`;
+- `E` event time;
+- `T` trade time;
 - `a` aggregate trade ID;
-- exact string `p` price and `q` total quantity;
-- `nq` normal quantity excluding RPI-involved quantity;
-- `f/l` first/last underlying trade IDs;
-- `m` = buyer is market maker;
-- `st=1` USD-M after CM migration.
+- `p` price;
+- `q` total quantity;
+- `nq` normal quantity;
+- `f/l` first/last trade IDs;
+- `m` boolean buyer-maker flag;
+- `s` symbol;
+- `st=1`;
+- price/quantity fields arrived as strings.
 
-Normalization decisions:
+The short probe measured apparent receive-wall minus exchange timestamp values around tens to a few hundred milliseconds. Those are **not** one-way network latency measurements and are not treated as an SLA.
 
-- `ReferenceBBO.exchange_ts` uses documented event time `E`, semantic `EVENT_TIME`.
-- `ReferenceTrade.exchange_ts` uses documented trade time `T`, semantic `TRADE_TIME`.
-- `m=true` means buyer is maker, therefore seller is the taker/aggressor → normalized `SELL`.
-- `m=false` means buyer is the taker/aggressor → normalized `BUY`.
-- Local receive wall time on the shared recorder host remains the primary cross-venue availability axis.
-- No Binance execution/account/private API is permitted in TASK-013.
+### Normalization decisions
+
+- `ReferenceBBO.exchange_ts` uses `E` with `EVENT_TIME`; `T` remains recoverable from immutable raw provenance because v1 has one exchange timestamp field.
+- `ReferenceTrade.exchange_ts` uses `T` with `TRADE_TIME`; `E` remains in immutable raw provenance.
+- The feed defines `m` as whether the buyer is market maker. Therefore `m=true` means the seller is the taker/aggressor → normalized `SELL`; `m=false` means buyer taker/aggressor → normalized `BUY`.
+- The parser rejects `st != 1` so COIN-M data cannot silently enter the USDⓈ-M reference universe.
+- Local receive wall time on the **same recorder host** remains the primary cross-venue causal-availability axis.
+- No Binance execution, account, or private API is permitted in TASK-013.
+
+### Remaining UNKNOWNs
+
+- exact reconnect replay/backfill behavior;
+- completeness during disconnection;
+- future schema stability beyond the documented migration and measured current wire sample;
+- deployment-region-specific apparent lag distribution.
 

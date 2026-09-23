@@ -265,10 +265,7 @@ def test_qcr1_to_parquet_is_deterministic_auditable_and_non_deduplicating(
         700,
     ]
 
-    frame_by_raw = {
-        (frame.ref.segment_id, frame.ref.offset): frame
-        for frame in all_frames
-    }
+    frame_by_raw = {(frame.ref.segment_id, frame.ref.offset): frame for frame in all_frames}
     for row in event_rows:
         raw_key = (row["raw_segment_id"], row["raw_offset"])
         frame = frame_by_raw[raw_key]

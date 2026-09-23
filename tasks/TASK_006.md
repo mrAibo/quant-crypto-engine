@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`IN REVIEW — IMPLEMENTED, GITHUB CI PENDING`
 
 ## Objective
 
@@ -179,15 +179,31 @@ Also test:
 - CI status;
 - known limitations.
 
+## Implementation status
+
+Implemented:
+
+- canonical manifest and immutable segment record types;
+- CLEAN-only segment sealing;
+- whole-file SHA-256 + byte length + frame/metadata statistics;
+- atomic sealed-file rename and parent-directory fsync;
+- atomic canonical-manifest temp/replace/fsync commit;
+- storage audit with explicit recovery states;
+- incomplete-open recovery via TASK-005 safe-tail truncation;
+- fault-hook injection at every publication commit boundary;
+- unit + crash-recovery tests.
+
+No network, normalization, Parquet, retention, or trading code is present.
+
 ## Definition of Done
 
-1. Clean raw segments seal to immutable checksum-addressed files.
-2. Manifest commit is atomic/durable at Stage 0 scope.
-3. Restart recovery classifies every supported crash state deterministically.
-4. Orphans/mismatches are never silently deleted or accepted.
-5. Python 3.12/3.13 tests green.
-6. Ruff/format/strict mypy/full pytest green.
-7. `STATUS.md` advances to TASK-007.
+1. Clean raw segments seal to immutable checksum-addressed files. **IMPLEMENTED**
+2. Manifest commit is atomic/durable at Stage 0 scope. **IMPLEMENTED**
+3. Restart recovery classifies every supported crash state deterministically. **IMPLEMENTED**
+4. Orphans/mismatches are never silently deleted or accepted. **IMPLEMENTED**
+5. Python 3.12/3.13 tests green. **PENDING CI**
+6. Ruff/format/strict mypy/full pytest green. **PENDING CI**
+7. `STATUS.md` advances to TASK-007. **PENDING**
 
 ## Do Not Build
 

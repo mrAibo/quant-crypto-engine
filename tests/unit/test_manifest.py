@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -220,13 +221,7 @@ def test_audit_detects_manifest_metadata_mismatch_even_when_file_hash_matches(
         segment_id="segment-1",
         sealed_wall_ns=9_000,
     )
-    altered = SegmentManifestRecord(
-        **{
-            **record.as_dict(),
-            "source_ids": ("wrong-source",),
-            "publication_status": PublicationStatus.PUBLISHED,
-        }
-    )  # type: ignore[arg-type]
+    altered = replace(record, source_ids=("wrong-source",))
     commit_manifest(
         manifest_path,
         SegmentManifest(schema_version=1, records=(altered,)),

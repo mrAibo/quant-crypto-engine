@@ -10,9 +10,6 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import pytest
 
-type _ReadTableFn = Callable[..., pa.Table]
-_READ_TABLE = cast(_ReadTableFn, pq.read_table)
-
 from cryptobot.data.instruments import load_instrument_registry
 from cryptobot.data.materialize import materialize_research_dataset
 from cryptobot.data.normalization_pipeline import (
@@ -22,6 +19,10 @@ from cryptobot.data.normalization_pipeline import (
     normalize_frames,
 )
 from cryptobot.data.rawlog import RawFrameMetadata, RawLog, iter_raw_frames
+
+type _ReadTableFn = Callable[..., pa.Table]
+
+_READ_TABLE = cast(_ReadTableFn, pq.read_table)
 
 
 def _metadata(

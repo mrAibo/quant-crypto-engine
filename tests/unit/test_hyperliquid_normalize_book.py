@@ -127,6 +127,17 @@ def test_l2_snapshot_normalizes_exactly_with_raw_provenance() -> None:
     assert event.envelope.quality_flags is QualityFlag.NONE
 
 
+def test_empty_l2_sides_are_preserved_without_synthesizing_levels() -> None:
+    payload = b'{"channel":"l2Book","data":{"coin":"BTC","time":1790193801460,"levels":[[],[]]}}'
+
+    result = normalize_book_frame(_raw_frame(payload), _registry())
+
+    assert isinstance(result.event, L2Snapshot)
+    assert result.event.bids == ()
+    assert result.event.asks == ()
+    assert result.event.envelope.quality_flags is QualityFlag.NONE
+
+
 def test_bbo_preserves_independent_null_side() -> None:
     frame = _raw_frame(_bbo_payload([{"px": "2500.5", "sz": "3.25", "n": 6}, None]))
 

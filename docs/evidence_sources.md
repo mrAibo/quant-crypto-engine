@@ -44,6 +44,55 @@ Verified on 2026-09-23:
 
 Important limitation: documentation is not an observed latency/cadence SLA. The recorder must measure actual cadence, staleness, reconnects and gaps rather than hard-coding review-model claims such as “slow book every 5 seconds.”
 
+## Hyperliquid WebSocket transport
+
+Primary sources:
+
+- <https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket>
+- <https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/timeouts-and-heartbeats>
+
+Re-verified on 2026-09-23 for TASK-007:
+
+- Mainnet endpoint: `wss://api.hyperliquid.xyz/ws`.
+- Subscription requests use `{"method":"subscribe","subscription":{...}}`.
+- The official connection example acknowledges a subscription on `channel: "subscriptionResponse"` and echoes the subscription in `data`.
+- The server may close a connection when it has sent no message to the client for 60 seconds.
+- Application heartbeat request: `{"method":"ping"}`.
+- Heartbeat response: `{"channel":"pong"}`.
+- The official Python SDK currently sends its application-level ping every 50 seconds; this is an SDK implementation choice, not a protocol SLA.
+
+Important limitation: heartbeat proves the connection answers; it does **not** prove a market-data channel is fresh. Channel freshness and gaps remain separately observed recorder evidence.
+
+## Hyperliquid WebSocket message envelopes
+
+Official source pinned to the verified SDK commit:
+
+<https://github.com/hyperliquid-dex/hyperliquid-python-sdk/blob/2fdb18f9517675ea03695a0962bd19eece9c83f0/hyperliquid/utils/types.py>
+
+Re-verified on 2026-09-23:
+
+- `l2Book` message envelope: `channel = "l2Book"`, with book data under `data`.
+- `bbo` message envelope: `channel = "bbo"`, with BBO data under `data`.
+- `trades` message envelope: `channel = "trades"`, with a list of trades under `data`.
+- `activeAssetCtx` message envelope: `channel = "activeAssetCtx"`, with coin/context data under `data`.
+- The SDK also models `pong` as a top-level channel.
+
+TASK-007 intentionally does **not** promote the SDK's inner business-field typing into the raw-capture contract. It inspects only the minimum top-level routing/ack fields required for safe operation and persists the received frame bytes unchanged.
+
+## Hyperliquid WebSocket limits
+
+Primary source: <https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/rate-limits-and-user-limits>
+
+Re-verified on 2026-09-23:
+
+- maximum 10 WebSocket connections per IP;
+- maximum 30 new WebSocket connections per minute;
+- maximum 1000 WebSocket subscriptions;
+- maximum 2000 messages sent to Hyperliquid per minute across WebSocket connections;
+- maximum 100 simultaneous inflight WebSocket post messages.
+
+TASK-007 uses public subscriptions and no WebSocket post requests. Reconnect behavior must remain comfortably below the documented connection-rate ceiling.
+
 ## Hyperliquid orders
 
 Primary source: <https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/exchange-endpoint>

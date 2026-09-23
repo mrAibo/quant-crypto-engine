@@ -1,13 +1,16 @@
 from __future__ import annotations
 
+from collections.abc import AsyncIterator
 from dataclasses import FrozenInstanceError
 from pathlib import Path
+from typing import cast
 
 import pytest
 
 from cryptobot.data.clock import ClockSample
 from cryptobot.data.rawlog import RawFrameMetadata
 from cryptobot.data.recorder import (
+    CaptureFrame,
     RecorderError,
     RecorderRuntimeSettings,
     RecorderState,
@@ -101,9 +104,9 @@ def test_segment_id_rejects_invalid_run_id() -> None:
 
 
 def test_initial_snapshot_is_explicit_and_immutable(tmp_path: Path) -> None:
-    async def empty_source():
+    async def empty_source() -> AsyncIterator[CaptureFrame]:
         if False:
-            yield  # pragma: no cover
+            yield cast(CaptureFrame, object())  # pragma: no cover
 
     supervisor = RecorderSupervisor(
         source=empty_source(),

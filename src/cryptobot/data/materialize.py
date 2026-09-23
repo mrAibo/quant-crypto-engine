@@ -4,10 +4,11 @@ import hashlib
 import json
 import os
 import shutil
+from collections.abc import Callable
 from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pyarrow as pa
 import pyarrow.parquet as pq
@@ -39,6 +40,12 @@ PARQUET_VERSION = "2.6"
 DATA_PAGE_VERSION = "1.0"
 COMPRESSION = "zstd"
 COMPRESSION_LEVEL = 3
+
+type _WriteTableFn = Callable[..., None]
+type _ReadTableFn = Callable[..., pa.Table]
+
+_WRITE_TABLE = cast(_WriteTableFn, pq.write_table)
+_READ_TABLE = cast(_ReadTableFn, pq.read_table)
 
 _TABLE_FILENAMES = (
     "frames.parquet",
@@ -404,7 +411,9 @@ def read_manifest(path: str | Path) -> dict[str, Any]:
 
 
 def _build_rows(results: tuple[FrameResult, ...]) -> dict[str, list[dict[str, object]]]:
-    rows = {filename: [] for filename in _TABLE_FILENAMES}
+    rows: dict[str, list[dict[str, object]]] = {
+        filename: [] for filename in _TABLE_FILENAMES
+    }
     ordered_results = sorted(results, key=_frame_sort_key)
     seen_event_ids: set[str] = set()
 
@@ -647,7 +656,7 @@ def _decimal_or_none(value: Decimal | None) -> str | None:
 
 
 def _write_table(table: pa.Table, path: Path) -> None:
-    pq.write_table(
+    _WRITE_TABLE(
         table,
         path,
         version=PARQUET_VERSION,
@@ -667,7 +676,7 @@ def _validate_round_trip(
     expected_schema: pa.Schema,
     expected_rows: list[dict[str, object]],
 ) -> None:
-    actual = pq.read_table(path, use_threads=False)
+    actual = _READ_TABLE(path, use_threads=False)
     if not actual.schema.equals(expected_schema, check_metadata=True):
         raise MaterializationError(f"schema mismatch after Parquet round trip: {path.name}")
     if actual.num_rows != len(expected_rows):

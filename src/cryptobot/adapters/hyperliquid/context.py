@@ -158,9 +158,7 @@ def normalize_context_frame(
         )
 
     raw_ctx = payload.get("ctx")
-    if not isinstance(raw_ctx, dict) or not all(
-        isinstance(key, str) for key in raw_ctx
-    ):
+    if not isinstance(raw_ctx, dict) or not all(isinstance(key, str) for key in raw_ctx):
         return _error_result(
             frame,
             channel,

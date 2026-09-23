@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -74,7 +75,7 @@ def test_end_to_end_frames_roundtrip_and_publish_valid_manifest(tmp_path: Path) 
             _frame(3, b"\xff\x00opaque"),
         ]
 
-        async def source():
+        async def source() -> AsyncIterator[FakeFrame]:
             for frame in expected:
                 yield frame
 
@@ -126,7 +127,7 @@ def test_bounded_queue_applies_backpressure_without_dropping(tmp_path: Path) -> 
         writer_gate = asyncio.Event()
         persist_calls = 0
 
-        async def source():
+        async def source() -> AsyncIterator[FakeFrame]:
             for frame in expected:
                 yield frame
 
@@ -181,7 +182,7 @@ def test_request_stop_drains_already_enqueued_frames(tmp_path: Path) -> None:
     async def scenario() -> None:
         release_source = asyncio.Event()
 
-        async def source():
+        async def source() -> AsyncIterator[FakeFrame]:
             yield _frame(1, b"one")
             await release_source.wait()
             yield _frame(2, b"two")

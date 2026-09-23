@@ -1,6 +1,6 @@
 {
   "task": "TASK-003",
-  "status": "IMPLEMENTED_CI_PENDING",
+  "status": "PASS",
   "schema_versions": {
     "recorder_config": 1,
     "instrument_registry": 1
@@ -54,14 +54,19 @@
     "recorder.reconnect.max_delay_seconds",
     "recorder.reconnect.jitter_fraction"
   ],
-  "design_notes": [
-    "Instrument IDs are canonicalized from venue/environment/product/native symbol, so later metadata enrichment does not rename the instrument.",
-    "Reference feed is required by project scope but intentionally not selected in TASK-003.",
-    "Operational thresholds remain null until derived from evidence or implementation measurements.",
-    "No network or exchange-client code is introduced."
-  ],
   "validation": {
-    "local": "NOT_RUN_IN_CURRENT_GITHUB_ONLY_PASS",
-    "github_ci": "PENDING"
-  }
+    "github_ci_run": 35890454291,
+    "github_ruff_check": "PASS",
+    "github_ruff_format_check": "PASS",
+    "github_mypy_strict": "PASS",
+    "github_pytest_python_3_12": "PASS",
+    "github_pytest_python_3_13": "PASS",
+    "tests_total": 33
+  },
+  "notes": [
+    "Canonical IDs exclude still-unverified metadata so later enrichment does not rename instruments.",
+    "Reference feed remains required but unselected.",
+    "Operational thresholds remain explicit nulls until derived.",
+    "No network or trading logic was introduced."
+  ]
 }

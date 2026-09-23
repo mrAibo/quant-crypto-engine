@@ -8,6 +8,7 @@ from enum import IntEnum
 from pathlib import Path
 from typing import cast
 
+from cryptobot.adapters.binance.public import SOURCE_ID as BINANCE_SOURCE_ID
 from cryptobot.adapters.binance.public import (
     BinanceFrameKind,
     BinanceReconnectPolicy,
@@ -15,7 +16,6 @@ from cryptobot.adapters.binance.public import (
     BinanceTransportSettings,
     classify_binance_payload,
 )
-from cryptobot.adapters.binance.public import SOURCE_ID as BINANCE_SOURCE_ID
 from cryptobot.adapters.hyperliquid.public import (
     HyperliquidPublicAdapter,
     ReconnectPolicy,

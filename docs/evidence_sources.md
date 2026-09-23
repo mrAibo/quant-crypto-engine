@@ -197,3 +197,29 @@ Measured unit probe:
 
 Decision: TASK-010 may convert the observed wire `time` as Unix epoch milliseconds to nanoseconds with 1 ms resolution, while retaining `ExchangeTimestampSemantics.UNKNOWN`. The measurement does not justify relabeling the timestamp as block or publication time.
 
+
+
+## Hyperliquid trade normalization
+
+Primary official source:
+
+- <https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/subscriptions>
+
+Official Python SDK reference:
+
+- <https://github.com/hyperliquid-dex/hyperliquid-python-sdk/tree/2fdb18f9517675ea03695a0962bd19eece9c83f0>
+
+Re-verified on 2026-09-23 before TASK-011 implementation:
+
+- `trades` subscribes by coin and returns `WsTrade[]`.
+- Official `WsTrade` fields: `coin`, `side`, `px`, `sz`, `hash`, `time`, `tid`, `users`.
+- `px` and `sz` are strings.
+- `tid` is documented as a 50-bit hash of `(buyer_oid, seller_oid)`.
+- The docs recommend `(block_time, coin, tid)` as a globally unique trade identifier.
+- `users` is documented as `[buyer, seller]`.
+- The reviewed official trade schema does **not** define `side` as aggressor direction. TASK-011 therefore preserves `native_side` and sets normalized `aggressor_side=UNKNOWN`.
+- Public-trade reconnect replay/duplicate guarantees and array sequencing guarantees are not documented in the reviewed source and remain UNKNOWN.
+- The official Python SDK master was still commit `2fdb18f9517675ea03695a0962bd19eece9c83f0` at re-verification time.
+
+The v1 normalized `Trade` contract does not contain buyer/seller address fields. TASK-011 validates the documented two-element `users` array but deliberately does not expand the event schema solely to persist public addresses; raw provenance retains the complete original payload.
+

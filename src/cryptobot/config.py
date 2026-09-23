@@ -5,7 +5,11 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from typing import Any
 
-from cryptobot.data.instruments import Environment, InstrumentRegistry
+from cryptobot.data.instruments import (
+    Environment,
+    InstrumentRegistry,
+    InstrumentValidationError,
+)
 
 
 class RecorderConfigError(ValueError):
@@ -145,7 +149,11 @@ def load_recorder_config(path: str | Path, registry: InstrumentRegistry) -> Reco
     _require_exact_fields(raw, _ROOT_FIELDS, "recorder config")
 
     schema_version = raw["schema_version"]
-    if not isinstance(schema_version, int) or isinstance(schema_version, bool) or schema_version != 1:
+    if (
+        not isinstance(schema_version, int)
+        or isinstance(schema_version, bool)
+        or schema_version != 1
+    ):
         raise RecorderConfigError("schema_version must be integer 1")
 
     sources = _parse_sources(raw["sources"], registry)
@@ -208,7 +216,10 @@ def _parse_source(raw: Any, index: int, registry: InstrumentRegistry) -> Recorde
         )
 
     for instrument_id in instrument_ids:
-        instrument = registry.get(instrument_id)
+        try:
+            instrument = registry.get(instrument_id)
+        except InstrumentValidationError as exc:
+            raise RecorderConfigError(str(exc)) from exc
         if instrument.venue != venue or instrument.environment is not environment:
             raise RecorderConfigError(
                 f"sources[{index}] instrument {instrument_id} does not match "

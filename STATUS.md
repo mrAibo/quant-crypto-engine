@@ -5,10 +5,10 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `task-005-raw-framed-writer`
+- Current branch: `main`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-005 / S0-WP05 — Append-only raw framed writer (validated; merge pending)**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004**
+- Current work package: **TASK-006 / S0-WP06 — Raw segment sealing and manifest recovery**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
@@ -151,27 +151,37 @@ Delivered:
 
 Artifact: `artifacts/stage_0/schema_v1.json`.
 
+## Completed — TASK-005
+
+PR #5, merge commit `544bf8ad0f4c04468035e0af9a4e260f3b39f187`.
+
+Delivered:
+
+- deterministic QCR1 raw frame log;
+- exact source payload preservation;
+- explicit write-vs-fsync durability semantics;
+- payload/frame checksums;
+- scan/replay helpers;
+- safe torn-tail truncation;
+- middle-corruption hard failure;
+- final green CI run `35892726690`.
+
+Artifact: `artifacts/stage_0/rawlog_report.json`.
+
 ## Current task
 
-Read **[`tasks/TASK_005.md`](tasks/TASK_005.md)**.
+Read **[`tasks/TASK_006.md`](tasks/TASK_006.md)**.
 
-TASK-005 is validated:
+Objective: make raw segment publication crash-safe through sealing, atomic rename, durable manifest commit, and deterministic restart classification.
 
-- deterministic QCR1 raw frame format;
-- exact payload preservation;
-- explicit written-vs-durable semantics;
-- frame/payload checksums;
-- scan/replay;
-- safe torn-tail recovery;
-- hard refusal to auto-truncate middle corruption.
+Planned outputs:
 
-Green GitHub Actions run: `35892543470`.
+- `src/cryptobot/data/manifest.py`
+- `tests/unit/test_manifest.py`
+- `tests/fault/test_manifest_commit.py`
+- `artifacts/stage_0/storage_recovery_report.json`
 
-### Exact next action
-
-Run one closeout CI after documentation/artifact changes, then merge PR #5.
-
-After merge, begin **[TASK-006 — raw segment sealing and manifest recovery](tasks/TASK_006.md)**.
+No WebSocket/venue parser, normalization, Parquet, retention, strategy, or trading code belongs in TASK-006.
 
 ## User actions currently required
 

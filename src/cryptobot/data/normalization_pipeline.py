@@ -143,7 +143,7 @@ class CausalRecord:
         return (self.host_id, self.boot_id)
 
     @property
-    def causal_key(self) -> tuple[int, int, str, str, int, int, str]:
+    def causal_key(self) -> tuple[int, int, str, str, int, int]:
         return (
             self.recv_mono_ns,
             self.recv_wall_ns,
@@ -151,7 +151,6 @@ class CausalRecord:
             self.raw_segment_id,
             self.raw_offset,
             self.event_ordinal,
-            self.event.envelope.event_id,
         )
 
 
@@ -602,13 +601,25 @@ def _domain_range(
     domain: tuple[str, str],
     results: list[FrameResult],
 ) -> CausalDomainRange:
+    ordered = sorted(
+        results,
+        key=lambda result: (
+            result.recv_mono_ns,
+            result.recv_wall_ns,
+            result.source_id,
+            result.raw_segment_id,
+            result.raw_offset,
+        ),
+    )
+    first = ordered[0]
+    last = ordered[-1]
     return CausalDomainRange(
         host_id=domain[0],
         boot_id=domain[1],
-        first_recv_wall_ns=min(result.recv_wall_ns for result in results),
-        last_recv_wall_ns=max(result.recv_wall_ns for result in results),
-        first_recv_mono_ns=min(result.recv_mono_ns for result in results),
-        last_recv_mono_ns=max(result.recv_mono_ns for result in results),
+        first_recv_wall_ns=first.recv_wall_ns,
+        last_recv_wall_ns=last.recv_wall_ns,
+        first_recv_mono_ns=first.recv_mono_ns,
+        last_recv_mono_ns=last.recv_mono_ns,
     )
 
 

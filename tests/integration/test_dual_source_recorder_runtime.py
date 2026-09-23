@@ -172,37 +172,39 @@ def test_fake_servers_capture_both_sources_in_one_clock_domain_and_materialize(
                 raise AssertionError("unexpected Binance stream request")
             await websocket.wait_closed()
 
-        async with serve(hl_handler, "127.0.0.1", 0) as hl_server:
-            async with serve(binance_handler, "127.0.0.1", 0) as bn_server:
-                hl_port = hl_server.sockets[0].getsockname()[1]
-                bn_port = bn_server.sockets[0].getsockname()[1]
-                endpoint_hl = f"ws://127.0.0.1:{hl_port}"
-                endpoint_bn = f"ws://127.0.0.1:{bn_port}"
+        async with (
+            serve(hl_handler, "127.0.0.1", 0) as hl_server,
+            serve(binance_handler, "127.0.0.1", 0) as bn_server,
+        ):
+            hl_port = hl_server.sockets[0].getsockname()[1]
+            bn_port = bn_server.sockets[0].getsockname()[1]
+            endpoint_hl = f"ws://127.0.0.1:{hl_port}"
+            endpoint_bn = f"ws://127.0.0.1:{bn_port}"
 
-                base = load_dual_source_recorder_config(
-                    "config/runtime/dual-source-smoke.json"
-                )
-                root = tmp_path / "capture"
-                config = replace(
-                    base,
-                    hyperliquid=replace(base.hyperliquid, endpoint=endpoint_hl),
-                    binance=replace(
-                        base.binance,
-                        public_endpoint=endpoint_bn,
-                        market_endpoint=endpoint_bn,
-                    ),
-                    storage_root=root,
-                    manifest_path=root / "manifest.json",
-                    run_duration_seconds=0.15,
-                )
-                summary = await run_dual_source_recorder(
-                    config,
-                    identity=RuntimeIdentity(
-                        host_id="host-test",
-                        boot_id="boot-test",
-                        run_id="dual-source-test",
-                    ),
-                )
+            base = load_dual_source_recorder_config(
+                "config/runtime/dual-source-smoke.json"
+            )
+            root = tmp_path / "capture"
+            config = replace(
+                base,
+                hyperliquid=replace(base.hyperliquid, endpoint=endpoint_hl),
+                binance=replace(
+                    base.binance,
+                    public_endpoint=endpoint_bn,
+                    market_endpoint=endpoint_bn,
+                ),
+                storage_root=root,
+                manifest_path=root / "manifest.json",
+                run_duration_seconds=0.15,
+            )
+            summary = await run_dual_source_recorder(
+                config,
+                identity=RuntimeIdentity(
+                    host_id="host-test",
+                    boot_id="boot-test",
+                    run_id="dual-source-test",
+                ),
+            )
 
         assert len(hl_requests) == 8
         assert len(binance_requests) == 2

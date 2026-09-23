@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from decimal import Decimal, ROUND_CEILING
+from decimal import ROUND_CEILING, Decimal
 from enum import StrEnum
 
 from cryptobot.data.numeric import (

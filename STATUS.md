@@ -5,9 +5,9 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `main`
+- Current branch: `task-013-binance-reference-feed`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-013 / S0-WP13 — Binance USDⓈ-M public reference feed**
+- Current work package: **TASK-013 / S0-WP13 — Binance USDⓈ-M public reference feed validated; merge pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -297,13 +297,25 @@ Delivered:
 
 Read **[`tasks/TASK_013.md`](tasks/TASK_013.md)**.
 
-Stage-0 external reference source is now frozen as **Binance USDⓈ-M Futures** for BTCUSDT and ETHUSDT, using only public `bookTicker` and `aggTrade` streams.
+TASK-013 is validated on PR #13:
 
-Reason: it gives real-time BBO and ~100 ms aggregate trades on perpetual instruments, avoiding Coinbase Exchange ticker's match-driven sampling and the larger spot/perp semantic gap.
+- Stage-0 reference venue frozen as Binance USDⓈ-M BTCUSDT/ETHUSDT;
+- current 2026 two-route architecture: `/public` bookTicker + `/market` aggTrade;
+- documented unsigned-integer SUBSCRIBE IDs;
+- public-only two-connection adapter, no credentials;
+- exact raw payload capture and causal receive timestamps;
+- deterministic ReferenceBBO/ReferenceTrade normalization;
+- exact Decimal numerics and `st=1` USD-M guard;
+- documented maker-flag aggressor mapping;
+- QCR1 replay + fake-server coverage;
+- final public adapter probe `35922113843`: ACK 1301/1302, all four frozen streams, 313 market frames in ~7.3 s, no credentials;
+- **271 tests PASS** on Python 3.12 and Python 3.13;
+- Ruff/format/strict mypy PASS;
+- final CI run `35923067510`.
 
 ### Exact next action
 
-Re-verify current official Binance USDⓈ-M public WebSocket endpoint/schema/connection rules and record them in the evidence contract. Then implement raw public capture + deterministic ReferenceBBO/ReferenceTrade normalization on a dedicated feature branch.
+Merge PR #13, close TASK-013 on main, then define TASK-014 as the deterministic raw-to-normalized causal reader/dispatch pipeline before Parquet materialization.
 
 ## User actions currently required
 

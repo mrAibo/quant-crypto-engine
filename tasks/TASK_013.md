@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
@@ -72,7 +72,12 @@ Implement a separate public adapter, parallel to Hyperliquid:
 - raw source ID distinct from Hyperliquid;
 - normalization from immutable QCR1 raw frames.
 
-Prefer a single combined/public connection for the four streams unless current official behavior or measurement makes a smaller design safer.
+Current 2026 routing makes one connection incorrect for this stream set. Use exactly two public, unauthenticated connections:
+
+- `wss://fstream.binance.com/public/stream` for `btcusdt@bookTicker` and `ethusdt@bookTicker`;
+- `wss://fstream.binance.com/market/stream` for `btcusdt@aggTrade` and `ethusdt@aggTrade`.
+
+The split is a protocol requirement, not an optimization. JSON `SUBSCRIBE` request IDs must be unsigned integers as documented.
 
 ## Reference BBO normalization
 
@@ -218,3 +223,68 @@ Create `artifacts/stage_0/binance_reference_probe.json` containing:
 - liquidation feeds;
 - Parquet materialization (TASK-015);
 - features/signals/models/backtest.
+
+
+## Implementation status
+
+Implemented:
+
+- Binance USD-M frozen as the single Stage-0 external reference feed;
+- BTCUSDT/ETHUSDT REFERENCE perpetual instruments;
+- official 2026 routed-endpoint / connection / bookTicker / aggTrade evidence;
+- two public-only WebSocket routes: /public for bookTicker and /market for aggTrade;
+- bounded reconnect and deterministic raw capture metadata;
+- subscription ACK/control classification;
+- deterministic ReferenceBBO and ReferenceTrade normalization;
+- exact Decimal values;
+- explicit st=1 USD-M boundary;
+- documented maker-flag → aggressor-side mapping;
+- QCR1 replay and fake-server integration tests;
+- successful mainnet public-only live probe run `35919551313`;
+- `artifacts/stage_0/binance_reference_probe.json`.
+
+No Binance private/account/execution/depth reconstruction code is present.
+
+## Validation status
+
+GitHub CI: **PASS** — run `35923067510`; 271 tests passed on Python 3.12 and Python 3.13; Ruff, formatter, and strict mypy passed.
+
+
+## 2026 routing resolution
+
+Current official Binance USDⓈ-M documentation was re-verified before implementation:
+
+- `bookTicker` is mapped to the high-frequency `/public` route;
+- `aggTrade` is mapped to the regular `/market` route;
+- legacy unrouted connections no longer carry Market-route streams after the 2026 migration;
+- Binance recommends splitting connections by traffic class;
+- JSON stream subscription `id` is documented as an unsigned integer.
+
+TASK-013 therefore uses two unauthenticated connections and deterministic integer IDs `1301` (PUBLIC) and `1302` (MARKET).
+
+
+## Final transport verification
+
+After aligning JSON `SUBSCRIBE` IDs with the documented unsigned-integer contract, the final adapter was exercised directly against Binance mainnet in workflow `35922113843`:
+
+- ACK IDs: `1301` / `1302`;
+- both `/public` and `/market` routes connected;
+- all four frozen BTCUSDT/ETHUSDT streams observed;
+- every sampled `st` value was `1`;
+- 313 market-data frames observed in approximately 7.3 seconds;
+- no credentials used.
+
+The temporary network workflow was removed afterward. Default project CI remains network-independent.
+
+
+## Validation result
+
+GitHub CI run `35923067510` on head `702e9e9294e20b5d30d9589c67d0049adfcca61a`:
+
+- Ruff: PASS;
+- Ruff format: PASS — 70 files;
+- strict mypy: PASS — 52 source files;
+- pytest Python 3.12: **271 PASS**;
+- pytest Python 3.13: **271 PASS**.
+
+Default CI is network-independent. Final live adapter verification was separately completed in public-only workflow `35922113843` and its temporary workflow was removed before this CI run.

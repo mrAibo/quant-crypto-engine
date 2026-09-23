@@ -279,3 +279,81 @@ Measured mainnet context probe:
 
 Decision: TASK-012 parses these values as exact Decimal strings and leaves exchange timestamp absent.
 
+
+
+## Binance USD-M reference feed
+
+Frozen Stage-0 reference source: **Binance USDⓈ-M Futures**, BTCUSDT and ETHUSDT only.
+
+Current official sources re-verified on 2026-09-23:
+
+- Connect / transport rules: <https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/websocket-market-streams/Connect>
+- 2026 routed-endpoint migration and stream mapping: <https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/websocket-market-streams/Important-WebSocket-Change-Notice>
+- Live SUBSCRIBE control messages: <https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/websocket-market-streams/Live-Subscribing-Unsubscribing-to-streams>
+- Exact currently observed post-migration wire shape: <https://github.com/mrAibo/quant-crypto-engine/actions/runs/35919551313>
+
+### Documented transport contract
+
+- Base host: `wss://fstream.binance.com`.
+- High-frequency public order-book streams use the `/public` route.
+- Regular market streams such as `aggTrade` use the `/market` route.
+- Individual-symbol `bookTicker` is explicitly mapped to Public; `aggTrade` is explicitly mapped to Market.
+- TASK-013 therefore uses **two independent unauthenticated connections**:
+  - `wss://fstream.binance.com/public/stream` for BTCUSDT/ETHUSDT `bookTicker`;
+  - `wss://fstream.binance.com/market/stream` for BTCUSDT/ETHUSDT `aggTrade`.
+- JSON `SUBSCRIBE` remains supported. Its `id` is documented as an **unsigned integer**; the implementation uses deterministic IDs `1301` and `1302`.
+- A connection is documented as valid for 24 hours.
+- Server ping frames arrive every 3 minutes; a pong is required within 10 minutes.
+- Client-to-server messages are limited to 10/s and one connection supports at most 1024 streams.
+- Combined stream payloads are wrapped as `{"stream":"<streamName>","data":<rawPayload>}`.
+
+### Measured current wire contract
+
+Public-only mainnet probe `35919551313` successfully received both subscription acknowledgements and all four frozen streams without credentials.
+
+Observed `bookTicker` fields for BTCUSDT and ETHUSDT:
+
+- `e="bookTicker"`;
+- `u` update ID;
+- `E` event time;
+- `T` transaction time;
+- `s` symbol;
+- `ps` pair;
+- `b/B` best bid price/quantity;
+- `a/A` best ask price/quantity;
+- `st=1`;
+- price/quantity fields arrived as strings.
+
+Observed `aggTrade` fields for BTCUSDT and ETHUSDT:
+
+- `e="aggTrade"`;
+- `E` event time;
+- `T` trade time;
+- `a` aggregate trade ID;
+- `p` price;
+- `q` total quantity;
+- `nq` normal quantity;
+- `f/l` first/last trade IDs;
+- `m` boolean buyer-maker flag;
+- `s` symbol;
+- `st=1`;
+- price/quantity fields arrived as strings.
+
+The short probe measured apparent receive-wall minus exchange timestamp values around tens to a few hundred milliseconds. Those are **not** one-way network latency measurements and are not treated as an SLA.
+
+### Normalization decisions
+
+- `ReferenceBBO.exchange_ts` uses `E` with `EVENT_TIME`; `T` remains recoverable from immutable raw provenance because v1 has one exchange timestamp field.
+- `ReferenceTrade.exchange_ts` uses `T` with `TRADE_TIME`; `E` remains in immutable raw provenance.
+- The feed defines `m` as whether the buyer is market maker. Therefore `m=true` means the seller is the taker/aggressor → normalized `SELL`; `m=false` means buyer taker/aggressor → normalized `BUY`.
+- The parser rejects `st != 1` so COIN-M data cannot silently enter the USDⓈ-M reference universe.
+- Local receive wall time on the **same recorder host** remains the primary cross-venue causal-availability axis.
+- No Binance execution, account, or private API is permitted in TASK-013.
+
+### Remaining UNKNOWNs
+
+- exact reconnect replay/backfill behavior;
+- completeness during disconnection;
+- future schema stability beyond the documented migration and measured current wire sample;
+- deployment-region-specific apparent lag distribution.
+

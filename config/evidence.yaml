@@ -931,6 +931,151 @@
       ],
       "reverify_after": null,
       "owner": "project"
+    },
+    {
+      "fact_id": "binance.usdm.websocket.routed_endpoints",
+      "subject": "Binance USD-M WebSocket routed endpoints",
+      "claim": "Official 2026 USD-M WebSocket docs require routed endpoints by data class: /public for high-frequency public order-book data and /market for regular market data. Unrouted connections only receive Public endpoint streams.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/websocket-market-streams/Connect",
+      "source_retrieved_at": "2026-09-23T20:52:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "REFERENCE",
+      "verification_artifact": "docs/evidence_sources.md#binance-usd-m-reference-feed",
+      "limitations": "TASK-013 therefore uses separate public and market WebSocket connections; it does not assume streams can be mixed across routed endpoints.",
+      "reverify_trigger": [
+        "BINANCE_WEBSOCKET_MIGRATION",
+        "BEFORE_REFERENCE_DEPLOYMENT"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "binance.usdm.websocket.connection_rules",
+      "subject": "Binance USD-M WebSocket connection lifetime and heartbeat",
+      "claim": "Official USD-M WebSocket docs state a connection is valid for 24 hours, server ping frames are sent every 3 minutes, pong is required within 10 minutes, inbound messages are limited to 10 per second, and a connection may listen to at most 1024 streams.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/websocket-market-streams/Connect",
+      "source_retrieved_at": "2026-09-23T20:52:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "REFERENCE",
+      "verification_artifact": "docs/evidence_sources.md#binance-usd-m-reference-feed",
+      "limitations": "These are transport limits, not market-data completeness guarantees.",
+      "reverify_trigger": [
+        "BINANCE_WEBSOCKET_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "binance.usdm.book_ticker.schema",
+      "subject": "Binance USD-M individual bookTicker schema",
+      "claim": "Current Binance USD-M routing documentation maps individual-symbol <symbol>@bookTicker to the /public endpoint. TASK-013 mainnet measurement observed u/E/T/s/ps/b/B/a/A/st with string price/quantity fields and st=1 for BTCUSDT/ETHUSDT.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED_AND_MEASURED",
+      "source_url": "https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/websocket-market-streams/Important-WebSocket-Change-Notice",
+      "source_retrieved_at": "2026-09-23T20:52:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "REFERENCE",
+      "verification_artifact": "artifacts/stage_0/binance_reference_probe.json",
+      "limitations": "Routing is documented. The exact post-migration wire field set used by TASK-013 is additionally pinned by live probe 35919551313; replay/completeness guarantees are not inferred.",
+      "reverify_trigger": [
+        "BINANCE_CM_MIGRATION_CHANGE",
+        "BOOK_TICKER_SCHEMA_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "binance.usdm.agg_trade.schema",
+      "subject": "Binance USD-M aggTrade schema",
+      "claim": "Current Binance USD-M routing documentation maps <symbol>@aggTrade to the /market endpoint. TASK-013 mainnet measurement observed E/T/a/p/q/nq/f/l/m/s/st with string price/quantity, boolean maker flag, and st=1 for BTCUSDT/ETHUSDT.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED_AND_MEASURED",
+      "source_url": "https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/websocket-market-streams/Important-WebSocket-Change-Notice",
+      "source_retrieved_at": "2026-09-23T20:52:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "REFERENCE",
+      "verification_artifact": "artifacts/stage_0/binance_reference_probe.json",
+      "limitations": "Routing is documented. The exact post-migration wire field set used by TASK-013 is additionally pinned by live probe 35919551313; reconnect replay and completeness remain UNKNOWN.",
+      "reverify_trigger": [
+        "AGG_TRADE_SCHEMA_CHANGE",
+        "BINANCE_CM_MIGRATION_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "binance.usdm.reference_choice",
+      "subject": "Stage-0 external reference venue",
+      "claim": "The project freezes Binance USD-M BTCUSDT/ETHUSDT bookTicker + aggTrade as the single Stage-0 external reference feed.",
+      "status": "VERIFIED",
+      "verification_scope": "PROJECT_DECISION",
+      "source_url": "https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/websocket-market-streams/Connect",
+      "source_retrieved_at": "2026-09-23T20:52:00Z",
+      "source_hash": null,
+      "effective_from": "2026-09-23T20:52:00Z",
+      "effective_to": null,
+      "environment": "REFERENCE",
+      "verification_artifact": "tasks/TASK_013.md",
+      "limitations": "This does not authorize Binance execution or additional reference venues.",
+      "reverify_trigger": [
+        "REFERENCE_FEED_REDESIGN"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "binance.usdm.reference_live_probe",
+      "subject": "Observed Binance USD-M reference stream behavior",
+      "claim": "TASK-013 public mainnet probe observed successful subscription acknowledgments on both routed connections and BTCUSDT/ETHUSDT bookTicker on PUBLIC plus aggTrade on MARKET, all with st=1 and documented wire field types.",
+      "status": "VERIFIED",
+      "verification_scope": "MEASURED",
+      "source_url": "https://github.com/mrAibo/quant-crypto-engine/actions/runs/35919551313",
+      "source_retrieved_at": "2026-09-23T20:59:28Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "REFERENCE",
+      "verification_artifact": "artifacts/stage_0/binance_reference_probe.json",
+      "limitations": "The ~6.3 second sample confirms connectivity/current shape only. Apparent lag values are not a latency SLA and reconnect replay was not established by this sample.",
+      "reverify_trigger": [
+        "BINANCE_WEBSOCKET_MIGRATION",
+        "WIRE_SCHEMA_CHANGE",
+        "REFERENCE_DEPLOYMENT_REGION_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "binance.usdm.websocket.subscription_id",
+      "subject": "Binance USD-M WebSocket stream subscription identifier",
+      "claim": "Official USD-M live subscription documentation requires the JSON SUBSCRIBE id to be an unsigned integer.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/websocket-market-streams/Live-Subscribing-Unsubscribing-to-streams",
+      "source_retrieved_at": "2026-09-23T21:16:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "REFERENCE",
+      "verification_artifact": "docs/evidence_sources.md#binance-usd-m-reference-feed",
+      "limitations": "This is the WebSocket Streams control-message id, not the separate WebSocket API request-id contract.",
+      "reverify_trigger": [
+        "BINANCE_WEBSOCKET_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
     }
   ]
 }

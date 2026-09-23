@@ -193,7 +193,8 @@ class BinanceReferenceAdapter:
                         raise item.error
                     if active:
                         raise ConnectionError(
-                            f"Binance {item.route.value} route ended while peer route remained active"
+                            f"Binance {item.route.value} route ended while "
+                            "peer route remained active"
                         )
                     continue
                 yield item
@@ -277,7 +278,11 @@ class BinanceReferenceAdapter:
                                 connection_id=connection_id,
                                 ingest_seq=ingest_seq,
                                 channel_hint=classification.stream or classification.event_type,
-                                capture_flags=(f"BINANCE_{route.value}", "LIVE_CAPTURE", "WS_PUBLIC"),
+                                capture_flags=(
+                                    f"BINANCE_{route.value}",
+                                    "LIVE_CAPTURE",
+                                    "WS_PUBLIC",
+                                ),
                             ),
                             payload=payload,
                             kind=classification.kind,

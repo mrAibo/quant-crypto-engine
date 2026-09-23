@@ -517,8 +517,7 @@ def _build_dataset_audit(
             (event_type, primary_counts[event_type]) for event_type in _PRIMARY_EXPECTED_TYPES
         ),
         reference_btc_event_counts=tuple(
-            (event_type, reference_counts[event_type])
-            for event_type in _REFERENCE_EXPECTED_TYPES
+            (event_type, reference_counts[event_type]) for event_type in _REFERENCE_EXPECTED_TYPES
         ),
         primary_bbo_cadence=_stream_cadence_audit(
             event_rows,

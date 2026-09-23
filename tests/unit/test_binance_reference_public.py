@@ -3,12 +3,14 @@ from __future__ import annotations
 import asyncio
 import json
 from pathlib import Path
+from typing import cast
 
 from websockets.asyncio.server import ServerConnection, serve
 
 from cryptobot.adapters.binance.public import (
     MARKET_STREAMS,
     PUBLIC_STREAMS,
+    BinanceCapturedFrame,
     BinanceFrameKind,
     BinanceReconnectPolicy,
     BinanceReferenceAdapter,
@@ -153,7 +155,7 @@ def test_two_route_fake_server_captures_ack_and_market_data(tmp_path: Path) -> N
                 connection_id_factory=lambda route: f"{route}-conn",
             )
             stream = adapter.session_frames()
-            frames = []
+            frames: list[BinanceCapturedFrame] = []
             try:
                 while len(frames) < 4:
                     frames.append(await asyncio.wait_for(anext(stream), timeout=2))
@@ -161,7 +163,9 @@ def test_two_route_fake_server_captures_ack_and_market_data(tmp_path: Path) -> N
                 await stream.aclose()
 
         assert len(requests) == 2
-        assert {tuple(request["params"]) for request in requests} == {
+        assert {
+            tuple(cast(list[str], request["params"])) for request in requests
+        } == {
             PUBLIC_STREAMS,
             MARKET_STREAMS,
         }

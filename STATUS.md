@@ -7,7 +7,7 @@
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `task-005-raw-framed-writer`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-005 / S0-WP05 — Append-only raw framed writer (implemented; CI pending)**
+- Current work package: **TASK-005 / S0-WP05 — Append-only raw framed writer (validated; merge pending)**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -155,24 +155,23 @@ Artifact: `artifacts/stage_0/schema_v1.json`.
 
 Read **[`tasks/TASK_005.md`](tasks/TASK_005.md)**.
 
-Implemented on the feature branch:
+TASK-005 is validated:
 
-- QCR1 append-only frame format;
-- exact raw payload preservation;
-- deterministic capture metadata;
-- payload/frame SHA-256;
+- deterministic QCR1 raw frame format;
+- exact payload preservation;
 - explicit written-vs-durable semantics;
-- scan/replay helpers;
-- torn-tail classification/recovery;
-- middle-corruption refusal;
-- unit + fault tests;
-- `artifacts/stage_0/rawlog_report.json`.
+- frame/payload checksums;
+- scan/replay;
+- safe torn-tail recovery;
+- hard refusal to auto-truncate middle corruption.
+
+Green GitHub Actions run: `35892543470`.
 
 ### Exact next action
 
-Open TASK-005 PR and require full GitHub CI green.
+Run one closeout CI after documentation/artifact changes, then merge PR #5.
 
-After merge, move to **TASK-006 — raw segment sealing and manifest recovery**.
+After merge, begin **[TASK-006 — raw segment sealing and manifest recovery](tasks/TASK_006.md)**.
 
 ## User actions currently required
 

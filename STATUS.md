@@ -5,10 +5,10 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `task-010-hyperliquid-book-normalization`
+- Current branch: `main`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-010 / S0-WP10 — Hyperliquid L2/BBO normalization validated; merge pending**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009**
+- Current work package: **TASK-011 / S0-WP11 — Hyperliquid trade normalization from raw capture**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
@@ -241,27 +241,33 @@ Delivered:
 
 Artifact: `artifacts/stage_0/live_capture_smoke.json`.
 
+## Completed — TASK-010
+
+PR #10, merge commit `a99b3667714a74bc38d5422b3214ee460034a6fd`.
+
+Delivered:
+
+- official/current Hyperliquid L2/BBO schema evidence;
+- measured Unix-millisecond wire timestamp unit with semantic intentionally UNKNOWN;
+- exact-Decimal L2Snapshot/BBO normalization;
+- deterministic event IDs and serialization;
+- complete raw QCR1 provenance;
+- strict canonical BTC/ETH mapping;
+- structured parse errors and NOT_APPLICABLE handling;
+- crossed/unsorted source preservation with SUSPECT quality flags;
+- QCR1 replay determinism;
+- **193 tests PASS** on Python 3.12 and 3.13;
+- Ruff/format/strict mypy PASS.
+
 ## Current task
 
-Read **[`tasks/TASK_010.md`](tasks/TASK_010.md)**.
+Read **[`tasks/TASK_011.md`](tasks/TASK_011.md)**.
 
-TASK-010 is validated on PR #10:
-
-- official/current L2/BBO schema evidence recorded;
-- measured wire timestamp unit, semantic intentionally UNKNOWN;
-- exact-Decimal normalization;
-- deterministic event IDs and serialization;
-- raw provenance and strict instrument mapping;
-- structured parse errors / NOT_APPLICABLE;
-- crossed/unsorted data preserved and marked SUSPECT;
-- QCR1 replay determinism;
-- **193 tests PASS** on Python 3.12 and Python 3.13;
-- Ruff/format/strict mypy PASS;
-- CI run `35914447469`.
+Objective: normalize Hyperliquid public `trades` raw frames into the existing v1 `Trade` contract with exact numerics, verified native side semantics, deterministic multi-event identity, and complete raw provenance.
 
 ### Exact next action
 
-Merge PR #10, advance `STATUS.md` to TASK-011, then re-verify current official Hyperliquid `trades` schema before implementing trade normalization.
+Re-verify current official Hyperliquid `trades` schema, `side`, `tid`, timestamp, hash/users, and reconnect behavior. Record evidence, then implement TASK-011 on its own feature branch.
 
 ## User actions currently required
 

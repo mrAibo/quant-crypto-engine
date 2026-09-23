@@ -8,7 +8,7 @@ from enum import IntEnum
 from pathlib import Path
 from typing import cast
 
-from cryptobot.adapters.binance.public import SOURCE_ID as BINANCE_SOURCE_ID
+from cryptobot.adapters.binance.public import SOURCE_ID as _BINANCE_SOURCE_ID
 from cryptobot.adapters.binance.public import (
     BinanceFrameKind,
     BinanceReconnectPolicy,
@@ -36,6 +36,7 @@ from cryptobot.data.recorder import (
 )
 from cryptobot.runtime.public_recorder import RuntimeIdentity, derive_runtime_identity
 
+BINANCE_SOURCE_ID = _BINANCE_SOURCE_ID
 HYPERLIQUID_SOURCE_ID = "hyperliquid-mainnet-public"
 _REQUIRED_HL_COINS = ("BTC", "ETH")
 _REQUIRED_HL_CHANNELS = ("l2Book", "bbo", "trades", "activeAssetCtx")
@@ -151,21 +152,21 @@ class _Observation:
         self.clock_domains.add((meta.host_id, meta.boot_id))
 
         if meta.source_id == hl_source_id:
-            classification = classify_public_payload(frame.payload)
-            key = f"{meta.source_id}:{classification.kind.value}"
+            hl_classification = classify_public_payload(frame.payload)
+            key = f"{meta.source_id}:{hl_classification.kind.value}"
             self.kind_counts[key] = self.kind_counts.get(key, 0) + 1
-            ack = classification.acknowledged_subscription
+            ack = hl_classification.acknowledged_subscription
             if ack is not None:
                 self.hl_acks.add(ack)
             return
 
         if meta.source_id == binance_source_id:
-            classification = classify_binance_payload(frame.payload)
-            key = f"{meta.source_id}:{classification.kind.value}"
+            binance_classification = classify_binance_payload(frame.payload)
+            key = f"{meta.source_id}:{binance_classification.kind.value}"
             self.kind_counts[key] = self.kind_counts.get(key, 0) + 1
-            ack = classification.subscription_ack_id
+            ack = binance_classification.subscription_ack_id
             if (
-                classification.kind is BinanceFrameKind.SUBSCRIPTION_ACK
+                binance_classification.kind is BinanceFrameKind.SUBSCRIPTION_ACK
                 and isinstance(ack, int)
                 and not isinstance(ack, bool)
             ):

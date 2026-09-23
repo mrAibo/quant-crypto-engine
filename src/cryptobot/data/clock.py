@@ -30,6 +30,7 @@ class ClockSample:
 class Clock(Protocol):
     def sample(self) -> ClockSample:
         """Return paired wall/monotonic readings for one host/boot."""
+        ...
 
 
 @dataclass(frozen=True, slots=True)

@@ -26,11 +26,11 @@ def test_frozen_stream_sets_are_exactly_btc_eth_bbo_and_aggtrade() -> None:
 
 
 def test_subscription_request_is_deterministic_and_public_only() -> None:
-    raw = subscription_request(PUBLIC_STREAMS, "ref-public")
+    raw = subscription_request(PUBLIC_STREAMS, 1301)
     decoded = json.loads(raw)
 
     assert decoded == {
-        "id": "ref-public",
+        "id": 1301,
         "method": "SUBSCRIBE",
         "params": ["btcusdt@bookTicker", "ethusdt@bookTicker"],
     }
@@ -39,8 +39,18 @@ def test_subscription_request_is_deterministic_and_public_only() -> None:
     assert "secret" not in raw.lower()
 
 
+def test_subscription_request_rejects_non_unsigned_integer_id() -> None:
+    for invalid in (-1, True, "1301"):
+        try:
+            subscription_request(PUBLIC_STREAMS, invalid)  # type: ignore[arg-type]
+        except Exception as exc:
+            assert "unsigned integer" in str(exc)
+        else:
+            raise AssertionError("invalid request id was accepted")
+
+
 def test_payload_classifier_handles_ack_market_unknown_and_malformed() -> None:
-    ack = classify_binance_payload(b'{"result":null,"id":"task013-public"}')
+    ack = classify_binance_payload(b'{"result":null,"id":1301}')
     bbo = classify_binance_payload(
         b'{"stream":"btcusdt@bookTicker","data":{"e":"bookTicker"}}'
     )
@@ -53,7 +63,7 @@ def test_payload_classifier_handles_ack_market_unknown_and_malformed() -> None:
     malformed = classify_binance_payload(b"not-json")
 
     assert ack.kind is BinanceFrameKind.SUBSCRIPTION_ACK
-    assert ack.subscription_ack_id == "task013-public"
+    assert ack.subscription_ack_id == 1301
     assert bbo.kind is BinanceFrameKind.MARKET_DATA
     assert bbo.event_type == "bookTicker"
     assert trade.kind is BinanceFrameKind.MARKET_DATA

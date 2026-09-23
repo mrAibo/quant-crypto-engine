@@ -5,10 +5,10 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `task-012-hyperliquid-context-normalization`
+- Current branch: `main`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-012 / S0-WP12 — Hyperliquid activeAssetCtx normalization validated; merge pending**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011**
+- Current work package: **TASK-013 / S0-WP13 — Binance USDⓈ-M public reference feed**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
@@ -278,27 +278,32 @@ Delivered:
 - **222 tests PASS** on Python 3.12 and 3.13;
 - Ruff/format/strict mypy PASS.
 
-## Current task
+## Completed — TASK-012
 
-Read **[`tasks/TASK_012.md`](tasks/TASK_012.md)**.
+PR #12, merge commit `9a6e4c801464b1a56036ae6f50c6fab9e7c1c966`.
 
-TASK-012 is validated on PR #12:
+Delivered:
 
 - official/current activeAssetCtx/funding/mark/oracle evidence;
-- live wire probe proving string-valued context and no native timestamp;
-- additive `FundingObservationKind.CURRENT` contract correction;
-- exact-Decimal FundingRateObservation + MarkPrice + OraclePrice normalization;
+- live wire probe confirming string-valued context and no native timestamp;
+- additive `FundingObservationKind.CURRENT` semantic correction;
+- exact-Decimal funding/mark/oracle normalization;
 - no fabricated exchange timestamp;
-- `MISSING_EXCHANGE_TIME` quality signaling;
-- complete raw provenance and deterministic event IDs;
-- QCR1 replay determinism;
-- **246 tests PASS** on Python 3.12 and Python 3.13;
-- Ruff/format/strict mypy PASS;
-- CI run `35918301023`.
+- complete raw provenance / QCR1 replay;
+- **246 tests PASS** on Python 3.12 and 3.13;
+- Ruff/format/strict mypy PASS.
+
+## Current task
+
+Read **[`tasks/TASK_013.md`](tasks/TASK_013.md)**.
+
+Stage-0 external reference source is now frozen as **Binance USDⓈ-M Futures** for BTCUSDT and ETHUSDT, using only public `bookTicker` and `aggTrade` streams.
+
+Reason: it gives real-time BBO and ~100 ms aggregate trades on perpetual instruments, avoiding Coinbase Exchange ticker's match-driven sampling and the larger spot/perp semantic gap.
 
 ### Exact next action
 
-Merge PR #12, close TASK-012 on main, then define/freeze TASK-013 external reference feed before implementation.
+Re-verify current official Binance USDⓈ-M public WebSocket endpoint/schema/connection rules and record them in the evidence contract. Then implement raw public capture + deterministic ReferenceBBO/ReferenceTrade normalization on a dedicated feature branch.
 
 ## User actions currently required
 
@@ -308,7 +313,7 @@ If a future blocker cannot be bypassed safely through available GitHub/CI toolin
 
 ## Open decisions intentionally deferred
 
-- Final external reference venue/feed.
+- Reference venue/feed frozen for Stage 0: **Binance USDⓈ-M BTCUSDT/ETHUSDT public bookTicker + aggTrade**.
 - Recorder VM/provider/region.
 - Production signing-key topology.
 - Operational timeout/staleness/watchdog thresholds.

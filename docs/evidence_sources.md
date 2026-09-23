@@ -223,3 +223,18 @@ Re-verified on 2026-09-23 before TASK-011 implementation:
 
 The v1 normalized `Trade` contract does not contain buyer/seller address fields. TASK-011 validates the documented two-element `users` array but deliberately does not expand the event schema solely to persist public addresses; raw provenance retains the complete original payload.
 
+Measured mainnet trade probe:
+
+- One-shot public-only GitHub Actions run: <https://github.com/mrAibo/quant-crypto-engine/actions/runs/35916459823>
+- Each of two independent BTC subscriptions produced an initial batch of 30 trades.
+- Session 1 initial batch spanned approximately 10.7 s of source timestamps; session 2 approximately 15.2 s.
+- The following observed batches were close to receive time (about 289–390 ms in that sample).
+- Session 1 and session 2 each contained 32 sampled native identities; **28 identities overlapped after reconnect**.
+- Observed `time` values were JSON integers on Unix epoch millisecond scale.
+- Observed `tid` values fit the documented 50-bit bound.
+- Observed messages contained exactly the documented eight trade keys and a two-element users list in this sample.
+
+Decision:
+
+TASK-011 preserves **every raw occurrence** and does not silently deduplicate reconnect replay. The normalized stable `trade_id` uses the vendor-recommended tuple material `(time, coin, tid)`; the capture-derived `event_id` additionally includes raw segment/offset/index, so duplicate deliveries remain separately auditable. Exact replay-window size and completeness remain UNKNOWN.
+

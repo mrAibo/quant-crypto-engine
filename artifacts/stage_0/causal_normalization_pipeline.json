@@ -1,6 +1,6 @@
 {
   "task": "TASK-014",
-  "status": "IMPLEMENTED_CI_PENDING",
+  "status": "PASS",
   "pipeline_version": "causal-normalization-v1",
   "frozen_sources": [
     "hyperliquid-mainnet-public",
@@ -95,6 +95,14 @@
     "AI/Jev/GPT"
   ],
   "validation": {
-    "github_ci": "PENDING"
+    "github_ci": "PASS",
+    "workflow_run": 35924328402,
+    "head_sha": "16e524d08a37db9e08f8e523c8365b094719a55c",
+    "ruff": "PASS",
+    "ruff_format": "PASS",
+    "mypy_strict": "PASS_55_SOURCE_FILES",
+    "pytest_python_3_12": "PASS_288",
+    "pytest_python_3_13": "PASS_288",
+    "default_ci_network_dependency": false
   }
 }

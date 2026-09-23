@@ -55,6 +55,9 @@
     "github_mypy_strict": "PASS",
     "github_pytest_python_3_12": "PASS_140",
     "uv_lock_python_3_13": "PASS",
-    "github_pytest_python_3_13": "PASS_140"
-  }
+    "github_pytest_python_3_13": "PASS_140",
+    "final_github_ci_run": 35904060906
+  },
+  "merged_pr": 7,
+  "merge_commit": "2182268783293bc01b2d1ac5608e3f01de9877f1"
 }

@@ -12,7 +12,6 @@ from typing import cast
 
 from cryptobot.data.rawlog import (
     FRAME_VERSION,
-    RawLogCorruptionError,
     TailState,
     iter_raw_frames,
     scan_raw_log,
@@ -88,7 +87,11 @@ class SegmentManifestRecord:
     publication_status: PublicationStatus
 
     def __post_init__(self) -> None:
-        if self.record_version != 1:
+        if (
+            isinstance(self.record_version, bool)
+            or not isinstance(self.record_version, int)
+            or self.record_version != 1
+        ):
             raise ManifestError("record_version must be integer 1")
         if not self.segment_id.strip():
             raise ManifestError("segment_id must be non-empty")
@@ -96,10 +99,12 @@ class SegmentManifestRecord:
         _require_nonnegative_int(self.byte_length, "byte_length")
         if not _SHA256_RE.fullmatch(self.sha256):
             raise ManifestError("sha256 must contain 64 lowercase hex characters")
-        if self.raw_frame_version != FRAME_VERSION:
-            raise ManifestError(
-                f"raw_frame_version must be {FRAME_VERSION}"
-            )
+        if (
+            isinstance(self.raw_frame_version, bool)
+            or not isinstance(self.raw_frame_version, int)
+            or self.raw_frame_version != FRAME_VERSION
+        ):
+            raise ManifestError(f"raw_frame_version must be {FRAME_VERSION}")
         _require_nonnegative_int(self.frame_count, "frame_count")
         _validate_optional_range(
             self.min_recv_wall_ns,
@@ -119,6 +124,8 @@ class SegmentManifestRecord:
                 self.event_schema_version,
                 "event_schema_version",
             )
+        if not isinstance(self.publication_status, PublicationStatus):
+            raise ManifestError("publication_status must be PublicationStatus")
         if len(set(self.source_ids)) != len(self.source_ids):
             raise ManifestError("source_ids must not contain duplicates")
         if tuple(sorted(self.source_ids)) != self.source_ids:
@@ -214,10 +221,12 @@ class SegmentManifest:
     records: tuple[SegmentManifestRecord, ...]
 
     def __post_init__(self) -> None:
-        if self.schema_version != MANIFEST_SCHEMA_VERSION:
-            raise ManifestError(
-                f"schema_version must be {MANIFEST_SCHEMA_VERSION}"
-            )
+        if (
+            isinstance(self.schema_version, bool)
+            or not isinstance(self.schema_version, int)
+            or self.schema_version != MANIFEST_SCHEMA_VERSION
+        ):
+            raise ManifestError(f"schema_version must be {MANIFEST_SCHEMA_VERSION}")
         ids = [record.segment_id for record in self.records]
         if len(ids) != len(set(ids)):
             raise ManifestError("duplicate segment_id in manifest")
@@ -597,6 +606,24 @@ def _verify_record_file(
         return f"sealed file raw log is {scan.tail_state.value}"
     if scan.valid_frames != record.frame_count:
         return "sealed file frame count does not match manifest"
+
+    stats = derive_segment_stats(path, record.segment_id)
+    expected_stats = (
+        record.min_recv_wall_ns,
+        record.max_recv_wall_ns,
+        record.min_ingest_seq,
+        record.max_ingest_seq,
+        record.source_ids,
+    )
+    actual_stats = (
+        stats.min_recv_wall_ns,
+        stats.max_recv_wall_ns,
+        stats.min_ingest_seq,
+        stats.max_ingest_seq,
+        stats.source_ids,
+    )
+    if actual_stats != expected_stats:
+        return "sealed file derived metadata does not match manifest"
     return None
 
 

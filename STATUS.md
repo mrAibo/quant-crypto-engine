@@ -8,7 +8,7 @@
 - Current branch: `task-014-causal-normalization-pipeline`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
 - Current work package: **TASK-014 / S0-WP14 — causal raw-to-normalized pipeline implemented; CI pending**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
@@ -330,30 +330,32 @@ Delivered:
 - **288 tests PASS** on Python 3.12 and 3.13;
 - Ruff/format/strict mypy PASS.
 
+## Completed — TASK-015
+
+PR #15, merge commit `03de66b0d5610de74fd24e8989c839e8067d93fc`.
+
+Delivered:
+
+- PyArrow 24.0.0 locked;
+- explicit deterministic Parquet research schemas;
+- exact string market numerics;
+- full frame/control/error visibility;
+- event/raw provenance checks;
+- deterministic file/schema/report/bundle hashes;
+- atomic non-overwriting publication;
+- QCR1 → normalize → Parquet/readback evidence;
+- **299 tests PASS** on Python 3.12 and 3.13;
+- final PR-head CI `35927498144` PASS.
+
 ## Current task
 
-Read **[`tasks/TASK_015.md`](tasks/TASK_015.md)**.
+Read **[`tasks/TASK_016.md`](tasks/TASK_016.md)**.
 
-TASK-015 is validated on PR #15:
-
-- PyArrow 24.0.0 locked in `uv.lock`;
-- eleven explicit Parquet schemas plus deterministic manifest;
-- exact fixed-point string market numerics; no binary-float market columns;
-- deterministic row ordering;
-- frame/control/error visibility;
-- strict event/frame provenance agreement;
-- duplicate stable trade identities preserved;
-- schema-correct empty datasets;
-- fixed writer contract and deterministic file/schema/source-report/bundle hashes;
-- non-overwriting sibling-temp atomic publication;
-- QCR1 → TASK-014 normalize → Parquet → readback integration replay;
-- **299 tests PASS** on Python 3.12 and Python 3.13;
-- Ruff/format/strict mypy PASS;
-- CI run `35927351683`.
+Data Gate audit found one remaining Stage-0 blocker: the runnable recorder is Hyperliquid-only, so simultaneous Hyperliquid + Binance capture under one host/boot clock domain has not yet been proven prospectively.
 
 ### Exact next action
 
-Require final PR-head CI after validation-document commits, merge PR #15, then run a separate Stage-0 Data Gate audit before implementing Stage 0.5 economic-frontier or any feature/backtest code.
+Implement a reusable dual-source public recorder using the existing Hyperliquid/Binance adapters, one shared clock and one RecorderSupervisor. Validate with fake servers, then run one bounded real-mainnet smoke through raw capture → normalization → Parquet before deciding the Stage-0 Data Gate.
 
 ## User actions currently required
 

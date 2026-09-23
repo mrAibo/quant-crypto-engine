@@ -323,9 +323,7 @@ def classify_binance_payload(payload: bytes) -> BinancePayloadClassification:
     if "result" in obj and "id" in obj:
         ack_id = obj.get("id")
         if isinstance(ack_id, bool) or not isinstance(ack_id, str | int):
-            return BinancePayloadClassification(
-                BinanceFrameKind.UNKNOWN, None, None, None
-            )
+            return BinancePayloadClassification(BinanceFrameKind.UNKNOWN, None, None, None)
         return BinancePayloadClassification(
             BinanceFrameKind.SUBSCRIPTION_ACK, None, None, ack_id
         )
@@ -333,9 +331,7 @@ def classify_binance_payload(payload: bytes) -> BinancePayloadClassification:
     stream = obj.get("stream")
     data = obj.get("data")
     if not isinstance(stream, str) or not isinstance(data, dict):
-        return BinancePayloadClassification(
-            BinanceFrameKind.UNKNOWN, None, None, None
-        )
+        return BinancePayloadClassification(BinanceFrameKind.UNKNOWN, None, None, None)
     data_obj = cast(dict[str, object], data)
     event_type = data_obj.get("e")
     if not isinstance(event_type, str):

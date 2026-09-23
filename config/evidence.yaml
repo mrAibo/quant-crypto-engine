@@ -1034,6 +1034,28 @@
       ],
       "reverify_after": null,
       "owner": "project"
+    },
+    {
+      "fact_id": "binance.usdm.reference_live_probe",
+      "subject": "Observed Binance USD-M reference stream behavior",
+      "claim": "TASK-013 public mainnet probe observed successful subscription acknowledgments on both routed connections and BTCUSDT/ETHUSDT bookTicker on PUBLIC plus aggTrade on MARKET, all with st=1 and documented wire field types.",
+      "status": "VERIFIED",
+      "verification_scope": "MEASURED",
+      "source_url": "https://github.com/mrAibo/quant-crypto-engine/actions/runs/35919551313",
+      "source_retrieved_at": "2026-09-23T20:59:28Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "REFERENCE",
+      "verification_artifact": "artifacts/stage_0/binance_reference_probe.json",
+      "limitations": "The ~6.3 second sample confirms connectivity/current shape only. Apparent lag values are not a latency SLA and reconnect replay was not established by this sample.",
+      "reverify_trigger": [
+        "BINANCE_WEBSOCKET_MIGRATION",
+        "WIRE_SCHEMA_CHANGE",
+        "REFERENCE_DEPLOYMENT_REGION_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
     }
   ]
 }

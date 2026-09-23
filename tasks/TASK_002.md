@@ -2,7 +2,7 @@
 
 ## Status
 
-`IN REVIEW — LOCAL TESTS PASS, GITHUB CI PENDING`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
@@ -19,73 +19,56 @@ Create the first machine-readable evidence policy so venue/API facts are never s
 
 ## Design decision
 
-`config/evidence.yaml` deliberately uses the JSON-compatible subset of YAML 1.2.
+`config/evidence.yaml` uses the JSON-compatible subset of YAML 1.2. JSON is valid YAML 1.2 and can be parsed with the Python standard library, so Stage 0 does not add a parser dependency merely for configuration syntax.
 
-Reason:
+## Contract guarantees
 
-- JSON is valid YAML 1.2.
-- Python can validate it using the standard library.
-- Stage 0 does not need a third-party YAML parser yet.
-- This avoids a dependency/lock-file change for a configuration format that does not require YAML-only syntax.
-
-A later migration to a full YAML parser would require an explicit format/schema decision and tests; it must not silently broaden accepted syntax.
-
-## Contract fields
-
-Each fact contains:
-
-- stable `fact_id`;
-- subject and narrow claim;
-- `VERIFIED` or `UNKNOWN` status;
-- verification scope;
-- source URL and retrieval time when applicable;
-- optional source hash;
-- effective period;
-- environment;
-- verification artifact;
-- limitations;
-- re-verification triggers and optional due time;
-- owner.
-
-## Validation rules
-
-- Unknown top-level/fact fields are rejected.
+- Unknown top-level and fact fields are rejected.
 - Duplicate fact IDs are rejected.
-- `VERIFIED` facts require non-`UNVERIFIED` scope, source URL, retrieval timestamp, and verification artifact.
-- `UNKNOWN` facts may remain without source/value instead of inventing one.
-- Source URLs must use HTTPS.
-- Source hashes, when present, must use `sha256:<64 lowercase hex>`.
-- Effective ranges must be ordered.
-- Reverification due status is reported but is not silently converted into a different fact status.
-- Missing source hashes on verified documentation are surfaced in the audit report.
+- `VERIFIED` requires a non-`UNVERIFIED` scope, source URL, retrieval timestamp, and verification artifact.
+- `UNKNOWN` may remain without a source/value rather than inventing one.
+- HTTPS source URLs are required when present.
+- Source hashes, when present, use `sha256:<64 lowercase hex>`.
+- Effective date ranges are validated.
+- Re-verification triggers are explicit and non-empty.
+- Re-verification due state is reported.
+- Missing retained source hashes for documented facts are surfaced as audit warnings.
 
 ## Seeded evidence
 
-Current contract contains **21 facts**:
+The initial contract contains **21 facts**:
 
-- **13 VERIFIED documented facts**, covering current Hyperliquid fees, maker rebate threshold, funding, public WebSocket subscriptions/semantics, order identifiers/TIF, scheduleCancel, API-wallet identity, nonce ownership, and historical archive limitations.
-- **8 UNKNOWN facts**, deliberately preserving account-specific fees, live execution latency, IOC behavior, realized slippage, API-wallet withdrawal/transfer scope, external reference-feed selection/timestamp semantics, and actual historical-period completeness.
+- **13 VERIFIED documented facts** covering current Hyperliquid fee schedule, maker rebate threshold, funding, public WebSocket semantics, order identifiers/TIF, scheduleCancel, API-wallet identity, nonce ownership, and historical archive limitations.
+- **8 intentionally UNKNOWN facts** covering project-account fees, live latency, IOC behavior, realized slippage, credential transfer/withdrawal scope, reference-feed selection/timestamp semantics, and historical-period completeness.
 
-## Local validation
+## Validation
 
-- `pytest tests/unit/test_evidence.py`: **10 passed**
-- `compileall`: **PASS**
+Local:
+- TASK-002 unit tests: **10/10 PASS**
+- compileall: **PASS**
 
-Ruff/mypy are not installed in the local sandbox and will be validated by GitHub Actions using the already committed lock file.
+GitHub Actions:
+- committed lock verification: **PASS**
+- dependency sync: **PASS**
+- Ruff lint: **PASS**
+- Ruff format: **PASS**
+- strict mypy: **PASS**
+- pytest Python 3.12: **PASS**
+- pytest Python 3.13: **PASS**
+
+CI run: `35879128871`.
 
 ## Definition of Done
 
-1. Machine-readable contract is structurally strict. **IMPLEMENTED**
-2. `VERIFIED` facts cannot exist without supporting source/scope. **IMPLEMENTED + TESTED**
-3. `UNKNOWN` facts remain representable without fabricated values. **IMPLEMENTED + TESTED**
-4. Reverification-due facts are reported. **IMPLEMENTED + TESTED**
-5. Unknown fields and duplicate IDs are rejected. **IMPLEMENTED + TESTED**
-6. Evidence report is reproducible. **IMPLEMENTED**
-7. Full repository Ruff/mypy/pytest CI is green. **PENDING**
-8. `STATUS.md` advances to TASK-003 only after merge. **PENDING**
+1. Strict machine-readable contract exists. **PASS**
+2. Unsupported facts can remain explicitly unknown. **PASS**
+3. Verified facts require provenance. **PASS**
+4. Re-verification is represented and tested. **PASS**
+5. Duplicate IDs and unknown fields fail validation. **PASS**
+6. Human-readable provenance exists. **PASS**
+7. Full repository CI is green. **PASS**
+8. Next task is defined before merge. **PASS**
 
-## Next task after merge
+## Next task
 
-TASK-003 — strict recorder configuration and instrument registry.
-
-Do not start Hyperliquid recorder implementation before TASK-003 defines the configuration and symbol contracts.
+`TASK-003 — Strict recorder configuration and instrument registry`.

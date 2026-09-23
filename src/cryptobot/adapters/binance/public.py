@@ -275,7 +275,7 @@ class BinanceReferenceAdapter:
                                 connection_id=connection_id,
                                 ingest_seq=ingest_seq,
                                 channel_hint=classification.stream or classification.event_type,
-                                capture_flags=("LIVE_CAPTURE", "WS_PUBLIC", f"BINANCE_{route.value}"),
+                                capture_flags=(f"BINANCE_{route.value}", "LIVE_CAPTURE", "WS_PUBLIC"),
                             ),
                             payload=payload,
                             kind=classification.kind,

@@ -2,7 +2,7 @@
 
 ## Status
 
-`VALIDATED — MERGE PENDING`
+`COMPLETE`
 
 ## Objective
 
@@ -363,3 +363,18 @@ GitHub CI run `35927351683` on head `d12fb38fcc89cec6974031f553277bece35f1abb`:
 - pytest Python 3.13: **299 PASS**.
 
 Default CI remains network-independent. PyArrow `24.0.0` is resolved in `uv.lock`.
+
+
+## Merge provenance
+
+Merged as PR #15 in commit `03de66b0d5610de74fd24e8989c839e8067d93fc`.
+
+Final PR-head CI run `35927498144` passed the same locked network-independent suite after validation-document commits.
+
+Validated implementation:
+
+- PyArrow: `24.0.0` locked;
+- Ruff/format: PASS;
+- strict mypy: PASS;
+- pytest Python 3.12: **299 PASS**;
+- pytest Python 3.13: **299 PASS**.

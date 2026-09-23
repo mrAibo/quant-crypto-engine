@@ -37,9 +37,6 @@ from cryptobot.data.materialize import (
     materialize_research_dataset,
     read_manifest,
 )
-type _ReadTableFn = Callable[..., pa.Table]
-_READ_TABLE = cast(_ReadTableFn, pq.read_table)
-
 from cryptobot.data.normalization_pipeline import (
     BINANCE_SOURCE_ID,
     HL_SOURCE_ID,
@@ -49,6 +46,10 @@ from cryptobot.data.normalization_pipeline import (
     PipelineError,
     PipelineErrorCode,
 )
+
+type _ReadTableFn = Callable[..., pa.Table]
+
+_READ_TABLE = cast(_ReadTableFn, pq.read_table)
 
 
 def _sha(offset: int) -> str:

@@ -49,6 +49,8 @@ def test_project_registry_loads_with_expected_roles_and_unknown_metadata() -> No
 
     btc = registry.get("hyperliquid.mainnet.perpetual.btc")
     eth = registry.get("hyperliquid.mainnet.perpetual.eth")
+    binance_btc = registry.get("binance_usdm.reference.perpetual.btcusdt")
+    binance_eth = registry.get("binance_usdm.reference.perpetual.ethusdt")
 
     assert btc.role is InstrumentRole.PRIMARY
     assert btc.base_asset == "BTC"
@@ -58,6 +60,13 @@ def test_project_registry_loads_with_expected_roles_and_unknown_metadata() -> No
     assert btc.margin_asset is None
     assert btc.price_decimals is None
     assert btc.native_asset_id is None
+    assert binance_btc.role is InstrumentRole.REFERENCE
+    assert binance_btc.environment is Environment.REFERENCE
+    assert binance_btc.product_type is ProductType.PERPETUAL
+    assert binance_btc.base_asset == "BTC"
+    assert binance_btc.quote_asset == "USDT"
+    assert binance_btc.margin_asset == "USDT"
+    assert binance_eth.base_asset == "ETH"
 
 
 def test_canonical_id_is_deterministic_and_symbol_sensitive() -> None:

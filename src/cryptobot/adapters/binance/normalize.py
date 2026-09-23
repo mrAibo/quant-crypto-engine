@@ -80,7 +80,6 @@ class BinanceReferenceNormalizationResult:
 def normalize_binance_reference_frame(
     frame: RawFrame,
     registry: InstrumentRegistry,
-    availability: AvailabilityKind,
 ) -> BinanceReferenceNormalizationResult:
     provenance_error = _validate_raw_provenance(frame)
     if provenance_error is not None:
@@ -159,6 +158,7 @@ def _normalize_book_ticker(
     stream: str,
     payload: dict[str, object],
     registry: InstrumentRegistry,
+    availability: AvailabilityKind,
 ) -> BinanceReferenceNormalizationResult:
     instrument = _instrument(payload, registry, frame, stream)
     if isinstance(instrument, BinanceReferenceNormalizationResult):

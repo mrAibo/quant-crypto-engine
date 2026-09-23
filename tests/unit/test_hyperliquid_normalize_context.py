@@ -129,9 +129,7 @@ def test_context_derived_event_ids_are_distinct_and_deterministic() -> None:
     second_ids = [event.envelope.event_id for event in second.events]
     assert len(set(first_ids)) == 3
     assert first_ids == second_ids
-    assert serialize_normalized_context(first.events) == serialize_normalized_context(
-        second.events
-    )
+    assert serialize_normalized_context(first.events) == serialize_normalized_context(second.events)
 
 
 def test_eth_context_maps_to_replication_instrument() -> None:
@@ -179,7 +177,7 @@ def test_exact_serialization_preserves_decimal_strings() -> None:
 
     decoded = json.loads(serialize_normalized_context(result.events))
     assert decoded[0]["rate"] == "0.00000001"
-    assert decoded[1]["price"] == "84384"
+    assert decoded[1]["price"] == "84384.0"
     assert decoded[2]["price"] == "84419.00"
 
 

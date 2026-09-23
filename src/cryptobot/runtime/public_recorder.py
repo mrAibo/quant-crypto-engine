@@ -311,9 +311,7 @@ def load_public_recorder_config(path: str | Path) -> PublicRecorderConfig:
 
     schema_version = _mapping_int(raw, "schema_version")
     parameters = raw["parameters"]
-    if not isinstance(parameters, dict) or not all(
-        isinstance(key, str) for key in parameters
-    ):
+    if not isinstance(parameters, dict) or not all(isinstance(key, str) for key in parameters):
         raise RuntimeConfigError("parameters must be a string-keyed object")
     params = cast(dict[str, object], parameters)
     _require_exact_fields(params, _PARAMETER_FIELDS, "parameters")

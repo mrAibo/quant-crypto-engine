@@ -36,7 +36,7 @@ def test_bbo_mid_and_spread_use_exact_decimal_arithmetic() -> None:
 
 def test_bbo_rejects_float_and_crossed_inputs() -> None:
     with pytest.raises(FrontierValidationError, match="binary float"):
-        bbo_mid(99.0, "101")
+        bbo_mid(99.0, "101")  # type: ignore[arg-type]
 
     with pytest.raises(FrontierValidationError, match="bid < ask"):
         bbo_mid("101", "101")

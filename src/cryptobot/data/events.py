@@ -115,6 +115,15 @@ class EventEnvelope:
         ):
             raise EventValidationError("schema_version must be integer 1")
 
+        if not isinstance(self.event_type, EventType):
+            raise EventValidationError("event_type must be EventType")
+        if not isinstance(self.exchange_ts_semantics, ExchangeTimestampSemantics):
+            raise EventValidationError(
+                "exchange_ts_semantics must be ExchangeTimestampSemantics"
+            )
+        if not isinstance(self.availability_kind, AvailabilityKind):
+            raise EventValidationError("availability_kind must be AvailabilityKind")
+
         for field_name, value in (
             ("event_id", self.event_id),
             ("source", self.source),

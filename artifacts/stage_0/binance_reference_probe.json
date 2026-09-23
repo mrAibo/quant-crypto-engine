@@ -107,7 +107,16 @@
     "mypy_strict": "PASS_52_SOURCE_FILES",
     "pytest_python_3_12": "PASS_271",
     "pytest_python_3_13": "PASS_271",
-    "default_ci_network_dependency": false
+    "default_ci_network_dependency": false,
+    "final_pr_head_ci": {
+      "workflow_run": 35923167765,
+      "head_sha": "ae9250e12fd5fc82fa6aa04269fe52c72c774f43",
+      "ruff": "PASS",
+      "ruff_format": "PASS",
+      "mypy_strict": "PASS",
+      "pytest_python_3_12": "PASS_271",
+      "pytest_python_3_13": "PASS_271"
+    }
   },
   "final_adapter_probe": {
     "status": "PASS",
@@ -133,5 +142,9 @@
     ],
     "credentials_used": false,
     "purpose": "Validate final adapter code after correcting SUBSCRIBE IDs to documented unsigned integers."
+  },
+  "merge": {
+    "pr": 13,
+    "commit": "d850f2d54d02f47b05bfeab0d881ff76ab3275d7"
   }
 }

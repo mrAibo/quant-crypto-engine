@@ -73,9 +73,7 @@ class PilotHorizonResult:
             "movement_quantiles_bps": {
                 name: _decimal_string(value) for name, value in self.movement_quantiles_bps
             },
-            "median_known_friction_bps": _decimal_string(
-                self.median_known_friction_bps
-            ),
+            "median_known_friction_bps": _decimal_string(self.median_known_friction_bps),
             "q90_known_friction_bps": _decimal_string(self.q90_known_friction_bps),
             "capture_fraction_vs_movement_quantiles": {
                 name: _decimal_string(value)
@@ -116,9 +114,7 @@ class FrontierPilotReport:
             "source_normalized_records_sha256": self.source_normalized_records_sha256,
             "source_id": self.source_id,
             "instrument_id": self.instrument_id,
-            "causal_domain": (
-                None if self.causal_domain is None else list(self.causal_domain)
-            ),
+            "causal_domain": (None if self.causal_domain is None else list(self.causal_domain)),
             "observation_count": self.observation_count,
             "observed_duration_ns": self.observed_duration_ns,
             "cadence_p99_ns": self.cadence_p99_ns,
@@ -126,9 +122,7 @@ class FrontierPilotReport:
             "spread_quantiles_bps": {
                 name: _decimal_string(value) for name, value in self.spread_quantiles_bps
             },
-            "fee_scenario_bps_per_side": _decimal_string(
-                self.fee_scenario_bps_per_side
-            ),
+            "fee_scenario_bps_per_side": _decimal_string(self.fee_scenario_bps_per_side),
             "fee_evidence_class": self.fee_evidence_class.value,
             "latency_evidence_class": self.latency_evidence_class.value,
             "funding_boundary_evidence_class": self.funding_boundary_evidence_class.value,
@@ -202,10 +196,7 @@ def analyze_frontier_pilot_dataset(
 
     lower_seconds = max(1, _ceil_div(cadence_p99_ns, _NS_PER_SECOND))
     upper_seconds = duration_ns // (2 * _NS_PER_SECOND)
-    spread_values = tuple(
-        _spread_bps(item.bid, item.ask)
-        for item in ordered
-    )
+    spread_values = tuple(_spread_bps(item.bid, item.ask) for item in ordered)
     spread_quantiles = _quantile_summary(spread_values)
 
     if upper_seconds < lower_seconds:
@@ -333,9 +324,7 @@ def _load_manifest_binding(dataset_dir: Path) -> tuple[str, str]:
     if not isinstance(bundle, str) or not _is_sha256(bundle):
         raise FrontierValidationError("dataset bundle_sha256 is invalid")
     if not isinstance(normalized, str) or not _is_sha256(normalized):
-        raise FrontierValidationError(
-            "dataset source_normalized_records_sha256 is invalid"
-        )
+        raise FrontierValidationError("dataset source_normalized_records_sha256 is invalid")
     return bundle, normalized
 
 
@@ -519,9 +508,7 @@ def _insufficient_report(
 
 
 def _is_sha256(value: str) -> bool:
-    return len(value) == 64 and all(
-        character in "0123456789abcdef" for character in value
-    )
+    return len(value) == 64 and all(character in "0123456789abcdef" for character in value)
 
 
 def _decimal_string(value: Decimal) -> str:

@@ -1,0 +1,114 @@
+{
+  "task": "TASK-015",
+  "status": "IMPLEMENTED_CI_PENDING",
+  "materializer_version": "parquet-materializer-v1",
+  "dataset_schema_version": 1,
+  "dependency": {
+    "library": "pyarrow",
+    "resolved_version": "24.0.0",
+    "pyproject_constraint": ">=20,<25",
+    "lockfile": "uv.lock",
+    "lock_resolution_run": 35926235274
+  },
+  "authority": {
+    "raw_source_of_truth": "QCR1",
+    "parquet_role": "DERIVED_REBUILDABLE"
+  },
+  "topology": [
+    "frames.parquet",
+    "events.parquet",
+    "l2_snapshots.parquet",
+    "l2_levels.parquet",
+    "bbo.parquet",
+    "trades.parquet",
+    "funding_rates.parquet",
+    "mark_prices.parquet",
+    "oracle_prices.parquet",
+    "reference_bbo.parquet",
+    "reference_trades.parquet",
+    "manifest.json"
+  ],
+  "exact_numeric_policy": {
+    "market_numeric_storage": "canonical exact fixed-point strings",
+    "serializer": "cryptobot.data.numeric.serialize_exact_decimal",
+    "binary_float_columns_for_market_values": false,
+    "integer_timestamps_and_ids": true
+  },
+  "deterministic_ordering": {
+    "frames": [
+      "host_id",
+      "boot_id",
+      "recv_mono_ns",
+      "recv_wall_ns",
+      "source_id",
+      "raw_segment_id",
+      "raw_offset"
+    ],
+    "events": [
+      "host_id",
+      "boot_id",
+      "recv_mono_ns",
+      "recv_wall_ns",
+      "source_id",
+      "raw_segment_id",
+      "raw_offset",
+      "event_ordinal"
+    ],
+    "l2_levels": "event order, BID before ASK, original side ordinal",
+    "cross_domain_statement": "serialization order only; not a causal claim"
+  },
+  "writer_contract": {
+    "parquet_version": "2.6",
+    "data_page_version": "1.0",
+    "compression": "zstd",
+    "compression_level": 3,
+    "use_dictionary": false,
+    "write_statistics": true,
+    "write_page_checksum": true,
+    "row_group_size": 65536,
+    "same_stack_byte_identity_required": true,
+    "cross_pyarrow_version_byte_identity_claimed": false
+  },
+  "publication": {
+    "temporary_path": "sibling deterministic .<dataset>.tmp directory",
+    "validation_before_publish": true,
+    "atomic_publish": "os.rename within same parent filesystem",
+    "overwrite_existing": false,
+    "partial_in_place_mutation": false
+  },
+  "manifest": {
+    "current_build_timestamp": false,
+    "hostname": false,
+    "temporary_path": false,
+    "per_table_row_count": true,
+    "per_file_sha256": true,
+    "schema_sha256": true,
+    "source_pipeline_report_sha256": true,
+    "source_normalized_records_sha256": true,
+    "bundle_sha256": true
+  },
+  "validation_design": [
+    "explicit schemas",
+    "float-free market numeric columns",
+    "all fixed tables including empty tables",
+    "frame/control/error visibility",
+    "event/envelope provenance agreement",
+    "all supported event payload tables",
+    "L2 order preservation",
+    "duplicate stable trade IDs preserved",
+    "same-input byte determinism under pinned stack",
+    "mixed causal domains serialized deterministically without causal claim",
+    "existing destination refusal",
+    "temporary cleanup on failure",
+    "QCR1 -> normalization pipeline -> Parquet -> readback integration"
+  ],
+  "ci": {
+    "github_ci": "PENDING"
+  },
+  "limitations": [
+    "Parquet is not authoritative; rebuild from QCR1 when needed",
+    "Cross-PyArrow-version byte identity is not promised",
+    "Market numerics are exact strings in Stage 0; later numeric feature tables require separately frozen scale semantics",
+    "No features, labels, bars, backtest, deduplication, backfill, execution, or AI"
+  ]
+}

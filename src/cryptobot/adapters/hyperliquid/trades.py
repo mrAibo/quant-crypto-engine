@@ -290,12 +290,7 @@ def _parse_trade(
         )
 
     tid = trade["tid"]
-    if (
-        isinstance(tid, bool)
-        or not isinstance(tid, int)
-        or tid < 0
-        or tid >= (1 << 50)
-    ):
+    if isinstance(tid, bool) or not isinstance(tid, int) or tid < 0 or tid >= (1 << 50):
         return _parse_error(
             frame,
             trade_index,

@@ -6,11 +6,12 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from decimal import Decimal
 from enum import StrEnum
-from typing import TypeAlias, cast
+from itertools import pairwise
+from typing import cast
 
 from cryptobot.data.events import (
-    AvailabilityKind,
     BBO,
+    AvailabilityKind,
     BookLevel,
     EventEnvelope,
     EventType,
@@ -65,7 +66,7 @@ class BookParseError:
     detail: str
 
 
-NormalizedBookEvent: TypeAlias = L2Snapshot | BBO
+type NormalizedBookEvent = L2Snapshot | BBO
 
 
 @dataclass(frozen=True, slots=True)
@@ -381,9 +382,9 @@ def _book_quality_flags(
     asks: tuple[BookLevel, ...],
 ) -> QualityFlag:
     suspect = False
-    if any(left.price < right.price for left, right in zip(bids, bids[1:], strict=False)):
+    if any(left.price < right.price for left, right in pairwise(bids)):
         suspect = True
-    if any(left.price > right.price for left, right in zip(asks, asks[1:], strict=False)):
+    if any(left.price > right.price for left, right in pairwise(asks)):
         suspect = True
     if bids and asks and bids[0].price >= asks[0].price:
         suspect = True

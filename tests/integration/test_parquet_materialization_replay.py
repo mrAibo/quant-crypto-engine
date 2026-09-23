@@ -2,10 +2,16 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Callable
 from pathlib import Path
+from typing import cast
 
+import pyarrow as pa
 import pyarrow.parquet as pq
 import pytest
+
+type _ReadTableFn = Callable[..., pa.Table]
+_READ_TABLE = cast(_ReadTableFn, pq.read_table)
 
 from cryptobot.data.instruments import load_instrument_registry
 from cryptobot.data.materialize import materialize_research_dataset
@@ -176,7 +182,8 @@ def _file_hashes(path: Path) -> dict[str, str]:
 
 
 def _read_rows(path: Path, filename: str) -> list[dict[str, object]]:
-    return pq.read_table(path / filename, use_threads=False).to_pylist()
+    rows = _READ_TABLE(path / filename, use_threads=False).to_pylist()
+    return cast(list[dict[str, object]], rows)
 
 
 def test_qcr1_to_parquet_is_deterministic_auditable_and_non_deduplicating(
@@ -267,8 +274,11 @@ def test_qcr1_to_parquet_is_deterministic_auditable_and_non_deduplicating(
 
     frame_by_raw = {(frame.ref.segment_id, frame.ref.offset): frame for frame in all_frames}
     for row in event_rows:
-        raw_key = (row["raw_segment_id"], row["raw_offset"])
-        frame = frame_by_raw[raw_key]
+        raw_segment_id = row["raw_segment_id"]
+        raw_offset = row["raw_offset"]
+        assert isinstance(raw_segment_id, str)
+        assert isinstance(raw_offset, int)
+        frame = frame_by_raw[(raw_segment_id, raw_offset)]
         assert row["raw_sha256"] == frame.ref.payload_sha256
 
     trade_rows = _read_rows(first.output_dir, "trades.parquet")

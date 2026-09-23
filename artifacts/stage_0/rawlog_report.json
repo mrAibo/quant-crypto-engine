@@ -1,6 +1,6 @@
 {
   "task": "TASK-005",
-  "status": "IMPLEMENTED_CI_PENDING",
+  "status": "PASS",
   "frame_version": 1,
   "magic": "QCR1",
   "layout": [
@@ -42,7 +42,12 @@
     "garbage after valid frame"
   ],
   "validation": {
-    "github_ci": "PENDING"
+    "github_ci_run": 35892543470,
+    "github_ruff_check": "PASS",
+    "github_ruff_format_check": "PASS",
+    "github_mypy_strict": "PASS",
+    "github_pytest_python_3_12": "PASS",
+    "github_pytest_python_3_13": "PASS"
   },
   "known_limitations": [
     "No segment sealing/manifest yet.",

@@ -7,7 +7,7 @@
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `task-012-hyperliquid-context-normalization`
 - Current phase: **Stage 0 — Evidence Contract and Market-Data Recorder**
-- Current work package: **TASK-012 / S0-WP12 — Hyperliquid activeAssetCtx normalization implemented; CI pending**
+- Current work package: **TASK-012 / S0-WP12 — Hyperliquid activeAssetCtx normalization validated; merge pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -282,21 +282,23 @@ Delivered:
 
 Read **[`tasks/TASK_012.md`](tasks/TASK_012.md)**.
 
-Implemented on the feature branch:
+TASK-012 is validated on PR #12:
 
-- current official context/funding/mark/oracle evidence;
+- official/current activeAssetCtx/funding/mark/oracle evidence;
 - live wire probe proving string-valued context and no native timestamp;
 - additive `FundingObservationKind.CURRENT` contract correction;
-- exact-Decimal funding/mark/oracle normalization;
+- exact-Decimal FundingRateObservation + MarkPrice + OraclePrice normalization;
 - no fabricated exchange timestamp;
-- `MISSING_EXCHANGE_TIME` quality flag;
+- `MISSING_EXCHANGE_TIME` quality signaling;
 - complete raw provenance and deterministic event IDs;
-- QCR1 replay tests;
-- `artifacts/stage_0/hyperliquid_context_normalization.json`.
+- QCR1 replay determinism;
+- **246 tests PASS** on Python 3.12 and Python 3.13;
+- Ruff/format/strict mypy PASS;
+- CI run `35918301023`.
 
 ### Exact next action
 
-Open TASK-012 PR and require full network-independent CI green. Then merge and advance to TASK-013 (external reference feed).
+Merge PR #12, close TASK-012 on main, then define/freeze TASK-013 external reference feed before implementation.
 
 ## User actions currently required
 

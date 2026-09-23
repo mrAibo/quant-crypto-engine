@@ -552,6 +552,112 @@
       ],
       "reverify_after": null,
       "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.l2book.data_shape",
+      "subject": "Hyperliquid WsBook data shape",
+      "claim": "WsBook is documented as {coin: string, levels: [Array<WsLevel>, Array<WsLevel>], time: number}, with levels representing bid and ask sides and the feed described as order-book snapshot updates.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/subscriptions",
+      "source_retrieved_at": "2026-09-23T00:00:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-l2-bbo-normalization",
+      "limitations": "The documentation defines the field shape and snapshot semantics but does not define an exchange sequence number or a completeness SLA.",
+      "reverify_trigger": [
+        "BEFORE_BOOK_NORMALIZATION",
+        "WEBSOCKET_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.wslevel.data_shape",
+      "subject": "Hyperliquid WsLevel data shape",
+      "claim": "WsLevel is documented with px:string price, sz:string size, and n:number number of orders.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/subscriptions",
+      "source_retrieved_at": "2026-09-23T00:00:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-l2-bbo-normalization",
+      "limitations": "The project parses px and sz as exact decimals and n as an integer; it does not infer tick/lot precision from these strings.",
+      "reverify_trigger": [
+        "BEFORE_BOOK_NORMALIZATION",
+        "WEBSOCKET_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.bbo.data_shape",
+      "subject": "Hyperliquid WsBbo data shape",
+      "claim": "WsBbo is documented as {coin:string, time:number, bbo:[WsLevel|null, WsLevel|null]}, and updates are sent only if the BBO changes on a block.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/subscriptions",
+      "source_retrieved_at": "2026-09-23T00:00:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-l2-bbo-normalization",
+      "limitations": "A null side is therefore structurally permitted by the documented type. Absence of an update does not prove a feed gap.",
+      "reverify_trigger": [
+        "BEFORE_BOOK_NORMALIZATION",
+        "WEBSOCKET_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.l2book.aggregation_parameters",
+      "subject": "Hyperliquid l2Book aggregation parameters",
+      "claim": "The l2Book subscription documents optional nSigFigs and mantissa parameters. The info endpoint documents nSigFigs values 2,3,4,5 or null/full precision, and mantissa values 1,2,5 only when nSigFigs is 5.",
+      "status": "VERIFIED",
+      "verification_scope": "DOCUMENTED",
+      "source_url": "https://hyperliquid.gitbook.io/Hyperliquid-docs/for-developers/api/info-endpoint",
+      "source_retrieved_at": "2026-09-23T00:00:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-l2-bbo-normalization",
+      "limitations": "TASK-010 normalizes the project's current default subscription without nSigFigs/mantissa and records aggregation as null rather than inventing a label.",
+      "reverify_trigger": [
+        "BEFORE_BOOK_NORMALIZATION",
+        "WEBSOCKET_DOC_CHANGE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
+    },
+    {
+      "fact_id": "hyperliquid.websocket.book_time_semantics",
+      "subject": "Hyperliquid WsBook/WsBbo time semantics",
+      "claim": "The official WebSocket type definitions expose time:number for WsBook and WsBbo, but the reviewed documentation does not explicitly define whether that value is publication time, block time, event time, or another exchange clock semantic.",
+      "status": "UNKNOWN",
+      "verification_scope": "UNVERIFIED",
+      "source_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/websocket/subscriptions",
+      "source_retrieved_at": "2026-09-23T00:00:00Z",
+      "source_hash": null,
+      "effective_from": null,
+      "effective_to": null,
+      "environment": "MAINNET",
+      "verification_artifact": "docs/evidence_sources.md#hyperliquid-l2-bbo-normalization",
+      "limitations": "TASK-010 must not label this timestamp BOOK_PUBLICATION_TIME without stronger evidence. Wire values may be parsed only under an explicitly documented/measured unit decision.",
+      "reverify_trigger": [
+        "BEFORE_BOOK_NORMALIZATION",
+        "WEBSOCKET_DOC_CHANGE",
+        "TIMESTAMP_SEMANTICS_EVIDENCE"
+      ],
+      "reverify_after": null,
+      "owner": "project"
     }
   ]
 }

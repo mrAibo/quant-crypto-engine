@@ -78,9 +78,7 @@ class ReconnectPolicy:
                 "the documented 30-new-connections-per-minute IP limit"
             )
         if self.base_delay_seconds > self.max_delay_seconds:
-            raise HyperliquidPublicError(
-                "base_delay_seconds must not exceed max_delay_seconds"
-            )
+            raise HyperliquidPublicError("base_delay_seconds must not exceed max_delay_seconds")
         if (
             isinstance(self.jitter_fraction, bool)
             or not isinstance(self.jitter_fraction, int | float)

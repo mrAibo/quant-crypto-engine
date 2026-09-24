@@ -1,0 +1,27 @@
+name: TASK-018 Format Probe
+
+on:
+  push:
+    branches: [task-018-frontier-evidence-campaign]
+    paths:
+      - ".github/workflows/task018-format-probe.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  format-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.18"
+      - run: uv python install 3.12
+      - run: uv sync --locked --all-groups --python 3.12
+      - name: Show formatter diff
+        shell: bash
+        run: |
+          uv run --python 3.12 ruff format src/cryptobot/research/campaign.py tests/unit/test_frontier_campaign.py
+          git --no-pager diff -- src/cryptobot/research/campaign.py tests/unit/test_frontier_campaign.py

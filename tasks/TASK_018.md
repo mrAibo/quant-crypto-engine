@@ -2,7 +2,7 @@
 
 ## Status
 
-`IN PROGRESS — COLLECTION TOOLING IMPLEMENTED, CI PENDING`
+`IN PROGRESS — COLLECTION TOOLING VALIDATED; LONG PROSPECTIVE CAMPAIGN PENDING`
 
 ## Objective
 
@@ -344,3 +344,24 @@ Added after the campaign core:
 The segment runner does not accept fee assumptions independently from the campaign CLI: the CLI loads the frozen campaign fee scenario before each run.
 
 Real 2,952-window collection and final gate adjudication remain pending.
+
+
+## Operational smoke validation
+
+One-shot public-only workflow `35940052539` validated the complete segment path on real public mainnet data:
+
+- duration: 30 seconds;
+- raw frames: **10,789**;
+- normalized events: **10,999**;
+- segment publication: PASS;
+- dataset bundle SHA-256: `9d24f826068a89f53b133ca6a8d034fa0680d86d71036936e615455806f1bf72`;
+- segment evidence SHA-256: `55341a47b460ddbcc897c665a51b385680dbc9e27491b1b1cbe7e395055a5cd8`;
+- campaign manifest SHA-256: `ad5e9a508ae1851057bf4e33029c6ed097054bb599ad043fe795ca11ae0bd1e2`;
+- incomplete segment directories: 0;
+- readiness: `COLLECTING`;
+- gate decision: `INCONCLUSIVE`;
+- valid 50-second windows: 0, expected because the smoke duration is shorter than the pre-registered 50-second horizon.
+
+The temporary network workflow was removed immediately after the successful smoke.
+
+TASK-018 is **not complete**: the prospective campaign still requires at least 2,952 valid non-overlapping 50-second windows and therefore persistent-host collection materially longer than the mathematical ~41-hour minimum when gaps/exclusions are included.

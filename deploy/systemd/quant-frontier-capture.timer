@@ -1,0 +1,11 @@
+[Unit]
+Description=Schedule near-continuous Stage-0.5 frontier raw capture
+
+[Timer]
+OnBootSec=2min
+OnUnitInactiveSec=10s
+Persistent=true
+Unit=quant-frontier-capture.service
+
+[Install]
+WantedBy=timers.target

@@ -88,15 +88,11 @@ class CampaignConfig:
     def as_dict(self) -> dict[str, object]:
         return {
             "campaign_id": self.campaign_id,
-            "fee_scenario_bps_per_side": serialize_exact_decimal(
-                self.fee_scenario_bps_per_side
-            ),
+            "fee_scenario_bps_per_side": serialize_exact_decimal(self.fee_scenario_bps_per_side),
             "target_horizon_seconds": self.target_horizon_seconds,
             "required_non_overlapping_windows": self.required_non_overlapping_windows,
             "dkw_confidence": serialize_exact_decimal(self.dkw_confidence),
-            "dkw_maximum_cdf_error": serialize_exact_decimal(
-                self.dkw_maximum_cdf_error
-            ),
+            "dkw_maximum_cdf_error": serialize_exact_decimal(self.dkw_maximum_cdf_error),
             "source_ids": list(self.source_ids),
             "primary_instrument_id": self.primary_instrument_id,
         }
@@ -211,11 +207,7 @@ class SegmentData:
                 raise CampaignValidationError(
                     "primary BBO observation belongs to an undeclared causal domain"
                 )
-            if not (
-                self.evidence.wall_start_ns
-                <= item.recv_wall_ns
-                <= self.evidence.wall_end_ns
-            ):
+            if not (self.evidence.wall_start_ns <= item.recv_wall_ns <= self.evidence.wall_end_ns):
                 raise CampaignValidationError(
                     "primary BBO observation falls outside segment wall interval"
                 )
@@ -330,12 +322,10 @@ class CampaignReport:
             "adjudication_window_count": self.adjudication_window_count,
             "excluded_window_count": self.excluded_window_count,
             "movement_quantiles_bps": {
-                name: serialize_exact_decimal(value)
-                for name, value in self.movement_quantiles_bps
+                name: serialize_exact_decimal(value) for name, value in self.movement_quantiles_bps
             },
             "friction_quantiles_bps": {
-                name: serialize_exact_decimal(value)
-                for name, value in self.friction_quantiles_bps
+                name: serialize_exact_decimal(value) for name, value in self.friction_quantiles_bps
             },
             "q50_friction_over_q95_move": (
                 None
@@ -345,9 +335,7 @@ class CampaignReport:
             "adjacent_nonzero_sign_agreement_fraction": (
                 None
                 if self.adjacent_nonzero_sign_agreement_fraction is None
-                else serialize_exact_decimal(
-                    self.adjacent_nonzero_sign_agreement_fraction
-                )
+                else serialize_exact_decimal(self.adjacent_nonzero_sign_agreement_fraction)
             ),
             "zero_move_fraction": (
                 None
@@ -378,9 +366,7 @@ def build_campaign_report(
         raise CampaignValidationError("segment_data contains duplicate segment IDs")
     expected_ids = {item.segment_id for item in manifest.segments}
     if set(data_by_id) != expected_ids:
-        raise CampaignValidationError(
-            "segment_data must match campaign manifest segments exactly"
-        )
+        raise CampaignValidationError("segment_data must match campaign manifest segments exactly")
 
     all_windows: list[MovementWindow] = []
     audits: list[SegmentWindowAudit] = []
@@ -499,9 +485,7 @@ def build_segment_windows(
         gap_excluded_count=gap_excluded,
         causal_domain_count=len(by_domain),
         cadence_p99_ns=(
-            None
-            if not cadence_values
-            else _nearest_rank_int(tuple(cadence_values), 99, 100)
+            None if not cadence_values else _nearest_rank_int(tuple(cadence_values), 99, 100)
         ),
     )
     return tuple(windows), audit
@@ -524,9 +508,7 @@ def adjudicate_windows(
 
     movement_values = tuple(item.absolute_move_bps for item in sample)
     friction_values = tuple(
-        item.known_friction_bps
-        for item in sample
-        if item.known_friction_bps is not None
+        item.known_friction_bps for item in sample if item.known_friction_bps is not None
     )
 
     movement_quantiles = _movement_quantiles(movement_values)
@@ -549,8 +531,7 @@ def adjudicate_windows(
     zero_fraction = (
         None
         if not sample
-        else Decimal(sum(item.signed_move_bps == 0 for item in sample))
-        / Decimal(len(sample))
+        else Decimal(sum(item.signed_move_bps == 0 for item in sample)) / Decimal(len(sample))
     )
     unsupported = (
         "actual_project_account_fee_tier",

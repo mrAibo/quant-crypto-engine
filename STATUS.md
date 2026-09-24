@@ -7,7 +7,7 @@
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `task-018-frontier-evidence-campaign`
 - Current phase: **Stage 0.5 — Profitability / Economic Frontier**
-- Current work package: **TASK-017 — profitability-frontier measurement contract validated; merge pending**
+- Current work package: **TASK-018 — prospective frontier evidence campaign tooling validated; operational smoke pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**

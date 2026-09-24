@@ -9,6 +9,11 @@ from pathlib import Path
 from websockets.asyncio.server import ServerConnection, serve
 
 from cryptobot.adapters.binance.public import MARKET_STREAMS, PUBLIC_STREAMS
+from cryptobot.research.campaign import CampaignConfig, CampaignReadiness, GateDecision
+from cryptobot.research.campaign_storage import (
+    initialize_campaign_root,
+    publish_campaign_report,
+)
 from cryptobot.runtime.dual_source_recorder import load_dual_source_recorder_config
 from cryptobot.runtime.frontier_segment import run_frontier_evidence_segment
 from cryptobot.runtime.public_recorder import RuntimeIdentity
@@ -174,9 +179,17 @@ def test_frontier_segment_runner_publishes_only_after_full_pipeline(
                 ),
             )
 
+            campaign_root = tmp_path / "campaign"
+            initialize_campaign_root(
+                campaign_root,
+                CampaignConfig(
+                    campaign_id="runner-integration-campaign",
+                    fee_scenario_bps_per_side=Decimal("4.5"),
+                ),
+            )
             result = await run_frontier_evidence_segment(
                 config,
-                campaign_root=tmp_path / "campaign",
+                campaign_root=campaign_root,
                 run_duration_seconds=0.15,
                 fee_scenario_bps_per_side=Decimal("4.5"),
                 identity=RuntimeIdentity(
@@ -211,5 +224,13 @@ def test_frontier_segment_runner_publishes_only_after_full_pipeline(
         }
         assert evidence["segment"]["segment_id"] == result.segment_id
         assert evidence["segment"]["causal_domains"] == [["host-test", "boot-test"]]
+
+        published = publish_campaign_report(campaign_root)
+        assert len(published.discovery.segments) == 1
+        assert published.discovery.incomplete_segment_directories == ()
+        assert published.report.readiness is CampaignReadiness.COLLECTING
+        assert published.report.gate_decision is GateDecision.INCONCLUSIVE
+        assert published.report.accepted_segment_count == 1
+        assert published.report_path.is_file()
 
     asyncio.run(scenario())

@@ -2,7 +2,7 @@
 
 ## Status
 
-`VALIDATED — MERGE PENDING`
+`COMPLETE`
 
 ## Objective
 
@@ -284,3 +284,19 @@ Final network-independent GitHub CI run `35935196082`:
 - pytest Python 3.13: **337 PASS**.
 
 TASK-017 validates the measurement pipeline and derives the next evidence requirement. It does **not** promote the Frontier Gate.
+
+
+## Merge provenance
+
+Merged as PR #17 in commit `e59b390ff0a15180b1454819c8ea14c93bc56261`.
+
+Final PR-head CI:
+
+- workflow `35937250139`;
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS;
+- pytest Python 3.12: **337 PASS**;
+- pytest Python 3.13: **337 PASS**.
+
+TASK-017 completed the measurement contract and pilot only. The Frontier Gate remains **NOT_EVALUATED** pending the prospective evidence window defined by TASK-018.

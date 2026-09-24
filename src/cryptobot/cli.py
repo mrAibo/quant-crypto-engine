@@ -92,8 +92,7 @@ def build_parser() -> argparse.ArgumentParser:
     frontier_report = subparsers.add_parser(
         "report-frontier-campaign",
         help=(
-            "Validate all published segments and publish a deterministic "
-            "campaign report revision."
+            "Validate all published segments and publish a deterministic campaign report revision."
         ),
     )
     frontier_report.add_argument("--campaign-root", required=True)

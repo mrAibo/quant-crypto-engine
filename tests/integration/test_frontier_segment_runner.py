@@ -200,9 +200,7 @@ def test_frontier_segment_runner_publishes_only_after_full_pipeline(
         assert (root / "dataset" / "manifest.json").is_file()
         assert (root / "raw" / "manifest.json").is_file()
 
-        evidence = json.loads(
-            (root / "segment-evidence.json").read_text(encoding="utf-8")
-        )
+        evidence = json.loads((root / "segment-evidence.json").read_text(encoding="utf-8"))
         assert evidence["acceptance"] == {
             "dataset_bundle_verified": True,
             "normalization_error_count": 0,

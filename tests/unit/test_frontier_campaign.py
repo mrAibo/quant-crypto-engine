@@ -360,8 +360,7 @@ def test_segment_window_builder_creates_strict_non_overlapping_windows() -> None
     assert len(windows) == 3
     assert audit.accepted_window_count == 3
     assert all(
-        later.start_recv_mono_ns >= earlier.end_recv_mono_ns
-        for earlier, later in pairwise(windows)
+        later.start_recv_mono_ns >= earlier.end_recv_mono_ns for earlier, later in pairwise(windows)
     )
 
 
@@ -369,10 +368,7 @@ def test_readiness_starts_only_at_2952_windows_and_uses_first_2952() -> None:
     manifest = CampaignManifest(config=_config())
     below = tuple(_window(index, move="10") for index in range(2951))
     ready = (*below, _window(2951, move="10"))
-    extra_adverse = ready + tuple(
-        _window(3000 + index, move="0.1")
-        for index in range(100)
-    )
+    extra_adverse = ready + tuple(_window(3000 + index, move="0.1") for index in range(100))
 
     below_report = adjudicate_windows(manifest=manifest, windows=below)
     ready_report = adjudicate_windows(manifest=manifest, windows=ready)
@@ -389,8 +385,7 @@ def test_readiness_starts_only_at_2952_windows_and_uses_first_2952() -> None:
 def test_q95_strictly_above_q50_friction_passes() -> None:
     manifest = CampaignManifest(config=_config())
     windows = tuple(
-        _window(index, move="12" if index >= 2800 else "10", friction="9")
-        for index in range(2952)
+        _window(index, move="12" if index >= 2800 else "10", friction="9") for index in range(2952)
     )
 
     report = adjudicate_windows(manifest=manifest, windows=windows)
@@ -414,8 +409,7 @@ def test_q95_equal_to_q50_friction_does_not_pass() -> None:
 def test_missing_required_friction_is_inconclusive() -> None:
     manifest = CampaignManifest(config=_config())
     windows = tuple(
-        _window(index, move="12", friction=None if index == 100 else "9")
-        for index in range(2952)
+        _window(index, move="12", friction=None if index == 100 else "9") for index in range(2952)
     )
 
     report = adjudicate_windows(manifest=manifest, windows=windows)

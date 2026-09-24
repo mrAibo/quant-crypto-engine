@@ -23,6 +23,8 @@ from cryptobot.research.campaign_storage import (
 from cryptobot.runtime.dual_source_recorder import load_dual_source_recorder_config
 from cryptobot.runtime.frontier_segment import (
     FrontierSegmentError,
+    capture_frontier_evidence_segment_sync,
+    process_next_frontier_captured_segment,
     run_frontier_evidence_segment_sync,
 )
 from cryptobot.runtime.public_recorder import (
@@ -75,6 +77,24 @@ def build_parser() -> argparse.ArgumentParser:
         "--fee-scenario-bps-per-side",
         type=Decimal,
         required=True,
+    )
+
+    frontier_capture = subparsers.add_parser(
+        "capture-frontier-segment",
+        help="Capture and seal one public-only Stage-0.5 raw evidence segment.",
+    )
+    frontier_capture.add_argument("--config", required=True)
+    frontier_capture.add_argument("--campaign-root", required=True)
+    frontier_capture.add_argument("--duration-seconds", type=float, required=True)
+
+    frontier_process = subparsers.add_parser(
+        "process-next-frontier-segment",
+        help="Process and publish the oldest capture-ready Stage-0.5 segment.",
+    )
+    frontier_process.add_argument("--campaign-root", required=True)
+    frontier_process.add_argument(
+        "--registry",
+        default="config/instruments.yaml",
     )
 
     frontier_segment = subparsers.add_parser(
@@ -141,11 +161,61 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         return 0
 
+    if args.command == "capture-frontier-segment":
+        dual_source_config = load_dual_source_recorder_config(args.config)
+        try:
+            load_campaign_config(args.campaign_root)
+            capture_result = capture_frontier_evidence_segment_sync(
+                dual_source_config,
+                campaign_root=args.campaign_root,
+                run_duration_seconds=args.duration_seconds,
+            )
+        except (CampaignValidationError, FrontierSegmentError, OSError, ValueError) as exc:
+            print(
+                json.dumps(
+                    {"status": "FAILED", "error": str(exc)},
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+            )
+            return 2
+        print(capture_result.to_json())
+        return 0
+
+    if args.command == "process-next-frontier-segment":
+        try:
+            campaign_config = load_campaign_config(args.campaign_root)
+            process_result = process_next_frontier_captured_segment(
+                args.campaign_root,
+                fee_scenario_bps_per_side=campaign_config.fee_scenario_bps_per_side,
+                registry_path=args.registry,
+            )
+        except (CampaignValidationError, FrontierSegmentError, OSError, ValueError) as exc:
+            print(
+                json.dumps(
+                    {"status": "FAILED", "error": str(exc)},
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+            )
+            return 2
+        if process_result is None:
+            print(
+                json.dumps(
+                    {"status": "IDLE", "pending_segment": None},
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+            )
+            return 0
+        print(process_result.to_json())
+        return 0
+
     if args.command == "run-frontier-segment":
         dual_source_config = load_dual_source_recorder_config(args.config)
         try:
             campaign_config = load_campaign_config(args.campaign_root)
-            result = run_frontier_evidence_segment_sync(
+            segment_result = run_frontier_evidence_segment_sync(
                 dual_source_config,
                 campaign_root=args.campaign_root,
                 run_duration_seconds=args.duration_seconds,
@@ -161,7 +231,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 )
             )
             return 2
-        print(result.to_json())
+        print(segment_result.to_json())
         return 0
 
     if args.command == "report-frontier-campaign":

@@ -5,10 +5,10 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `task-017-profitability-frontier`
+- Current branch: `main`
 - Current phase: **Stage 0.5 — Profitability / Economic Frontier**
 - Current work package: **TASK-017 — profitability-frontier measurement contract validated; merge pending**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
@@ -367,30 +367,32 @@ Real dual-source public mainnet evidence:
 
 This validates the data/evidence pipeline only. Economic edge remains UNPROVEN.
 
-## Current task
+## Completed — TASK-017
 
-Read **[`tasks/TASK_017.md`](tasks/TASK_017.md)**.
-
-TASK-017 is validated on PR #17.
+PR #17, merge commit `e59b390ff0a15180b1454819c8ea14c93bc56261`.
 
 Delivered:
 
-- exact model-free BBO/spread/movement/friction primitives;
-- deterministic displayed-depth L2 book walking;
-- deterministic 1-2-5 horizon support logic;
-- full deterministic Parquet dataset audit;
-- causal BTC BBO movement measurement with gap exclusions;
-- documented-base taker fee scenario separated from actual account fee UNKNOWN;
-- latency/funding unsupported components remain explicit;
-- real prospective pilot workflow `35933979812`;
-- pilot intentionally **did not** evaluate/promote the Frontier Gate;
-- derived next evidence requirement: **2,952 non-overlapping 50-second windows**;
-- mathematical minimum observed duration: **147,600 s ≈ 41 h**, with real requirement potentially larger due gaps/dependence;
-- final CI `35935196082`: **337 tests PASS** on Python 3.12 and 3.13; Ruff/format/strict mypy PASS.
+- deterministic model-free frontier math/audit/reporting;
+- exact BBO/spread/movement/friction and L2 depth primitives;
+- prospective real-data pilot;
+- no model/alpha claim;
+- derived target horizon: **50 seconds**;
+- required valid non-overlapping windows: **2,952**;
+- mathematical minimum observed support: **147,600 s ≈ 41 h**;
+- final PR-head CI `35937250139`: **337 tests PASS** on Python 3.12 and 3.13; Ruff/format/strict mypy PASS.
+
+Frontier Gate remains **NOT_EVALUATED**.
+
+## Current task
+
+Read **[`tasks/TASK_018.md`](tasks/TASK_018.md)**.
+
+TASK-018 creates a restart-safe prospective evidence campaign, collects the pre-registered 50-second window support, and adjudicates only economic **feasibility** before any predictive model exists.
 
 ### Exact next action
 
-Merge PR #17. Then define TASK-018 for prospective evidence-window collection and Frontier Gate adjudication without fitting any predictive model.
+Create the TASK-018 branch and implement the immutable campaign/segment contracts plus deterministic cross-segment 50-second window aggregation first. Do not start a long evidence collection until those contracts and tests are green.
 
 ## User actions currently required
 

@@ -124,67 +124,43 @@ The merged implementation includes:
 
 No wallet, API key, private stream, order, signer, or capital logic is required for TASK-018.
 
+## Persistent-host campaign checkpoint
+
+Prospective collection started on **2026-09-24** on a persistent Ubuntu WSL2 host. **Do not initialize a second campaign.**
+
+- deployed collector checkout: `main` at `f01b1fac2c81ccf59d0d05d13ba44dace5367f5f`;
+- host CI-equivalent verification: Python 3.12.3, pinned `uv 0.12.18`, Ruff PASS, Ruff format PASS, strict mypy PASS, **359 pytest PASS**;
+- campaign root: `/var/lib/quant-crypto-engine/frontier-campaign`;
+- campaign ID: `btc-frontier-50s-v1`;
+- frozen fee scenario: **4.5 bps/side SCENARIO**;
+- first persistent-host acceptance segment: 70 seconds, **69,837** raw frames, **70,281** normalized events;
+- acceptance-segment dataset bundle SHA-256: `50e910e5ffd108e58cd02503125059b059609ce53d734ea078652d15bf609274`;
+- acceptance-segment evidence SHA-256: `3eb1abf0d91431909fcf3be1b6a5927253d287ca3e7e899c2b82f22510d514a8`;
+- checkpoint campaign-manifest SHA-256: `b03185793f345a61a98871381641e5ead41a42930ccf0d5f22ad486bbdaf1dfe`;
+- checkpoint valid 50-second windows: **1**;
+- readiness: `COLLECTING`;
+- gate: `INCONCLUSIVE`;
+- one setup-time systemd segment was interrupted by the WSL lifecycle before keep-alive was added; that incomplete segment is deliberately preserved and is not counted;
+- Windows AC sleep is disabled; a Windows logon scheduled keep-alive holds WSL open and auto-restarts it on failure;
+- the supplied one-hour systemd segment service/timer is enabled and collection is active.
+
+No wallet, API key, account endpoint, order, signer, or capital is involved.
+
 ## Exact next action
 
-The repository does **not** need more implementation first.
+Continue the **existing initialized campaign**; do not reinitialize it and do not delete incomplete segments.
 
-It needs a persistent Linux host/VM with outbound public WebSocket access and enough disk to retain immutable QCR1 + Parquet evidence.
+On a fresh session:
 
-On that host:
+1. connect to the existing collector host through the authorized remote-computer connector;
+2. verify `quant-frontier-segment.service` / `quant-frontier-segment.timer` and free disk;
+3. inspect the latest cumulative report after accepted segments;
+4. continue bounded one-hour segments until `report.total_valid_non_overlapping_windows >= 2952`;
+5. do not stop merely because 41 wall-clock hours passed;
+6. when statistically ready, run the deterministic pre-registered Frontier Gate adjudication;
+7. commit the final evidence result and advance `STATUS.md` according to the gate outcome.
 
-### 1. Checkout current main and install locked environment
-
-```bash
-git clone https://github.com/mrAibo/quant-crypto-engine.git
-cd quant-crypto-engine
-git checkout main
-git pull --ff-only
-
-uv sync --locked --all-groups --python 3.12
-```
-
-### 2. Initialize the campaign exactly once
-
-```bash
-uv run --python 3.12 python -m cryptobot.cli init-frontier-campaign \
-  --campaign-root /var/lib/quant-crypto-engine/frontier-campaign \
-  --campaign-id btc-frontier-50s-v1 \
-  --fee-scenario-bps-per-side 4.5
-```
-
-This 4.5 bps value is a documented-base **SCENARIO**, not a measured future account fee.
-
-### 3. Run bounded immutable collection segments
-
-Example one-hour segment:
-
-```bash
-uv run --python 3.12 python -m cryptobot.cli run-frontier-segment \
-  --config config/runtime/dual-source-smoke.json \
-  --campaign-root /var/lib/quant-crypto-engine/frontier-campaign \
-  --duration-seconds 3600 \
-  --registry config/instruments.yaml
-```
-
-Recommended operational path: use the supplied systemd service/timer from `docs/runbooks/frontier_campaign.md`.
-
-### 4. Rebuild cumulative report after accepted segments
-
-```bash
-uv run --python 3.12 python -m cryptobot.cli report-frontier-campaign \
-  --campaign-root /var/lib/quant-crypto-engine/frontier-campaign
-```
-
-Watch:
-
-- `published_segment_count`;
-- `incomplete_segment_directories`;
-- `report.total_valid_non_overlapping_windows`;
-- `report.adjudication_window_count`;
-- `report.readiness`;
-- `report.gate_decision`.
-
-Do not stop merely because 41 wall-clock hours passed. The requirement is **>= 2,952 valid non-overlapping 50-second windows**.
+No repository implementation work is currently required before that evidence threshold.
 
 ## Frontier Gate outcomes
 
@@ -253,18 +229,8 @@ Preserve failed/incomplete segments for diagnostics.
 
 ## User action currently required
 
-**Provide or choose the persistent Linux host/VM.**
+No command or repository action is required from the user while collection remains healthy.
 
-Once the host exists, the next session should help with:
+Physical requirement: keep the collector machine powered and connected to AC power. Windows AC sleep is disabled for the campaign; battery sleep remains unchanged.
 
-1. host sizing/selection if not yet chosen;
-2. installation/deployment;
-3. campaign initialization;
-4. systemd timer setup;
-5. first one-hour segment verification;
-6. cumulative report inspection;
-7. monitoring until >= 2,952 valid windows;
-8. final deterministic Frontier Gate adjudication;
-9. commit the final evidence result and advance `STATUS.md`.
-
-If host access or external network behavior blocks progress and cannot be resolved with available tools, write a complete self-contained task prompt for another harness instead of weakening tests or evidence rules.
+If host access or external network behavior later blocks progress and cannot be resolved with available tools, document the blocker without weakening tests or evidence rules.

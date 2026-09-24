@@ -199,6 +199,12 @@ def process_frontier_captured_segment(
         "recorder_summary_sha256",
     ):
         raise FrontierSegmentError("recorder-summary digest does not match capture-ready")
+    recorder_summary = _parse_object(recorder_summary_bytes, "recorder-summary")
+    _validate_recorder_summary(
+        recorder_summary,
+        expected_run_id=run_id,
+        expected_segment_id=segment_id,
+    )
 
     raw_path = _safe_segment_path(root, _required_str(capture, "raw_relative_path"))
     raw_manifest_path = _safe_segment_path(
@@ -388,18 +394,72 @@ def run_frontier_evidence_segment_sync(
 
 
 def _parse_capture_ready(raw: bytes) -> dict[str, object]:
-    try:
-        value = json.loads(raw)
-    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
-        raise FrontierSegmentError("capture-ready is not valid UTF-8 JSON") from exc
-    if not isinstance(value, dict) or not all(isinstance(key, str) for key in value):
-        raise FrontierSegmentError("capture-ready root must be an object")
-    result = cast(dict[str, object], value)
+    result = _parse_object(raw, "capture-ready")
+    expected_fields = {
+        "schema_version",
+        "capture_version",
+        "run_id",
+        "segment_id",
+        "raw_frame_count",
+        "raw_relative_path",
+        "raw_manifest_relative_path",
+        "recorder_summary_sha256",
+        "raw_manifest_sha256",
+        "public_only",
+    }
+    if set(result) != expected_fields:
+        raise FrontierSegmentError("capture-ready fields do not match the frozen contract")
     if _required_int(result, "schema_version") != 1:
         raise FrontierSegmentError("unsupported capture-ready schema_version")
     if _required_str(result, "capture_version") != "frontier-capture-v1":
         raise FrontierSegmentError("unsupported capture_version")
     return result
+
+
+def _parse_object(raw: bytes, label: str) -> dict[str, object]:
+    try:
+        value = json.loads(raw)
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise FrontierSegmentError(f"{label} is not valid UTF-8 JSON") from exc
+    if not isinstance(value, dict) or not all(isinstance(key, str) for key in value):
+        raise FrontierSegmentError(f"{label} root must be an object")
+    return cast(dict[str, object], value)
+
+
+def _validate_recorder_summary(
+    value: dict[str, object],
+    *,
+    expected_run_id: str,
+    expected_segment_id: str,
+) -> None:
+    if _required_str(value, "status") != "SUCCESS":
+        raise FrontierSegmentError("recorder-summary status is not SUCCESS")
+    if _required_int(value, "exit_code") != 0:
+        raise FrontierSegmentError("recorder-summary exit_code is not zero")
+    if _required_str(value, "run_id") != expected_run_id:
+        raise FrontierSegmentError("recorder-summary run_id does not match capture-ready")
+    for field in (
+        "both_sources_observed",
+        "single_expected_clock_domain",
+        "all_hyperliquid_acks_observed",
+        "all_binance_acks_observed",
+    ):
+        if value.get(field) is not True:
+            raise FrontierSegmentError(f"recorder-summary {field} must be true")
+
+    audit = value.get("audit")
+    if not isinstance(audit, dict) or audit.get("clean") is not True:
+        raise FrontierSegmentError("recorder-summary storage audit is not clean")
+
+    recorder = value.get("recorder")
+    if not isinstance(recorder, dict):
+        raise FrontierSegmentError("recorder-summary recorder must be an object")
+    if recorder.get("state") != "COMPLETE":
+        raise FrontierSegmentError("recorder-summary recorder state is not COMPLETE")
+    if recorder.get("shutdown_outcome") != "CLEAN_DURABLE":
+        raise FrontierSegmentError("recorder-summary shutdown is not CLEAN_DURABLE")
+    if recorder.get("segment_id") != expected_segment_id:
+        raise FrontierSegmentError("recorder-summary segment_id does not match capture-ready")
 
 
 def _safe_segment_path(root: Path, relative: str) -> Path:

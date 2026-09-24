@@ -13,10 +13,17 @@ from cryptobot.research.campaign import (
     CampaignManifest,
     CampaignReport,
     CampaignValidationError,
+    MovementWindow,
     SegmentData,
-    build_campaign_report,
+    SegmentEvidence,
+    SegmentWindowAudit,
+    adjudicate_windows,
+    build_segment_windows,
 )
-from cryptobot.research.campaign_dataset import load_campaign_segment
+from cryptobot.research.campaign_dataset import (
+    load_campaign_segment,
+    release_unused_arrow_memory,
+)
 
 _CONFIG_FILENAME = "campaign-config.json"
 _SEGMENT_PREFIX = "segment-"
@@ -40,8 +47,20 @@ class CampaignDiscovery:
 
 
 @dataclass(frozen=True, slots=True)
+class CampaignReportDiscovery:
+    config: CampaignConfig
+    manifest: CampaignManifest
+    segment_evidence: tuple[SegmentEvidence, ...]
+    incomplete_segment_directories: tuple[str, ...]
+
+    @property
+    def segments(self) -> tuple[SegmentEvidence, ...]:
+        return self.segment_evidence
+
+
+@dataclass(frozen=True, slots=True)
 class PublishedCampaignReport:
-    discovery: CampaignDiscovery
+    discovery: CampaignReportDiscovery
     report: CampaignReport
     report_path: Path
 
@@ -123,6 +142,7 @@ def discover_campaign(campaign_root: str | Path) -> CampaignDiscovery:
             incomplete.append(child.name)
             continue
         published.append(_load_published_segment(child, config))
+        release_unused_arrow_memory()
 
     data = tuple(item.data for item in published)
     manifest = CampaignManifest(
@@ -151,14 +171,49 @@ def publish_campaign_report(
     campaign_root: str | Path,
 ) -> PublishedCampaignReport:
     root = Path(campaign_root)
-    discovery = discover_campaign(root)
-    report = build_campaign_report(
-        discovery.manifest,
-        tuple(item.data for item in discovery.segments),
+    config = load_campaign_config(root)
+    evidence: list[SegmentEvidence] = []
+    windows: list[MovementWindow] = []
+    audits: list[SegmentWindowAudit] = []
+    incomplete: list[str] = []
+
+    for child in sorted(root.iterdir(), key=lambda item: item.name):
+        if not child.is_dir() or not child.name.startswith(_SEGMENT_PREFIX):
+            continue
+        evidence_path = child / _SEGMENT_EVIDENCE_FILENAME
+        if not evidence_path.is_file():
+            incomplete.append(child.name)
+            continue
+
+        published = _load_published_segment(child, config)
+        segment_windows, audit = build_segment_windows(config, published.data)
+        evidence.append(published.data.evidence)
+        windows.extend(segment_windows)
+        audits.append(audit)
+        del published
+        release_unused_arrow_memory()
+
+    manifest = CampaignManifest(config=config, segments=tuple(evidence))
+    ordered_windows = tuple(
+        sorted(
+            windows,
+            key=lambda item: (
+                item.start_recv_wall_ns,
+                item.end_recv_wall_ns,
+                item.segment_id,
+                item.start_event_id,
+            ),
+        )
     )
+    report = adjudicate_windows(
+        manifest=manifest,
+        windows=ordered_windows,
+        segment_audits=tuple(audits),
+    )
+
     reports_root = root / _REPORTS_DIRNAME
     reports_root.mkdir(parents=True, exist_ok=True)
-    path = reports_root / f"{discovery.manifest.sha256}.json"
+    path = reports_root / f"{manifest.sha256}.json"
     payload = report.to_json_bytes()
     if path.exists():
         if path.read_bytes() != payload:
@@ -167,6 +222,13 @@ def publish_campaign_report(
             )
     else:
         _write_new(path, payload)
+
+    discovery = CampaignReportDiscovery(
+        config=config,
+        manifest=manifest,
+        segment_evidence=tuple(evidence),
+        incomplete_segment_directories=tuple(sorted(incomplete)),
+    )
     return PublishedCampaignReport(
         discovery=discovery,
         report=report,

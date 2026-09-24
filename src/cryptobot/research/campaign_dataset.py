@@ -6,7 +6,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
-from typing import cast
+from typing import Protocol, cast
 
 import pyarrow as pa
 import pyarrow.parquet as pq
@@ -31,8 +31,22 @@ _REFERENCE_SOURCE = "binance-usdm-reference-public"
 _PRIMARY_INSTRUMENT = "hyperliquid.mainnet.perpetual.btc"
 _REQUIRED_SOURCES = (_REFERENCE_SOURCE, _PRIMARY_SOURCE)
 
+
+class _MemoryPool(Protocol):
+    def release_unused(self) -> None: ...
+
+
 type _ReadTableFn = Callable[..., pa.Table]
+type _DefaultMemoryPoolFn = Callable[[], _MemoryPool]
+
 _READ_TABLE = cast(_ReadTableFn, pq.read_table)
+_DEFAULT_MEMORY_POOL = cast(_DefaultMemoryPoolFn, pa.default_memory_pool)
+
+
+def release_unused_arrow_memory() -> None:
+    """Return unused PyArrow allocator pages after a completed segment load."""
+
+    _DEFAULT_MEMORY_POOL().release_unused()
 
 
 @dataclass(frozen=True, slots=True)
@@ -59,58 +73,45 @@ def load_campaign_segment(
     manifest = _parse_manifest(manifest_bytes)
     _validate_manifest_contract(root, manifest)
 
-    frame_rows = _read_rows(
-        root / "frames.parquet",
-        columns=[
-            "source_id",
-            "host_id",
-            "boot_id",
-            "recv_wall_ns",
-        ],
-    )
-    event_rows = _read_rows(
-        root / "events.parquet",
-        columns=[
-            "event_id",
-            "source_id",
-            "instrument_id",
-            "event_type",
-            "host_id",
-            "boot_id",
-            "recv_mono_ns",
-            "recv_wall_ns",
-            "quality_flags",
-        ],
-    )
-
+    frames_path = root / "frames.parquet"
+    events_path = root / "events.parquet"
     raw_frame_count = _required_int(manifest, "raw_frame_count")
     normalized_event_count = _required_int(manifest, "normalized_event_count")
-    if len(frame_rows) != raw_frame_count:
+
+    if _parquet_row_count(frames_path) != raw_frame_count:
         raise CampaignValidationError(
             "frames.parquet row count does not match manifest raw_frame_count"
         )
-    if len(event_rows) != normalized_event_count:
+    if _parquet_row_count(events_path) != normalized_event_count:
         raise CampaignValidationError(
             "events.parquet row count does not match manifest normalized_event_count"
         )
-    if not frame_rows:
+
+    frame_table = _read_table(
+        frames_path,
+        columns=[
+            "source_id",
+            "host_id",
+            "boot_id",
+            "recv_wall_ns",
+        ],
+    )
+    if frame_table.num_rows == 0:
         raise CampaignValidationError("campaign segment dataset contains no raw frames")
 
-    source_ids = tuple(sorted(_frame_source_ids(frame_rows)))
+    source_ids = tuple(sorted(_frame_source_ids(frame_table)))
     if source_ids != _REQUIRED_SOURCES:
         raise CampaignValidationError(
             "campaign segment dataset does not contain exactly the frozen source set"
         )
 
-    domains = tuple(sorted(_frame_domains(frame_rows)))
-    wall_values = tuple(_frame_wall_ns(frame_rows))
-    wall_start_ns = min(wall_values)
-    wall_end_ns = max(wall_values)
+    domains = tuple(sorted(_frame_domains(frame_table)))
+    wall_start_ns, wall_end_ns = _frame_wall_bounds(frame_table)
     if wall_end_ns <= wall_start_ns:
         raise CampaignValidationError("campaign segment must span a positive receive-wall interval")
 
-    primary_bbo = _load_primary_bbo(root, event_rows)
-    primary_l2_count = _primary_l2_count(event_rows)
+    primary_bbo = _load_primary_bbo(root)
+    primary_l2_count = _primary_l2_count(root)
 
     evidence = SegmentEvidence(
         segment_id=segment_id,
@@ -190,6 +191,8 @@ def _validate_manifest_contract(
             raise CampaignValidationError(f"dataset table is missing: {filename}")
         if _sha256_file(path) != expected_sha:
             raise CampaignValidationError(f"dataset table hash mismatch: {filename}")
+        if _parquet_row_count(path) != expected_rows:
+            raise CampaignValidationError(f"dataset table row_count mismatch: {filename}")
 
     expected_bundle = _required_sha256(manifest, "bundle_sha256")
     actual_bundle = _manifest_bundle_sha256(manifest, tables)
@@ -229,10 +232,26 @@ def _manifest_bundle_sha256(
     return hashlib.sha256(encoded).hexdigest()
 
 
-def _load_primary_bbo(
-    root: Path,
-    event_rows: tuple[dict[str, object], ...],
-) -> tuple[PrimaryBBOObservation, ...]:
+def _load_primary_bbo(root: Path) -> tuple[PrimaryBBOObservation, ...]:
+    event_rows = _read_rows(
+        root / "events.parquet",
+        columns=[
+            "event_id",
+            "source_id",
+            "instrument_id",
+            "event_type",
+            "host_id",
+            "boot_id",
+            "recv_mono_ns",
+            "recv_wall_ns",
+            "quality_flags",
+        ],
+        filters=[
+            ("source_id", "=", _PRIMARY_SOURCE),
+            ("instrument_id", "=", _PRIMARY_INSTRUMENT),
+            ("event_type", "=", "BBO"),
+        ],
+    )
     bbo_rows = _read_rows(
         root / "bbo.parquet",
         columns=["event_id", "bid_price_exact", "ask_price_exact"],
@@ -287,7 +306,21 @@ def _load_primary_bbo(
     return tuple(output)
 
 
-def _primary_l2_count(event_rows: tuple[dict[str, object], ...]) -> int:
+def _primary_l2_count(root: Path) -> int:
+    event_rows = _read_rows(
+        root / "events.parquet",
+        columns=[
+            "source_id",
+            "instrument_id",
+            "event_type",
+            "quality_flags",
+        ],
+        filters=[
+            ("source_id", "=", _PRIMARY_SOURCE),
+            ("instrument_id", "=", _PRIMARY_INSTRUMENT),
+            ("event_type", "=", "L2_SNAPSHOT"),
+        ],
+    )
     count = 0
     for row in event_rows:
         if row.get("source_id") != _PRIMARY_SOURCE:
@@ -302,28 +335,95 @@ def _primary_l2_count(event_rows: tuple[dict[str, object], ...]) -> int:
     return count
 
 
-def _frame_source_ids(rows: tuple[dict[str, object], ...]) -> set[str]:
-    return {_row_str(row, "source_id") for row in rows}
+def _frame_source_ids(table: pa.Table) -> set[str]:
+    return _unique_string_values(table.column("source_id"), "source_id")
 
 
-def _frame_domains(rows: tuple[dict[str, object], ...]) -> set[tuple[str, str]]:
-    return {(_row_str(row, "host_id"), _row_str(row, "boot_id")) for row in rows}
+def _frame_domains(table: pa.Table) -> set[tuple[str, str]]:
+    hosts = _unique_string_values(table.column("host_id"), "host_id")
+    boots = _unique_string_values(table.column("boot_id"), "boot_id")
+    if len(hosts) == 1 and len(boots) == 1:
+        return {(next(iter(hosts)), next(iter(boots)))}
+
+    domains: set[tuple[str, str]] = set()
+    for batch in table.select(["host_id", "boot_id"]).to_batches(max_chunksize=65_536):
+        host_values = batch.column(0).to_pylist()
+        boot_values = batch.column(1).to_pylist()
+        for host, boot in zip(host_values, boot_values, strict=True):
+            if not isinstance(host, str) or not host:
+                raise CampaignValidationError("Parquet host_id must be a non-empty string")
+            if not isinstance(boot, str) or not boot:
+                raise CampaignValidationError("Parquet boot_id must be a non-empty string")
+            domains.add((host, boot))
+    return domains
 
 
-def _frame_wall_ns(rows: tuple[dict[str, object], ...]) -> tuple[int, ...]:
-    return tuple(_row_int(row, "recv_wall_ns") for row in rows)
+def _frame_wall_bounds(table: pa.Table) -> tuple[int, int]:
+    minimum: int | None = None
+    maximum: int | None = None
+    for chunk in table.column("recv_wall_ns").iterchunks():
+        for value in chunk.to_pylist():
+            if isinstance(value, bool) or not isinstance(value, int):
+                raise CampaignValidationError("Parquet recv_wall_ns must be an integer")
+            minimum = value if minimum is None else min(minimum, value)
+            maximum = value if maximum is None else max(maximum, value)
+    if minimum is None or maximum is None:
+        raise CampaignValidationError("Parquet recv_wall_ns is empty")
+    return minimum, maximum
+
+
+def _unique_string_values(column: pa.ChunkedArray, field: str) -> set[str]:
+    output: set[str] = set()
+    for chunk in column.iterchunks():
+        for value in chunk.to_pylist():
+            if not isinstance(value, str) or not value:
+                raise CampaignValidationError(f"Parquet {field} must be a non-empty string")
+            output.add(value)
+    return output
+
+
+def _read_table(
+    path: Path,
+    *,
+    columns: list[str],
+) -> pa.Table:
+    try:
+        return _READ_TABLE(path, columns=columns, use_threads=False)
+    except Exception as exc:
+        raise CampaignValidationError(f"cannot read Parquet table: {path.name}") from exc
 
 
 def _read_rows(
     path: Path,
     *,
     columns: list[str],
+    filters: list[tuple[str, str, object]] | None = None,
 ) -> tuple[dict[str, object], ...]:
     try:
-        rows = _READ_TABLE(path, columns=columns, use_threads=False).to_pylist()
+        if filters is None:
+            table = _READ_TABLE(path, columns=columns, use_threads=False)
+        else:
+            table = _READ_TABLE(
+                path,
+                columns=columns,
+                filters=filters,
+                use_threads=False,
+            )
+        rows = table.to_pylist()
     except Exception as exc:
         raise CampaignValidationError(f"cannot read Parquet table: {path.name}") from exc
     return tuple(cast(dict[str, object], row) for row in rows)
+
+
+def _parquet_row_count(path: Path) -> int:
+    try:
+        table = _READ_TABLE(path, columns=[], use_threads=False)
+    except Exception as exc:
+        raise CampaignValidationError(f"cannot read Parquet metadata: {path.name}") from exc
+    row_count = table.num_rows
+    if isinstance(row_count, bool) or not isinstance(row_count, int):
+        raise CampaignValidationError(f"Parquet row count is invalid: {path.name}")
+    return cast(int, row_count)
 
 
 def _read_bytes(path: Path) -> bytes:

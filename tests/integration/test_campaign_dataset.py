@@ -17,6 +17,7 @@ from cryptobot.data.events import (
 )
 from cryptobot.data.materialize import materialize_research_dataset
 from cryptobot.data.normalization_pipeline import FrameOutcome, FrameResult
+from cryptobot.research import campaign_dataset as campaign_dataset_module
 from cryptobot.research.campaign import CampaignValidationError
 from cryptobot.research.campaign_dataset import load_campaign_segment
 
@@ -234,3 +235,26 @@ def test_campaign_segment_loader_rejects_tampered_bundle_digest(
 
     with pytest.raises(CampaignValidationError, match="bundle_sha256"):
         load_campaign_segment(dataset, segment_id="segment-001")
+
+
+def test_campaign_segment_loader_filters_large_event_scans(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    dataset = _materialized_dataset(tmp_path / "dataset")
+    original = campaign_dataset_module._READ_TABLE
+    event_calls: list[tuple[object, object]] = []
+
+    def guarded_read_table(path: str | Path, **kwargs: object) -> object:
+        if Path(path).name == "events.parquet":
+            event_calls.append((kwargs.get("columns"), kwargs.get("filters")))
+        return original(path, **kwargs)
+
+    monkeypatch.setattr(campaign_dataset_module, "_READ_TABLE", guarded_read_table)
+
+    loaded = load_campaign_segment(dataset, segment_id="segment-001")
+
+    assert loaded.data.evidence.normalized_event_count == 3
+    materializing_calls = [(columns, filters) for columns, filters in event_calls if columns != []]
+    assert materializing_calls
+    assert all(filters is not None for _, filters in materializing_calls)

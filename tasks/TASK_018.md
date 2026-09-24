@@ -2,7 +2,7 @@
 
 ## Status
 
-`IN PROGRESS — CAMPAIGN CORE IMPLEMENTED, CI PENDING`
+`IN PROGRESS — COLLECTION TOOLING IMPLEMENTED, CI PENDING`
 
 ## Objective
 
@@ -315,3 +315,32 @@ Still pending in TASK-018:
 - final Frontier Gate adjudication.
 
 No predictive model, private endpoint, order, signer, or capital logic is present.
+
+
+## Collection tooling progress
+
+Added after the campaign core:
+
+- tamper-checked TASK-015 dataset loader;
+- full manifest bundle-hash recomputation;
+- SHA-256 verification of every materialized table;
+- strict source/domain/wall-interval reconstruction from Parquet;
+- bounded public dual-source evidence-segment runner;
+- exclusive segment publication only after recorder/audit/normalization/materialization checks;
+- immutable per-segment evidence binding recorder summary, normalization report, dataset manifest, and frontier audit;
+- campaign initialization with frozen fee scenario;
+- automatic discovery of fully published segments only;
+- incomplete segment directories are reported but never counted;
+- re-verification of all bound segment evidence during discovery;
+- versioned deterministic campaign reports keyed by campaign-manifest SHA;
+- CLI:
+  - `init-frontier-campaign`;
+  - `run-frontier-segment`;
+  - `report-frontier-campaign`;
+- fake-server end-to-end test through capture -> QCR1 -> normalize -> Parquet -> segment evidence -> aggregate report;
+- persistent-host runbook;
+- systemd one-shot segment service + timer.
+
+The segment runner does not accept fee assumptions independently from the campaign CLI: the CLI loads the frozen campaign fee scenario before each run.
+
+Real 2,952-window collection and final gate adjudication remain pending.

@@ -2,7 +2,7 @@
 
 ## Status
 
-`IN PROGRESS — COLLECTION TOOLING VALIDATED; LONG PROSPECTIVE CAMPAIGN PENDING`
+`IN PROGRESS — TOOLING MERGED; LONG PROSPECTIVE CAMPAIGN PENDING`
 
 ## Objective
 
@@ -365,3 +365,31 @@ One-shot public-only workflow `35940052539` validated the complete segment path 
 The temporary network workflow was removed immediately after the successful smoke.
 
 TASK-018 is **not complete**: the prospective campaign still requires at least 2,952 valid non-overlapping 50-second windows and therefore persistent-host collection materially longer than the mathematical ~41-hour minimum when gaps/exclusions are included.
+
+
+## Tooling merge provenance
+
+Collection tooling merged through replacement PR #19 in commit `0a169e2205252bd07863a31e2653ea834fd8e514`.
+
+PR #18 was closed as superseded after a STATUS-only mainline divergence; its TASK-018 implementation was cleanly rebased onto current `main` in PR #19.
+
+Final network-independent CI run `35940389564`:
+
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS — 74 source files;
+- pytest Python 3.12: **359 PASS**;
+- pytest Python 3.13: **359 PASS**.
+
+Operational public-only smoke workflow `35940052539`:
+
+- duration: 30 seconds;
+- raw frames: **10,789**;
+- normalized events: **10,999**;
+- immutable segment publication: PASS;
+- incomplete segment directories: 0;
+- readiness: `COLLECTING`;
+- gate: `INCONCLUSIVE`;
+- 50-second valid windows: 0, expected because smoke duration was shorter than the 50-second target horizon.
+
+Remaining TASK-018 work is evidence collection, not repository implementation: accumulate at least **2,952 valid non-overlapping 50-second windows** on a persistent public-only collector, then run deterministic Frontier Gate adjudication.

@@ -1,6 +1,8 @@
 # Project Status
 
 > **Continuation entry point:** Read this file first in every new chat/session, then read the referenced current task. Treat this repository as the source of truth over conversational memory.
+>
+> **Fresh-session shortcut:** read `HANDOFF.md` first for the compact operational handoff, then return here for the authoritative detailed status.
 
 ## Project
 

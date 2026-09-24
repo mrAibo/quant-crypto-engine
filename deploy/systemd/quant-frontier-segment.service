@@ -1,0 +1,24 @@
+[Unit]
+Description=Quant Crypto Engine bounded Stage-0.5 frontier evidence segment
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=quantcrypto
+Group=quantcrypto
+WorkingDirectory=/opt/quant-crypto-engine
+Environment=SEGMENT_SECONDS=3600
+EnvironmentFile=-/etc/quant-crypto-engine/frontier-campaign.env
+ExecStart=/opt/quant-crypto-engine/.venv/bin/python -m cryptobot.cli run-frontier-segment --config /etc/quant-crypto-engine/dual-source.json --campaign-root /var/lib/quant-crypto-engine/frontier-campaign --duration-seconds ${SEGMENT_SECONDS} --registry /opt/quant-crypto-engine/config/instruments.yaml
+ExecStartPost=/opt/quant-crypto-engine/.venv/bin/python -m cryptobot.cli report-frontier-campaign --campaign-root /var/lib/quant-crypto-engine/frontier-campaign
+TimeoutStartSec=infinity
+TimeoutStopSec=60s
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/quant-crypto-engine
+StandardOutput=journal
+StandardError=journal

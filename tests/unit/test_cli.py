@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -45,3 +46,28 @@ def test_validate_recorder_runtime_cli_is_network_free_and_machine_readable(
     assert payload["recorder"]["rollover_mode"] == "DISABLED"
     assert payload["reconnect"]["base_delay_seconds"] == 2.0
     assert payload["transport"]["heartbeat_idle_seconds"] == 50.0
+
+
+def test_plan_retrospective_data_cli_is_non_gating(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    output = tmp_path / "retrospective-plan.json"
+    result = main(
+        [
+            "plan-retrospective-data",
+            "--start-date",
+            "2026-09-01",
+            "--end-date",
+            "2026-09-01",
+            "--output",
+            str(output),
+        ]
+    )
+
+    payload = json.loads(capsys.readouterr().out)
+    plan = json.loads(output.read_text(encoding="utf-8"))
+    assert result == 0
+    assert payload["status"] == "SUCCESS"
+    assert payload["task_018_gate_eligibility"] == "EXCLUDED_FROM_TASK_018_FRONTIER_GATE"
+    assert plan["task_018_gate_eligibility"] == "EXCLUDED_FROM_TASK_018_FRONTIER_GATE"

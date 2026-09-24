@@ -4,6 +4,7 @@ import argparse
 import asyncio
 import json
 from collections.abc import Sequence
+from datetime import date
 from decimal import Decimal
 
 from cryptobot.adapters.hyperliquid.public import (
@@ -19,6 +20,13 @@ from cryptobot.research.campaign_storage import (
     initialize_campaign_root,
     load_campaign_config,
     publish_campaign_report,
+)
+from cryptobot.research.retrospective import (
+    GATE_ELIGIBILITY,
+    RetrospectiveDataError,
+    binance_usdm_daily_aggtrades_spec,
+    download_binance_archive,
+    write_retrospective_plan,
 )
 from cryptobot.runtime.dual_source_recorder import load_dual_source_recorder_config
 from cryptobot.runtime.frontier_segment import (
@@ -66,6 +74,26 @@ def build_parser() -> argparse.ArgumentParser:
         help="Audit raw storage configured for the public recorder without network access.",
     )
     public_audit.add_argument("--config", required=True)
+
+    retrospective_plan = subparsers.add_parser(
+        "plan-retrospective-data",
+        help="Write a non-gating plan for official Hyperliquid/Binance historical archives.",
+    )
+    retrospective_plan.add_argument("--start-date", required=True)
+    retrospective_plan.add_argument("--end-date", required=True)
+    retrospective_plan.add_argument("--output", required=True)
+
+    retrospective_download = subparsers.add_parser(
+        "download-binance-retrospective",
+        help="Download one checksum-verified Binance USD-M aggTrades archive.",
+    )
+    retrospective_download.add_argument("--date", required=True)
+    retrospective_download.add_argument(
+        "--symbol",
+        choices=("BTCUSDT", "ETHUSDT"),
+        required=True,
+    )
+    retrospective_download.add_argument("--destination", required=True)
 
     frontier_init = subparsers.add_parser(
         "init-frontier-campaign",
@@ -133,6 +161,66 @@ def main(argv: Sequence[str] | None = None) -> int:
         report = audit_public_recorder(public_config)
         print(json.dumps(report, sort_keys=True, separators=(",", ":")))
         return 0 if bool(report["clean"]) else 3
+
+    if args.command == "plan-retrospective-data":
+        try:
+            output = write_retrospective_plan(
+                args.output,
+                date.fromisoformat(args.start_date),
+                date.fromisoformat(args.end_date),
+            )
+        except (RetrospectiveDataError, OSError, ValueError) as exc:
+            print(
+                json.dumps(
+                    {"status": "FAILED", "error": str(exc)},
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+            )
+            return 2
+        print(
+            json.dumps(
+                {
+                    "status": "SUCCESS",
+                    "plan_path": str(output),
+                    "task_018_gate_eligibility": GATE_ELIGIBILITY,
+                },
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+        )
+        return 0
+
+    if args.command == "download-binance-retrospective":
+        try:
+            spec = binance_usdm_daily_aggtrades_spec(
+                date.fromisoformat(args.date),
+                args.symbol,
+            )
+            downloaded = download_binance_archive(spec, args.destination)
+        except (RetrospectiveDataError, OSError, ValueError) as exc:
+            print(
+                json.dumps(
+                    {"status": "FAILED", "error": str(exc)},
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+            )
+            return 2
+        print(
+            json.dumps(
+                {
+                    "status": "SUCCESS",
+                    "archive_path": str(downloaded.archive_path),
+                    "manifest_path": str(downloaded.manifest_path),
+                    "sha256": downloaded.sha256,
+                    "task_018_gate_eligibility": GATE_ELIGIBILITY,
+                },
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+        )
+        return 0
 
     if args.command == "init-frontier-campaign":
         try:

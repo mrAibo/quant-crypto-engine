@@ -1,0 +1,35 @@
+name: TASK-018 Frontier Segment Smoke
+
+on:
+  push:
+    branches: [task-018-frontier-evidence-campaign]
+    paths:
+      - ".github/workflows/task018-frontier-smoke.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  frontier-segment-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.18"
+      - run: uv python install 3.12
+      - run: uv sync --locked --all-groups --python 3.12
+      - name: Initialize temporary campaign
+        run: |
+          uv run --python 3.12 python -m cryptobot.cli init-frontier-campaign             --campaign-root "$RUNNER_TEMP/frontier-campaign"             --campaign-id task018-ci-smoke             --fee-scenario-bps-per-side 4.5
+      - name: Run 30-second public-only evidence segment
+        run: |
+          uv run --python 3.12 python -m cryptobot.cli run-frontier-segment             --config config/runtime/dual-source-smoke.json             --campaign-root "$RUNNER_TEMP/frontier-campaign"             --duration-seconds 30             --registry config/instruments.yaml
+      - name: Build cumulative campaign report
+        run: |
+          uv run --python 3.12 python -m cryptobot.cli report-frontier-campaign             --campaign-root "$RUNNER_TEMP/frontier-campaign"
+      - name: Print published evidence inventory
+        shell: bash
+        run: |
+          find "$RUNNER_TEMP/frontier-campaign" -maxdepth 3 -type f -printf '%P %s bytes\n' | sort

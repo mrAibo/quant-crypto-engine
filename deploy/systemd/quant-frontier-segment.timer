@@ -1,0 +1,11 @@
+[Unit]
+Description=Schedule repeated Stage-0.5 frontier evidence segments
+
+[Timer]
+OnBootSec=2min
+OnUnitInactiveSec=5min
+Persistent=true
+Unit=quant-frontier-segment.service
+
+[Install]
+WantedBy=timers.target

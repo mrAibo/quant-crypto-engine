@@ -1,7 +1,7 @@
 {
   "task": "TASK-017",
   "stage": "0.5",
-  "status": "PILOT_PASS_FINAL_CI_PENDING",
+  "status": "PASS",
   "objective": "Model-free economic-frontier measurement before predictive modeling.",
   "source_authority": "TASK-015 deterministic Parquet derived from QCR1",
   "binding_distinctions": [
@@ -256,5 +256,16 @@
     },
     "gate_decision": "NOT_EVALUATED",
     "gate_limitation": "short pilot measures movement and known top-of-book+taker-fee friction only; predictability, live latency/slippage, exact funding-boundary cost, serial dependence, and Frontier Gate evidence remain unproven"
-  }
+  },
+  "validation": {
+    "pilot_workflow_run": 35933979812,
+    "final_ci_workflow_run": 35935196082,
+    "ruff": "PASS",
+    "ruff_format": "PASS",
+    "mypy_strict": "PASS_66_SOURCE_FILES",
+    "pytest_python_3_12": "PASS_337",
+    "pytest_python_3_13": "PASS_337",
+    "default_ci_network_dependency": false
+  },
+  "exit_decision": "TASK_017_COMPLETE_FRONTIER_GATE_NOT_EVALUATED"
 }

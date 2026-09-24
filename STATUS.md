@@ -5,9 +5,9 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `main`
+- Current branch: `task-017-profitability-frontier`
 - Current phase: **Stage 0.5 — Profitability / Economic Frontier**
-- Current work package: **TASK-017 — model-free profitability-frontier measurement contract**
+- Current work package: **TASK-017 — profitability-frontier measurement contract validated; merge pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -371,11 +371,26 @@ This validates the data/evidence pipeline only. Economic edge remains UNPROVEN.
 
 Read **[`tasks/TASK_017.md`](tasks/TASK_017.md)**.
 
-TASK-017 begins Stage 0.5. It builds model-free movement/cost/frontier measurements before any predictive model is fitted.
+TASK-017 is validated on PR #17.
+
+Delivered:
+
+- exact model-free BBO/spread/movement/friction primitives;
+- deterministic displayed-depth L2 book walking;
+- deterministic 1-2-5 horizon support logic;
+- full deterministic Parquet dataset audit;
+- causal BTC BBO movement measurement with gap exclusions;
+- documented-base taker fee scenario separated from actual account fee UNKNOWN;
+- latency/funding unsupported components remain explicit;
+- real prospective pilot workflow `35933979812`;
+- pilot intentionally **did not** evaluate/promote the Frontier Gate;
+- derived next evidence requirement: **2,952 non-overlapping 50-second windows**;
+- mathematical minimum observed duration: **147,600 s ≈ 41 h**, with real requirement potentially larger due gaps/dependence;
+- final CI `35935196082`: **337 tests PASS** on Python 3.12 and 3.13; Ruff/format/strict mypy PASS.
 
 ### Exact next action
 
-Create a dedicated TASK-017 branch and implement exact frontier primitives with synthetic tests first: BBO mid/spread, bps movement, 1-2-5 horizon grid, L2 book walking, fee accounting, coverage/sample support, and deterministic report contracts.
+Merge PR #17. Then define TASK-018 for prospective evidence-window collection and Frontier Gate adjudication without fitting any predictive model.
 
 ## User actions currently required
 

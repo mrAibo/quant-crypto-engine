@@ -1,0 +1,271 @@
+{
+  "task": "TASK-017",
+  "stage": "0.5",
+  "status": "PASS",
+  "objective": "Model-free economic-frontier measurement before predictive modeling.",
+  "source_authority": "TASK-015 deterministic Parquet derived from QCR1",
+  "binding_distinctions": [
+    "market movement is not predictability",
+    "predictability is not executable net edge"
+  ],
+  "numeric_policy": "Decimal for price/size/fee/friction/movement arithmetic; binary float market inputs rejected",
+  "horizon_policy": {
+    "grid": "deterministic 1-2-5 logarithmic grid",
+    "lower_upper_bounds": "explicit inputs derived by later dataset audit",
+    "support": "actual non-overlapping window count is reported; unsupported cells remain visible"
+  },
+  "execution_cost_policy": {
+    "taker_only": true,
+    "maker": false,
+    "bbo": "strict uncrossed BBO only",
+    "fee": "per-side scenario, counted exactly once in exact directional cash-flow friction",
+    "depth": "displayed L2 only; partial fill and unfilled remainder explicit; no queue/fill invention",
+    "funding": "exact boundary alignment remains unsupported until separately evidenced",
+    "latency": "explicit scenario/UNKNOWN; market-data lag is not treated as execution latency"
+  },
+  "implemented_primitives": [
+    "exact BBO mid",
+    "spread bps",
+    "signed and absolute movement bps",
+    "round-trip fee bps",
+    "directional top-of-book round-trip friction",
+    "required capture fraction",
+    "L2 buy/sell book walk",
+    "crossed/locked book rejection",
+    "1-2-5 horizon grid",
+    "non-overlapping window count",
+    "horizon support classification",
+    "nearest-rank empirical quantile",
+    "full source/type dataset audit",
+    "primary BBO/L2 cadence and gap audit",
+    "per-horizon candidate/gap-exclusion accounting",
+    "DKW-derived non-overlapping evidence-window planning",
+    "deterministic digest-bound frontier report"
+  ],
+  "gate_decision": "NOT_EVALUATED",
+  "next_evidence": {
+    "target_horizon_seconds": 50,
+    "required_non_overlapping_windows": 2952,
+    "mathematical_minimum_duration_seconds": 147600,
+    "mathematical_minimum_duration_hours": "41",
+    "rule": "Collect until the valid non-overlapping 50-second support count reaches the derived floor; elapsed wall time alone is not sufficient.",
+    "caveat": "Serial dependence and gaps can only increase the real evidence requirement."
+  },
+  "deliberately_not_claimed": [
+    "predictive alpha",
+    "positive expectancy",
+    "short-horizon impossibility from a one-minute pilot",
+    "live slippage",
+    "actual account fee tier",
+    "funding-boundary-aligned cost",
+    "maker fill economics",
+    "production readiness"
+  ],
+  "pilot": {
+    "workflow_run": 35933979812,
+    "purpose": "PILOT_ONLY_NOT_FRONTIER_GATE",
+    "raw_frame_count": 39107,
+    "normalized_event_count": 39506,
+    "normalization_error_count": 0,
+    "dataset_bundle_sha256": "b74593242c70320ebd037c930be0dab7083a80b0e80dc67e288fd19494bc0178",
+    "observed_duration_ns": 59219978825,
+    "observation_count": 352,
+    "cadence_p99_ns": 1010874868,
+    "largest_gap_ns": 1209851774,
+    "dataset_audit": {
+      "causal_domain_count": 1,
+      "event_counts_by_source_type": [
+        {
+          "count": 37167,
+          "event_type": "REFERENCE_BBO",
+          "source_id": "binance-usdm-reference-public"
+        },
+        {
+          "count": 1036,
+          "event_type": "REFERENCE_TRADE",
+          "source_id": "binance-usdm-reference-public"
+        },
+        {
+          "count": 666,
+          "event_type": "BBO",
+          "source_id": "hyperliquid-mainnet-public"
+        },
+        {
+          "count": 118,
+          "event_type": "FUNDING_RATE_OBSERVATION",
+          "source_id": "hyperliquid-mainnet-public"
+        },
+        {
+          "count": 24,
+          "event_type": "L2_SNAPSHOT",
+          "source_id": "hyperliquid-mainnet-public"
+        },
+        {
+          "count": 118,
+          "event_type": "MARK_PRICE",
+          "source_id": "hyperliquid-mainnet-public"
+        },
+        {
+          "count": 118,
+          "event_type": "ORACLE_PRICE",
+          "source_id": "hyperliquid-mainnet-public"
+        },
+        {
+          "count": 259,
+          "event_type": "TRADE",
+          "source_id": "hyperliquid-mainnet-public"
+        }
+      ],
+      "observed_duration_ns": 59478675905,
+      "primary_bbo_cadence": {
+        "event_type": "BBO",
+        "interarrival_count": 351,
+        "largest_gap_ns": 1209851774,
+        "observed_count": 352,
+        "q50_ns": 125440431,
+        "q90_ns": 345109358,
+        "q99_ns": 1010874868,
+        "usable_count": 352
+      },
+      "primary_btc_event_counts": {
+        "BBO": 352,
+        "FUNDING_RATE_OBSERVATION": 59,
+        "L2_SNAPSHOT": 12,
+        "MARK_PRICE": 59,
+        "ORACLE_PRICE": 59,
+        "TRADE": 140
+      },
+      "primary_l2_cadence": {
+        "event_type": "L2_SNAPSHOT",
+        "interarrival_count": 11,
+        "largest_gap_ns": 5494872645,
+        "observed_count": 12,
+        "q50_ns": 5375021535,
+        "q90_ns": 5457073585,
+        "q99_ns": 5494872645,
+        "usable_count": 12
+      },
+      "reference_btc_event_counts": {
+        "REFERENCE_BBO": 24938,
+        "REFERENCE_TRADE": 543
+      }
+    },
+    "spread_quantiles_bps": {
+      "q50": "0.1184097569639738314437109618",
+      "q75": "0.1184321946077821795076773670",
+      "q90": "0.1184321946077821795076773670",
+      "q95": "0.1184321946077821795076773670"
+    },
+    "fee_scenario_bps_per_side": "4.5",
+    "fee_evidence_class": "SCENARIO",
+    "latency_evidence_class": "UNKNOWN",
+    "funding_boundary_evidence_class": "UNKNOWN",
+    "horizons": [
+      {
+        "candidate_start_count": 347,
+        "capture_fraction_vs_movement_quantiles": {
+          "q75": "77.05879561595120589279123169",
+          "q90": "9.633261708883772954780341687",
+          "q95": "9.629384617101816027509355350"
+        },
+        "gap_excluded_count": 1,
+        "horizon_seconds": 2,
+        "median_known_friction_bps": "9.122568898722181814099770000",
+        "movement_quantiles_bps": {
+          "q50": "0",
+          "q75": "0.1183845247749214222716810000",
+          "q90": "0.9469865113608788034825430000",
+          "q95": "0.9473677977843435629318660000"
+        },
+        "movement_sample_count": 346,
+        "non_overlapping_windows": 29,
+        "q90_known_friction_bps": "9.122591356834911301539580000"
+      },
+      {
+        "candidate_start_count": 330,
+        "capture_fraction_vs_movement_quantiles": {
+          "q75": "9.630296873991688245690757216",
+          "q90": "5.136097515669575583156310606",
+          "q95": "4.815148436995844122845381150"
+        },
+        "gap_excluded_count": 1,
+        "horizon_seconds": 5,
+        "median_known_friction_bps": "9.122568898722181814099770000",
+        "movement_quantiles_bps": {
+          "q50": "0",
+          "q75": "0.9472780557117906515496880000",
+          "q90": "1.776167386014458002522158000",
+          "q95": "1.894556111423581303099375000"
+        },
+        "movement_sample_count": 329,
+        "non_overlapping_windows": 11,
+        "q90_known_friction_bps": "9.122591356834911301539580000"
+      },
+      {
+        "candidate_start_count": 306,
+        "capture_fraction_vs_movement_quantiles": {
+          "q50": "9.633261708883772954780341687",
+          "q75": "4.815148436995844122845381150",
+          "q90": "4.280993519947851870811669013",
+          "q95": "4.280638753379568230407787424"
+        },
+        "gap_excluded_count": 0,
+        "horizon_seconds": 10,
+        "median_known_friction_bps": "9.122568898722181814099770000",
+        "movement_quantiles_bps": {
+          "q50": "0.9469865113608788034825430000",
+          "q75": "1.894556111423581303099375000",
+          "q90": "2.130946673059506685845187000",
+          "q95": "2.131123279561935770312269000"
+        },
+        "movement_sample_count": 306,
+        "non_overlapping_windows": 5,
+        "q90_known_friction_bps": "9.122591356834911301539580000"
+      },
+      {
+        "candidate_start_count": 239,
+        "capture_fraction_vs_movement_quantiles": {
+          "q50": "4.281044200886178105155080481",
+          "q75": "2.963519136955085697974622169",
+          "q90": "2.266435165175035467435042983",
+          "q95": "2.266435165175035467435042983"
+        },
+        "gap_excluded_count": 2,
+        "horizon_seconds": 20,
+        "median_known_friction_bps": "9.122568898722181814099770000",
+        "movement_quantiles_bps": {
+          "q50": "2.130921445948585600890252000",
+          "q75": "3.078289181589462779339944000",
+          "q90": "4.025073842347328357237142000",
+          "q95": "4.025073842347328357237142000"
+        },
+        "movement_sample_count": 237,
+        "non_overlapping_windows": 2,
+        "q90_known_friction_bps": "9.122591356834911301539580000"
+      }
+    ],
+    "movement_q95_meets_median_known_friction": false,
+    "evidence_window_plan": {
+      "confidence": "0.95",
+      "dependence_limitation": "DKW planning count assumes independent samples; non-overlap reduces mechanical overlap but does not prove independence. Serial dependence or gaps can only increase the required real evidence window.",
+      "maximum_cdf_error": "0.025",
+      "minimum_observed_duration_seconds": 147600,
+      "required_non_overlapping_windows": 2952,
+      "target_horizon_seconds": 50,
+      "target_reason": "EXPAND_ONE_125_CELL_BECAUSE_PILOT_Q95_BELOW_MEDIAN_KNOWN_FRICTION"
+    },
+    "gate_decision": "NOT_EVALUATED",
+    "gate_limitation": "short pilot measures movement and known top-of-book+taker-fee friction only; predictability, live latency/slippage, exact funding-boundary cost, serial dependence, and Frontier Gate evidence remain unproven"
+  },
+  "validation": {
+    "pilot_workflow_run": 35933979812,
+    "final_ci_workflow_run": 35935196082,
+    "ruff": "PASS",
+    "ruff_format": "PASS",
+    "mypy_strict": "PASS_66_SOURCE_FILES",
+    "pytest_python_3_12": "PASS_337",
+    "pytest_python_3_13": "PASS_337",
+    "default_ci_network_dependency": false
+  },
+  "exit_decision": "TASK_017_COMPLETE_FRONTIER_GATE_NOT_EVALUATED"
+}

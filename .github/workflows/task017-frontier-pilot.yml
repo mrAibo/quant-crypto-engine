@@ -1,0 +1,111 @@
+name: TASK-017 Frontier Pilot
+
+# frontier-report-v3
+
+on:
+  push:
+    branches: [task-017-profitability-frontier]
+    paths:
+      - ".github/workflows/task017-frontier-pilot.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.18"
+
+      - run: uv python install 3.12
+      - run: uv sync --locked --all-groups --python 3.12
+
+      - name: Capture prospective dual-source data and run model-free frontier pilot
+        shell: bash
+        run: |
+          uv run --python 3.12 python - <<'PY'
+          import asyncio
+          import json
+          from dataclasses import replace
+          from decimal import Decimal
+          from pathlib import Path
+
+          from cryptobot.data.instruments import load_instrument_registry
+          from cryptobot.data.materialize import materialize_research_dataset
+          from cryptobot.data.normalization_pipeline import (
+              FrameOutcome,
+              normalize_frames,
+          )
+          from cryptobot.data.rawlog import iter_raw_frames
+          from cryptobot.research.frontier_dataset import (
+              analyze_frontier_pilot_dataset,
+          )
+          from cryptobot.runtime.dual_source_recorder import (
+              DualSourceExitCode,
+              load_dual_source_recorder_config,
+              run_dual_source_recorder,
+          )
+
+          async def main() -> None:
+              base = load_dual_source_recorder_config(
+                  "config/runtime/dual-source-smoke.json"
+              )
+              config = replace(base, run_duration_seconds=60.0)
+              summary = await run_dual_source_recorder(config)
+
+              if summary.exit_code != int(DualSourceExitCode.SUCCESS):
+                  raise AssertionError("prospective recorder did not finish cleanly")
+              if summary.recorder.final_path is None or summary.recorder.segment_id is None:
+                  raise AssertionError("prospective recorder did not seal a raw segment")
+
+              frames = tuple(
+                  iter_raw_frames(
+                      summary.recorder.final_path,
+                      summary.recorder.segment_id,
+                  )
+              )
+              registry = load_instrument_registry("config/instruments.yaml")
+              normalized = normalize_frames(frames, registry)
+              errors = tuple(
+                  item for item in normalized if item.outcome is FrameOutcome.ERROR
+              )
+              if errors:
+                  raise AssertionError(
+                      f"normalization produced {len(errors)} error frames"
+                  )
+
+              dataset = materialize_research_dataset(
+                  normalized,
+                  Path("data/task017-frontier-pilot"),
+              )
+              report = analyze_frontier_pilot_dataset(
+                  dataset.output_dir,
+                  fee_scenario_bps_per_side=Decimal("4.5"),
+              )
+
+              evidence = {
+                  "task": "TASK-017",
+                  "purpose": "PILOT_ONLY_NOT_FRONTIER_GATE",
+                  "recorder": summary.as_dict(),
+                  "raw_frame_count": len(frames),
+                  "normalized_event_count": dataset.manifest.normalized_event_count,
+                  "normalization_error_count": len(errors),
+                  "dataset_bundle_sha256": dataset.manifest.bundle_sha256,
+                  "frontier_pilot": report.as_dict(),
+              }
+              print(
+                  "TASK017_PILOT="
+                  + json.dumps(
+                      evidence,
+                      sort_keys=True,
+                      separators=(",", ":"),
+                  )
+              )
+
+          asyncio.run(main())
+          PY

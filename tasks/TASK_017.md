@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`VALIDATED — MERGE PENDING`
 
 ## Objective
 
@@ -220,3 +220,67 @@ Then define the next Stage-0.5 task for the evidence window and Frontier Gate ad
 - maker queue simulator;
 - OMS/signing/orders;
 - live capital deployment.
+
+
+## Implementation progress
+
+Implemented first model-free frontier primitives:
+
+- exact BBO mid/spread arithmetic;
+- exact signed/absolute bps movement;
+- exact per-side/round-trip fee arithmetic;
+- direction-specific top-of-book round-trip friction;
+- required-capture-fraction diagnostic;
+- strict displayed-depth L2 book walking with explicit partial fills;
+- crossed/locked/unsorted book rejection;
+- deterministic 1-2-5 horizon grid;
+- non-overlapping window support accounting;
+- nearest-rank empirical quantile without float interpolation;
+- OBSERVED / SCENARIO / UNKNOWN evidence classes;
+- digest-bound deterministic frontier report contract;
+- Stage-0.5 frontier contract artifact;
+- 18 unit tests.
+
+Still pending in TASK-017:
+
+- dataset audit/real Parquet reader;
+- prospective pilot frontier run;
+- derived evidence-window requirement;
+- final CI and merge.
+
+
+## Final validation
+
+Real prospective Stage-0.5 pilot workflow: `35933979812`.
+
+Pilot result:
+
+- pipeline purpose: **PILOT ONLY — NOT FRONTIER GATE**;
+- raw frames: **39,107**;
+- normalized events: **39,506**;
+- normalization errors: **0**;
+- observed primary-BBO duration: approximately **59.22 s**;
+- primary BTC BBO observations: **352**;
+- primary BTC L2 snapshots: **12**;
+- pilot horizons with measured diagnostics: **2s / 5s / 10s / 20s**;
+- short pilot q95 movement did **not** exceed median known top-of-book + documented-base-taker friction;
+- this is explicitly **not** an alpha or impossibility conclusion.
+
+Derived evidence-window requirement:
+
+- target next 1-2-5 horizon: **50 s**;
+- DKW planning confidence: **0.95**;
+- maximum empirical-CDF error: **0.025**;
+- required non-overlapping windows: **2,952**;
+- mathematical minimum observed duration: **147,600 s ≈ 41 h**;
+- serial dependence, gaps, and invalid windows can only increase the real collection requirement.
+
+Final network-independent GitHub CI run `35935196082`:
+
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS — 66 source files;
+- pytest Python 3.12: **337 PASS**;
+- pytest Python 3.13: **337 PASS**.
+
+TASK-017 validates the measurement pipeline and derives the next evidence requirement. It does **not** promote the Frontier Gate.

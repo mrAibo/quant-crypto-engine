@@ -123,19 +123,13 @@ async def run_frontier_evidence_segment(
 
     registry = load_instrument_registry(registry_path)
     normalized = normalize_frames(frames, registry)
-    errors = tuple(
-        result
-        for result in normalized
-        if result.outcome is FrameOutcome.ERROR
-    )
+    errors = tuple(result for result in normalized if result.outcome is FrameOutcome.ERROR)
     pipeline_report = build_pipeline_report(normalized)
     pipeline_report_bytes = serialize_pipeline_report(pipeline_report)
     _write_new(segment_root / "normalization-report.json", pipeline_report_bytes)
 
     if errors:
-        raise FrontierSegmentError(
-            f"normalization produced {len(errors)} target/source errors"
-        )
+        raise FrontierSegmentError(f"normalization produced {len(errors)} target/source errors")
     if pipeline_report.total_raw_frames != len(frames):
         raise FrontierSegmentError("pipeline raw-frame count does not match sealed QCR1")
     if pipeline_report.causal_domain_count != 1:

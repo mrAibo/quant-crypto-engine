@@ -422,7 +422,7 @@ The campaign is now initialized and collecting prospectively on a persistent Ubu
 - gate: `INCONCLUSIVE`;
 - one setup-time systemd segment was terminated by the WSL lifecycle before Windows keep-alive was installed; it is preserved as incomplete and is not counted;
 - two subsequent one-hour segments completed capture but were killed during post-capture processing by WSL memory exhaustion; both incomplete segment directories are preserved and are not counted;
-- kernel OOM records measured the processing Python process at about **13.44 GiB** and **14.55 GiB** anonymous RSS on those failures, with WSL exposing about **14 GiB RAM + 4 GiB swap**;
+- kernel OOM records measured the processing Python process at about **12.82 GiB** and **13.88 GiB** anonymous RSS on those failures, with WSL exposing about **14.48 GiB RAM + 4 GiB swap**;
 - no cgroup `MemoryMax` / `MemoryHigh` limit caused the failure;
 - Windows AC sleep is disabled; a logon scheduled keep-alive keeps WSL active and is configured to restart on failure;
 - at **2026-09-24 06:29 CEST**, the operational segment duration was reduced from 3,600 s to **900 s** through `/etc/quant-crypto-engine/frontier-campaign.env`;

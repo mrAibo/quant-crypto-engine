@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`IN PROGRESS — COLLECTION TOOLING VALIDATED; LONG PROSPECTIVE CAMPAIGN PENDING`
 
 ## Objective
 
@@ -282,3 +282,86 @@ If no persistent host is available, define a separately reviewed chunked collect
 - OMS/signing/orders;
 - account/private capture;
 - capital deployment.
+
+
+## Implementation progress
+
+Implemented first campaign core:
+
+- immutable pre-registered CampaignConfig;
+- immutable SegmentEvidence / CampaignManifest contracts;
+- deterministic manifest/report JSON + SHA-256;
+- duplicate dataset/normalized digest rejection;
+- overlapping/touching segment interval rejection;
+- explicit causal-domain membership validation;
+- per-domain 50-second non-overlapping window construction;
+- no window may cross segment or host/boot boundary;
+- start-BBO known-friction calculation using the documented-base taker fee scenario;
+- deterministic campaign chronology;
+- first-2,952-window adjudication sample to prevent later optional-stopping changes;
+- strict pre-registered `q95 move > q50 friction` rule;
+- equality is FAIL, missing required friction is INCONCLUSIVE;
+- fee remains SCENARIO; latency/funding remain UNKNOWN;
+- simple adjacent-sign / zero-move dependence diagnostics;
+- unit tests for campaign immutability, overlap/digest protection, boot/segment boundaries, readiness, gate outcomes, and deterministic digests;
+- `artifacts/stage_05/frontier_campaign_contract.json`.
+
+Still pending in TASK-018:
+
+- dataset -> immutable segment-evidence loader;
+- reusable bounded segment runner over TASK-016/014/015/017;
+- operational persistent-host runbook;
+- real prospective campaign accumulation to >= 2,952 valid 50-second windows;
+- final Frontier Gate adjudication.
+
+No predictive model, private endpoint, order, signer, or capital logic is present.
+
+
+## Collection tooling progress
+
+Added after the campaign core:
+
+- tamper-checked TASK-015 dataset loader;
+- full manifest bundle-hash recomputation;
+- SHA-256 verification of every materialized table;
+- strict source/domain/wall-interval reconstruction from Parquet;
+- bounded public dual-source evidence-segment runner;
+- exclusive segment publication only after recorder/audit/normalization/materialization checks;
+- immutable per-segment evidence binding recorder summary, normalization report, dataset manifest, and frontier audit;
+- campaign initialization with frozen fee scenario;
+- automatic discovery of fully published segments only;
+- incomplete segment directories are reported but never counted;
+- re-verification of all bound segment evidence during discovery;
+- versioned deterministic campaign reports keyed by campaign-manifest SHA;
+- CLI:
+  - `init-frontier-campaign`;
+  - `run-frontier-segment`;
+  - `report-frontier-campaign`;
+- fake-server end-to-end test through capture -> QCR1 -> normalize -> Parquet -> segment evidence -> aggregate report;
+- persistent-host runbook;
+- systemd one-shot segment service + timer.
+
+The segment runner does not accept fee assumptions independently from the campaign CLI: the CLI loads the frozen campaign fee scenario before each run.
+
+Real 2,952-window collection and final gate adjudication remain pending.
+
+
+## Operational smoke validation
+
+One-shot public-only workflow `35940052539` validated the complete segment path on real public mainnet data:
+
+- duration: 30 seconds;
+- raw frames: **10,789**;
+- normalized events: **10,999**;
+- segment publication: PASS;
+- dataset bundle SHA-256: `9d24f826068a89f53b133ca6a8d034fa0680d86d71036936e615455806f1bf72`;
+- segment evidence SHA-256: `55341a47b460ddbcc897c665a51b385680dbc9e27491b1b1cbe7e395055a5cd8`;
+- campaign manifest SHA-256: `ad5e9a508ae1851057bf4e33029c6ed097054bb599ad043fe795ca11ae0bd1e2`;
+- incomplete segment directories: 0;
+- readiness: `COLLECTING`;
+- gate decision: `INCONCLUSIVE`;
+- valid 50-second windows: 0, expected because the smoke duration is shorter than the pre-registered 50-second horizon.
+
+The temporary network workflow was removed immediately after the successful smoke.
+
+TASK-018 is **not complete**: the prospective campaign still requires at least 2,952 valid non-overlapping 50-second windows and therefore persistent-host collection materially longer than the mathematical ~41-hour minimum when gaps/exclusions are included.

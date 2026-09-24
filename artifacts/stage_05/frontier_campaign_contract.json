@@ -113,5 +113,19 @@
     "valid_non_overlapping_50s_windows": 0,
     "expected_zero_window_reason": "30-second smoke is shorter than the pre-registered 50-second horizon",
     "default_ci_network_dependency": false
-  }
+  },
+  "tooling_validation": {
+    "github_ci": "PASS",
+    "workflow_run": 35940389564,
+    "ruff": "PASS",
+    "ruff_format": "PASS",
+    "mypy_strict": "PASS_74_SOURCE_FILES",
+    "pytest_python_3_12": "PASS_359",
+    "pytest_python_3_13": "PASS_359",
+    "merged_pr": 19,
+    "merge_commit": "0a169e2205252bd07863a31e2653ea834fd8e514",
+    "superseded_pr": 18,
+    "default_ci_network_dependency": false
+  },
+  "task_status": "IN_PROGRESS_LONG_PROSPECTIVE_COLLECTION_PENDING"
 }

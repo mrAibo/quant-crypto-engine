@@ -48,26 +48,32 @@ def test_validate_recorder_runtime_cli_is_network_free_and_machine_readable(
     assert payload["transport"]["heartbeat_idle_seconds"] == 50.0
 
 
-def test_plan_retrospective_data_cli_is_non_gating(
+def test_frontier_split_processor_cli_is_idle_without_capture(
     tmp_path: Path,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    output = tmp_path / "retrospective-plan.json"
+    campaign_root = tmp_path / "campaign"
     result = main(
         [
-            "plan-retrospective-data",
-            "--start-date",
-            "2026-09-01",
-            "--end-date",
-            "2026-09-01",
-            "--output",
-            str(output),
+            "init-frontier-campaign",
+            "--campaign-root",
+            str(campaign_root),
+            "--campaign-id",
+            "cli-split-campaign",
+            "--fee-scenario-bps-per-side",
+            "4.5",
         ]
     )
-
-    payload = json.loads(capsys.readouterr().out)
-    plan = json.loads(output.read_text(encoding="utf-8"))
     assert result == 0
-    assert payload["status"] == "SUCCESS"
-    assert payload["task_018_gate_eligibility"] == "EXCLUDED_FROM_TASK_018_FRONTIER_GATE"
-    assert plan["task_018_gate_eligibility"] == "EXCLUDED_FROM_TASK_018_FRONTIER_GATE"
+    capsys.readouterr()
+
+    result = main(
+        [
+            "process-next-frontier-segment",
+            "--campaign-root",
+            str(campaign_root),
+        ]
+    )
+    payload = json.loads(capsys.readouterr().out)
+    assert result == 0
+    assert payload == {"pending_segment": None, "status": "IDLE"}

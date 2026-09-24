@@ -410,15 +410,26 @@ The existing `btc-frontier-50s-v1` prospective campaign is active on Ubuntu WSL2
 
 Current production state:
 
-- deployed checkout: `main` at `60821293fa8fe03a90bda35e1195410821f8bc1d`;
-- host-side verification: Python 3.12.3, Ruff PASS, Ruff format PASS, strict mypy PASS on **77 source files**, **370 pytest PASS**;
+- deployed checkout: `main` at `272506ad9c6f216ad2a279d6730569deb310a820`;
+- host-side verification: Python 3.12.3, Ruff PASS, Ruff format PASS, strict mypy PASS on **77 source files**, **371 pytest PASS**;
 - campaign root: `/var/lib/quant-crypto-engine/frontier-campaign`;
 - fee assumption remains **4.5 bps/side SCENARIO**;
 - `SEGMENT_SECONDS=900`;
 - legacy combined `quant-frontier-segment.timer`: **inactive**;
-- split `quant-frontier-capture.timer` and `quant-frontier-process.timer`: **active**;
+- split `quant-frontier-capture.timer` and `quant-frontier-process.timer`: **active and enabled**;
 - processor priority: `Nice=10`, `OOMScoreAdjust=250`;
 - Windows AC sleep remains disabled and WSL keep-alive remains active.
+
+Report scalability:
+
+- PR #27 merged as `272506ad9c6f216ad2a279d6730569deb310a820`;
+- PR-head CI `35994008562` and post-merge CI `35994069207`: green;
+- report loading now filters to the primary BTC BBO/L2 rows needed for the Gate while retaining existing SHA-256/tamper checks;
+- cumulative report aggregation now processes one segment at a time and releases unused Arrow allocator pages;
+- frozen 22-segment equivalence test: old and optimized report JSON had identical SHA-256 `d5f6ede81be6f019e372f2358a618fbcd3da6cdbf823fb7e06041dd442e10dad`;
+- benchmark: **110.76 s / 3,662,312 KiB RSS** legacy vs **35.18 s / 1,194,780 KiB RSS** optimized;
+- live 23-segment production report: **35.26 s / 1,240,964 KiB max RSS**, swap 0;
+- latest disk check: about **927 GiB free**; no new kernel OOM events were observed.
 
 The first production split segment validated the decoupled path:
 
@@ -434,12 +445,12 @@ The first production split segment validated the decoupled path:
 
 Latest cumulative report:
 
-- campaign manifest SHA-256: `aca5ccdd792fdfbe9206a024ea7655983b843c39411e5884777710f8ed442aed`;
-- accepted segments: **8**;
-- valid non-overlapping 50-second windows: **120 / 2,952**;
-- excluded candidate windows: **13**;
-- q50 known friction ≈ **9.1231 bps**;
-- q95 observed absolute primary-mid movement ≈ **7.9536 bps**;
+- campaign manifest SHA-256: `6abc46b53572ac91c657f92bc8126a293830785aa7f8168d1d413d831fd9a3eb`;
+- accepted segments: **23**;
+- valid non-overlapping 50-second windows: **375 / 2,952**;
+- excluded candidate windows: **15**;
+- q50 known friction ≈ **9.1234 bps**;
+- q95 observed absolute primary-mid movement ≈ **10.6401 bps**;
 - readiness: `COLLECTING`;
 - gate: `INCONCLUSIVE`.
 

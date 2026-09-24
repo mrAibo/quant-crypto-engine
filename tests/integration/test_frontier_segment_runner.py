@@ -6,6 +6,7 @@ from dataclasses import replace
 from decimal import Decimal
 from pathlib import Path
 
+import pytest
 from websockets.asyncio.server import ServerConnection, serve
 
 from cryptobot.adapters.binance.public import MARKET_STREAMS, PUBLIC_STREAMS
@@ -16,9 +17,12 @@ from cryptobot.research.campaign_storage import (
 )
 from cryptobot.runtime.dual_source_recorder import load_dual_source_recorder_config
 from cryptobot.runtime.frontier_segment import (
+    FrontierSegmentError,
     capture_frontier_evidence_segment,
     discover_pending_captured_segments,
+    process_frontier_captured_segment,
     process_next_frontier_captured_segment,
+    run_frontier_evidence_segment,
 )
 from cryptobot.runtime.public_recorder import RuntimeIdentity
 
@@ -191,10 +195,11 @@ def test_frontier_segment_runner_publishes_only_after_full_pipeline(
                     fee_scenario_bps_per_side=Decimal("4.5"),
                 ),
             )
-            capture = await capture_frontier_evidence_segment(
+            result = await run_frontier_evidence_segment(
                 config,
                 campaign_root=campaign_root,
                 run_duration_seconds=0.15,
+                fee_scenario_bps_per_side=Decimal("4.5"),
                 identity=RuntimeIdentity(
                     host_id="host-test",
                     boot_id="boot-test",
@@ -202,20 +207,8 @@ def test_frontier_segment_runner_publishes_only_after_full_pipeline(
                 ),
             )
 
-        root = Path(capture.segment_root)
-        assert capture.run_id == "segment-test-run"
-        assert capture.raw_frame_count > 0
+        root = Path(result.segment_root)
         assert (root / "capture-ready.json").is_file()
-        assert not (root / "processing-started.json").exists()
-        assert not (root / "segment-evidence.json").exists()
-        assert discover_pending_captured_segments(campaign_root) == (root,)
-
-        result = process_next_frontier_captured_segment(
-            campaign_root,
-            fee_scenario_bps_per_side=Decimal("4.5"),
-        )
-        assert result is not None
-        assert discover_pending_captured_segments(campaign_root) == ()
         assert (root / "processing-started.json").is_file()
         assert result.run_id == "segment-test-run"
         assert result.raw_frame_count > 0
@@ -251,3 +244,218 @@ def test_frontier_segment_runner_publishes_only_after_full_pipeline(
         assert published.report_path.is_file()
 
     asyncio.run(scenario())
+
+
+def test_split_frontier_capture_then_process_preserves_publication_boundary(
+    tmp_path: Path,
+) -> None:
+    async def scenario() -> None:
+        async def hl_handler(websocket: ServerConnection) -> None:
+            for _ in range(8):
+                raw = await websocket.recv()
+                assert isinstance(raw, str)
+                request = json.loads(raw)
+                assert isinstance(request, dict)
+                await websocket.send(
+                    json.dumps(
+                        {
+                            "channel": "subscriptionResponse",
+                            "data": {
+                                "method": "subscribe",
+                                "subscription": request["subscription"],
+                            },
+                        },
+                        separators=(",", ":"),
+                    )
+                )
+            for payload in _hl_payloads():
+                await websocket.send(json.dumps(payload, separators=(",", ":")))
+            await websocket.wait_closed()
+
+        async def binance_handler(websocket: ServerConnection) -> None:
+            raw = await websocket.recv()
+            assert isinstance(raw, str)
+            request = json.loads(raw)
+            assert isinstance(request, dict)
+            await websocket.send(
+                json.dumps({"result": None, "id": request["id"]}, separators=(",", ":"))
+            )
+            streams = request["params"]
+            if streams == list(PUBLIC_STREAMS):
+                await websocket.send(json.dumps(_binance_book("BTCUSDT"), separators=(",", ":")))
+                await websocket.send(json.dumps(_binance_book("ETHUSDT"), separators=(",", ":")))
+            elif streams == list(MARKET_STREAMS):
+                await websocket.send(json.dumps(_binance_trade("BTCUSDT"), separators=(",", ":")))
+                await websocket.send(json.dumps(_binance_trade("ETHUSDT"), separators=(",", ":")))
+            else:
+                raise AssertionError("unexpected Binance stream request")
+            await websocket.wait_closed()
+
+        async with (
+            serve(hl_handler, "127.0.0.1", 0) as hl_server,
+            serve(binance_handler, "127.0.0.1", 0) as bn_server,
+        ):
+            hl_port = hl_server.sockets[0].getsockname()[1]
+            bn_port = bn_server.sockets[0].getsockname()[1]
+            base = load_dual_source_recorder_config("config/runtime/dual-source-smoke.json")
+            config = replace(
+                base,
+                hyperliquid=replace(
+                    base.hyperliquid,
+                    endpoint=f"ws://127.0.0.1:{hl_port}",
+                ),
+                binance=replace(
+                    base.binance,
+                    public_endpoint=f"ws://127.0.0.1:{bn_port}",
+                    market_endpoint=f"ws://127.0.0.1:{bn_port}",
+                ),
+            )
+            campaign_root = tmp_path / "campaign"
+            initialize_campaign_root(
+                campaign_root,
+                CampaignConfig(
+                    campaign_id="split-runner-campaign",
+                    fee_scenario_bps_per_side=Decimal("4.5"),
+                ),
+            )
+            capture = await capture_frontier_evidence_segment(
+                config,
+                campaign_root=campaign_root,
+                run_duration_seconds=0.15,
+                identity=RuntimeIdentity(
+                    host_id="host-split",
+                    boot_id="boot-split",
+                    run_id="split-run",
+                ),
+            )
+
+        root = Path(capture.segment_root)
+        assert capture.raw_frame_count > 0
+        assert (root / "capture-ready.json").is_file()
+        assert not (root / "segment-evidence.json").exists()
+        assert discover_pending_captured_segments(campaign_root) == (root,)
+
+        result = process_next_frontier_captured_segment(
+            campaign_root,
+            fee_scenario_bps_per_side=Decimal("4.5"),
+        )
+        assert result is not None
+        assert result.run_id == "split-run"
+        assert (root / "processing-started.json").is_file()
+        assert (root / "segment-evidence.json").is_file()
+        assert discover_pending_captured_segments(campaign_root) == ()
+        assert (
+            process_next_frontier_captured_segment(
+                campaign_root,
+                fee_scenario_bps_per_side=Decimal("4.5"),
+            )
+            is None
+        )
+
+        published = publish_campaign_report(campaign_root)
+        assert len(published.discovery.segments) == 1
+        assert published.discovery.incomplete_segment_directories == ()
+
+    asyncio.run(scenario())
+
+
+def test_capture_ready_tamper_is_rejected_and_processing_is_latched(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "segment-run-a"
+    root.mkdir()
+    (root / "recorder-summary.json").write_text("{}\n", encoding="utf-8")
+    raw_root = root / "raw"
+    raw_root.mkdir()
+    raw_file = raw_root / "segment-a.raw"
+    raw_file.write_bytes(b"not-qcr1")
+    manifest = raw_root / "manifest.json"
+    manifest.write_text("{}\n", encoding="utf-8")
+
+    import hashlib
+
+    capture = {
+        "schema_version": 1,
+        "capture_version": "frontier-capture-v1",
+        "run_id": "run-a",
+        "segment_id": "segment-a",
+        "raw_frame_count": 1,
+        "raw_relative_path": "raw/segment-a.raw",
+        "raw_manifest_relative_path": "raw/manifest.json",
+        "recorder_summary_sha256": hashlib.sha256(b"{}\n").hexdigest(),
+        "raw_manifest_sha256": hashlib.sha256(b"{}\n").hexdigest(),
+        "public_only": True,
+    }
+    (root / "capture-ready.json").write_text(
+        json.dumps(capture, sort_keys=True, separators=(",", ":")) + "\n",
+        encoding="utf-8",
+    )
+    (root / "recorder-summary.json").write_text('{"tampered":true}\n', encoding="utf-8")
+
+    with pytest.raises(FrontierSegmentError, match="recorder-summary digest"):
+        process_frontier_captured_segment(
+            root,
+            fee_scenario_bps_per_side=Decimal("4.5"),
+        )
+
+    assert not (root / "processing-started.json").exists()
+
+
+def test_capture_ready_rejects_failed_recorder_even_with_matching_digest(
+    tmp_path: Path,
+) -> None:
+    import hashlib
+
+    root = tmp_path / "segment-run-failed"
+    root.mkdir()
+    raw_root = root / "raw"
+    raw_root.mkdir()
+    raw_file = raw_root / "segment-failed.raw"
+    raw_file.write_bytes(b"not-used")
+    manifest = raw_root / "manifest.json"
+    manifest.write_text("{}\n", encoding="utf-8")
+
+    recorder_summary = {
+        "status": "FAILED",
+        "exit_code": 2,
+        "run_id": "run-failed",
+        "both_sources_observed": True,
+        "single_expected_clock_domain": True,
+        "all_hyperliquid_acks_observed": True,
+        "all_binance_acks_observed": True,
+        "audit": {"clean": True},
+        "recorder": {
+            "state": "COMPLETE",
+            "shutdown_outcome": "CLEAN_DURABLE",
+            "segment_id": "segment-failed",
+        },
+    }
+    recorder_bytes = (
+        json.dumps(recorder_summary, sort_keys=True, separators=(",", ":")) + "\n"
+    ).encode()
+    (root / "recorder-summary.json").write_bytes(recorder_bytes)
+
+    capture = {
+        "schema_version": 1,
+        "capture_version": "frontier-capture-v1",
+        "run_id": "run-failed",
+        "segment_id": "segment-failed",
+        "raw_frame_count": 1,
+        "raw_relative_path": "raw/segment-failed.raw",
+        "raw_manifest_relative_path": "raw/manifest.json",
+        "recorder_summary_sha256": hashlib.sha256(recorder_bytes).hexdigest(),
+        "raw_manifest_sha256": hashlib.sha256(b"{}\n").hexdigest(),
+        "public_only": True,
+    }
+    (root / "capture-ready.json").write_text(
+        json.dumps(capture, sort_keys=True, separators=(",", ":")) + "\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(FrontierSegmentError, match="status is not SUCCESS"):
+        process_frontier_captured_segment(
+            root,
+            fee_scenario_bps_per_side=Decimal("4.5"),
+        )
+
+    assert not (root / "processing-started.json").exists()

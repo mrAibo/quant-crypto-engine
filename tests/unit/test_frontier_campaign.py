@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from decimal import Decimal
+from itertools import pairwise
 
 import pytest
 
@@ -360,14 +361,14 @@ def test_segment_window_builder_creates_strict_non_overlapping_windows() -> None
     assert audit.accepted_window_count == 3
     assert all(
         later.start_recv_mono_ns >= earlier.end_recv_mono_ns
-        for earlier, later in zip(windows, windows[1:], strict=True)
+        for earlier, later in pairwise(windows)
     )
 
 
 def test_readiness_starts_only_at_2952_windows_and_uses_first_2952() -> None:
     manifest = CampaignManifest(config=_config())
     below = tuple(_window(index, move="10") for index in range(2951))
-    ready = below + (_window(2951, move="10"),)
+    ready = (*below, _window(2951, move="10"))
     extra_adverse = ready + tuple(
         _window(3000 + index, move="0.1")
         for index in range(100)

@@ -7,8 +7,8 @@ from pathlib import Path
 import pytest
 
 from cryptobot.data.events import (
-    AvailabilityKind,
     BBO,
+    AvailabilityKind,
     EventEnvelope,
     EventType,
     ExchangeTimestampSemantics,

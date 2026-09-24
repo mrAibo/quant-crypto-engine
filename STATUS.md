@@ -421,14 +421,21 @@ The campaign is now initialized and collecting prospectively on a persistent Ubu
 - readiness: `COLLECTING`;
 - gate: `INCONCLUSIVE`;
 - one setup-time systemd segment was terminated by the WSL lifecycle before Windows keep-alive was installed; it is preserved as incomplete and is not counted;
+- two subsequent one-hour segments completed capture but were killed during post-capture processing by WSL memory exhaustion; both incomplete segment directories are preserved and are not counted;
+- kernel OOM records measured the processing Python process at about **13.44 GiB** and **14.55 GiB** anonymous RSS on those failures, with WSL exposing about **14 GiB RAM + 4 GiB swap**;
+- no cgroup `MemoryMax` / `MemoryHigh` limit caused the failure;
 - Windows AC sleep is disabled; a logon scheduled keep-alive keeps WSL active and is configured to restart on failure;
-- the repository-supplied one-hour systemd segment service/timer is enabled and active.
+- at **2026-09-24 06:29 CEST**, the operational segment duration was reduced from 3,600 s to **900 s** through `/etc/quant-crypto-engine/frontier-campaign.env`;
+- the 15-minute duration is an operational memory-risk mitigation only; the frozen 50-second horizon, 2,952-window floor, evidence classes, and q95-vs-q50 gate remain unchanged;
+- the systemd timer remains enabled and a 900-second validation segment is currently collecting.
 
-The incomplete setup segment is retained intentionally for diagnostics. It must not be deleted or rewritten.
+All incomplete segments are retained intentionally for diagnostics. They must not be deleted, spliced, or rewritten.
 
 ### Exact next action
 
-Continue the **existing initialized campaign** using bounded immutable one-hour segments until the cumulative report contains at least **2,952 valid non-overlapping 50-second windows**.
+Continue the **existing initialized campaign** using bounded immutable **15-minute** segments on the current WSL host until memory-bounded processing is proven stable and the cumulative report contains at least **2,952 valid non-overlapping 50-second windows**.
+
+First verify that a 900-second segment completes the full capture -> normalization -> Parquet -> audit -> immutable publication path without OOM. Do not treat a raw/sealed but unpublished segment as accepted evidence.
 
 Do **not** run `init-frontier-campaign` again.
 

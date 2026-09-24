@@ -230,9 +230,7 @@ def _load_published_segment(
 
     fee = _required_decimal(raw, "fee_scenario_bps_per_side")
     if fee != config.fee_scenario_bps_per_side:
-        raise CampaignValidationError(
-            "segment fee scenario does not match frozen campaign config"
-        )
+        raise CampaignValidationError("segment fee scenario does not match frozen campaign config")
 
     acceptance_raw = raw.get("acceptance")
     if not isinstance(acceptance_raw, dict) or not all(

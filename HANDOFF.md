@@ -130,17 +130,27 @@ Prospective collection started on **2026-09-24** on the persistent Ubuntu WSL2 h
 
 Current deployed state:
 
-- production checkout: `main` at `60821293fa8fe03a90bda35e1195410821f8bc1d`;
-- host verification after deployment: Python 3.12.3, Ruff PASS, Ruff format PASS, strict mypy PASS on **77 source files**, **370 pytest PASS**;
+- production checkout: `main` at `272506ad9c6f216ad2a279d6730569deb310a820`;
+- host verification after deployment: Python 3.12.3, Ruff PASS, Ruff format PASS, strict mypy PASS on **77 source files**, **371 pytest PASS**;
 - campaign root: `/var/lib/quant-crypto-engine/frontier-campaign`;
 - campaign ID: `btc-frontier-50s-v1`;
 - frozen fee scenario: **4.5 bps/side SCENARIO**;
 - operational segment size remains **900 seconds**;
 - Windows AC sleep is disabled and the `QuantCryptoEngine-WSLKeepAlive` scheduled task keeps WSL active;
 - legacy `quant-frontier-segment.timer` is **inactive**;
-- split `quant-frontier-capture.timer` and `quant-frontier-process.timer` are **active**;
+- split `quant-frontier-capture.timer` and `quant-frontier-process.timer` are **active and enabled**;
 - capture and processing are now decoupled: the next raw capture starts while the previous sealed segment is normalized/materialized;
 - the processor is deliberately lower priority (`Nice=10`, `OOMScoreAdjust=250`).
+
+Campaign-report scalability is also deployed:
+
+- PR #27 merged as `272506ad9c6f216ad2a279d6730569deb310a820`;
+- pre-merge CI `35994008562`: green after the corrected formatted head;
+- post-merge CI `35994069207`: green;
+- on a frozen real 22-segment snapshot, legacy vs optimized report JSON was **byte-for-byte identical** with SHA-256 `d5f6ede81be6f019e372f2358a618fbcd3da6cdbf823fb7e06041dd442e10dad`;
+- frozen-snapshot benchmark improved from **110.76 s / 3,662,312 KiB RSS** to **35.18 s / 1,194,780 KiB RSS**;
+- production report at 23 accepted segments completed in **35.26 s** with **1,240,964 KiB max RSS**, swap 0;
+- latest operational check showed about **927 GiB free** and no new kernel OOM events.
 
 The first production split segment completed end to end:
 
@@ -153,14 +163,14 @@ The first production split segment completed end to end:
 - no new OOM was observed;
 - the next capture started while processing ran; measured inter-capture receive-time gap is approximately **60 seconds**, materially below the old combined capture/process downtime.
 
-Latest deterministic campaign checkpoint after that split publication:
+Latest deterministic campaign checkpoint:
 
-- campaign manifest SHA-256: `aca5ccdd792fdfbe9206a024ea7655983b843c39411e5884777710f8ed442aed`;
-- accepted/published segments: **8**;
-- total valid non-overlapping 50-second windows: **120 / 2,952**;
-- excluded candidate windows: **13**;
-- q50 known friction: about **9.1231 bps**;
-- observed q95 absolute primary-mid movement: about **7.9536 bps**;
+- campaign manifest SHA-256: `6abc46b53572ac91c657f92bc8126a293830785aa7f8168d1d413d831fd9a3eb`;
+- accepted/published segments: **23**;
+- total valid non-overlapping 50-second windows: **375 / 2,952**;
+- excluded candidate windows: **15**;
+- q50 known friction: about **9.1234 bps**;
+- observed q95 absolute primary-mid movement: about **10.6401 bps**;
 - readiness: `COLLECTING`;
 - gate: `INCONCLUSIVE`.
 

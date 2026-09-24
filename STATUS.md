@@ -5,7 +5,7 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `main`
+- Current branch: `task-018-frontier-evidence-campaign`
 - Current phase: **Stage 0.5 — Profitability / Economic Frontier**
 - Current work package: **TASK-017 — profitability-frontier measurement contract validated; merge pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017**
@@ -388,11 +388,22 @@ Frontier Gate remains **NOT_EVALUATED**.
 
 Read **[`tasks/TASK_018.md`](tasks/TASK_018.md)**.
 
-TASK-018 creates a restart-safe prospective evidence campaign, collects the pre-registered 50-second window support, and adjudicates only economic **feasibility** before any predictive model exists.
+Campaign core now implemented on the feature branch:
+
+- immutable pre-registered 50-second / 2,952-window campaign config;
+- immutable segment manifests and deterministic SHA-bound campaign state;
+- duplicate/overlap protection;
+- no cross-segment or cross-boot causal windowing;
+- deterministic non-overlapping 50-second movement windows;
+- first-2,952-window adjudication sample;
+- pre-registered q95 movement vs q50 known-friction rule;
+- PASS / FAIL_AT_50S / INCONCLUSIVE semantics;
+- scenario/unknown cost separation;
+- unit tests for boundaries, readiness, gate decisions, and deterministic serialization.
 
 ### Exact next action
 
-Create the TASK-018 branch and implement the immutable campaign/segment contracts plus deterministic cross-segment 50-second window aggregation first. Do not start a long evidence collection until those contracts and tests are green.
+Run full CI on the campaign core. Fix all lint/type/test issues without weakening contracts. After green CI, implement dataset-to-segment loading and the reusable bounded evidence-segment runner before any long real collection.
 
 ## User actions currently required
 

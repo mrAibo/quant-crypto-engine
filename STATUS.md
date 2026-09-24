@@ -9,7 +9,7 @@
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `main`
 - Current phase: **Stage 0.5 — Profitability / Economic Frontier**
-- Current work package: **TASK-018 — tooling merged; long prospective evidence collection pending**
+- Current work package: **TASK-018 — tooling merged; persistent prospective evidence collection ACTIVE**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -404,39 +404,61 @@ TASK-018 repository/tooling work is merged:
 
 TASK-018 itself remains **IN PROGRESS** because the economic-feasibility evidence requirement is not yet met.
 
+### Persistent-host collection checkpoint — 2026-09-24
+
+The campaign is now initialized and collecting prospectively on a persistent Ubuntu WSL2 host.
+
+- collector checkout at deployment: `main` commit `f01b1fac2c81ccf59d0d05d13ba44dace5367f5f`;
+- host CI-equivalent verification: Python 3.12.3, `uv 0.12.18`, Ruff PASS, Ruff format PASS, strict mypy PASS, **359 pytest PASS**;
+- campaign root: `/var/lib/quant-crypto-engine/frontier-campaign`;
+- campaign ID: `btc-frontier-50s-v1`;
+- fee assumption remains **4.5 bps/side SCENARIO**, not an observed account fee;
+- persistent-host acceptance segment: 70 seconds, **69,837 raw frames**, **70,281 normalized events**, publication PASS;
+- dataset bundle SHA-256: `50e910e5ffd108e58cd02503125059b059609ce53d734ea078652d15bf609274`;
+- segment evidence SHA-256: `3eb1abf0d91431909fcf3be1b6a5927253d287ca3e7e899c2b82f22510d514a8`;
+- checkpoint campaign-manifest SHA-256: `b03185793f345a61a98871381641e5ead41a42930ccf0d5f22ad486bbdaf1dfe`;
+- checkpoint valid non-overlapping 50-second windows: **1**;
+- readiness: `COLLECTING`;
+- gate: `INCONCLUSIVE`;
+- one setup-time systemd segment was terminated by the WSL lifecycle before Windows keep-alive was installed; it is preserved as incomplete and is not counted;
+- Windows AC sleep is disabled; a logon scheduled keep-alive keeps WSL active and is configured to restart on failure;
+- the repository-supplied one-hour systemd segment service/timer is enabled and active.
+
+The incomplete setup segment is retained intentionally for diagnostics. It must not be deleted or rewritten.
+
 ### Exact next action
 
-Run the merged campaign collector on a persistent Linux host/VM using bounded immutable segments until the cumulative report contains at least **2,952 valid non-overlapping 50-second windows**.
+Continue the **existing initialized campaign** using bounded immutable one-hour segments until the cumulative report contains at least **2,952 valid non-overlapping 50-second windows**.
 
-Initialize exactly once:
+Do **not** run `init-frontier-campaign` again.
 
-```bash
-uv sync --locked --all-groups --python 3.12
+For continuation, inspect the existing persistent collector, the systemd service/timer, disk capacity, and the latest report under:
 
-uv run --python 3.12 python -m cryptobot.cli init-frontier-campaign \
-  --campaign-root /var/lib/quant-crypto-engine/frontier-campaign \
-  --campaign-id btc-frontier-50s-v1 \
-  --fee-scenario-bps-per-side 4.5
-```
+`/var/lib/quant-crypto-engine/frontier-campaign`
 
-Then run bounded segments (the supplied systemd timer defaults to one-hour segments) and rebuild the cumulative report after each accepted segment.
+The report fields that control progress remain:
+
+- `published_segment_count`;
+- `incomplete_segment_directories`;
+- `report.total_valid_non_overlapping_windows`;
+- `report.adjudication_window_count`;
+- `report.readiness`;
+- `report.gate_decision`.
 
 Do **not** start predictive modeling before the Frontier Gate is adjudicated.
 
 ## User actions currently required
 
-**One persistent Linux host/VM is now required.**
+No command or repository action is currently required from the user while collection remains healthy.
 
-The repository and campaign tooling are ready. The remaining evidence campaign needs at least ~41 hours of mathematically valid support and likely longer after gaps/exclusions, so it should not be run as one GitHub-hosted CI job.
+Physical requirement: keep the collector machine powered and on AC power. AC sleep has been disabled for the campaign; battery sleep remains unchanged.
 
-Provide/access a Linux host with outbound public WebSocket access and enough disk for immutable QCR1 + Parquet evidence. Then follow `docs/runbooks/frontier_campaign.md` (or run the supplied systemd service/timer).
-
-If a future blocker cannot be bypassed safely through available GitHub/CI tooling, provide a complete self-contained task prompt for another harness (for example DeepSeek) rather than weakening tests or quality gates.
+If a future blocker cannot be bypassed safely through available tooling, document the blocker rather than weakening tests, evidence rules, or quality gates.
 
 ## Open decisions intentionally deferred
 
 - Reference venue/feed frozen for Stage 0: **Binance USDⓈ-M BTCUSDT/ETHUSDT public bookTicker + aggTrade**.
-- Recorder VM/provider/region.
+- TASK-018 collection host is currently local Ubuntu WSL2; any future cloud/production VM/provider/region remains deferred.
 - Production signing-key topology.
 - Operational timeout/staleness/watchdog thresholds.
 - Capital amounts/scaling ladder.

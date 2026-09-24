@@ -213,8 +213,9 @@ before expensive work, so a crashed/OOM processing attempt is preserved and not 
 automatically.
 
 The capture timer starts the next raw segment 10 seconds after the prior capture unit becomes
-inactive. Processing is a separate lower-priority unit polled once per minute, so capture can
-continue while the previous sealed segment is normalized/materialized.
+inactive. A successful capture triggers the lower-priority processor immediately through
+`OnSuccess=`; the processor's one-minute timer is a recovery/backlog fallback. Capture can
+therefore continue while the previous sealed segment is normalized/materialized.
 
 Install after initializing the campaign:
 

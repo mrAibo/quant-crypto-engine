@@ -141,8 +141,13 @@ Prospective collection started on **2026-09-24** on a persistent Ubuntu WSL2 hos
 - readiness: `COLLECTING`;
 - gate: `INCONCLUSIVE`;
 - one setup-time systemd segment was interrupted by the WSL lifecycle before keep-alive was added; that incomplete segment is deliberately preserved and is not counted;
+- two later one-hour segments were killed during post-capture processing by WSL memory exhaustion and remain preserved as incomplete evidence;
+- kernel OOM evidence showed the processing Python process reaching about **13.44 GiB** and **14.55 GiB** anonymous RSS on the two failures, while WSL exposed about **14 GiB RAM + 4 GiB swap**;
+- this is an operational segment-size problem, not a change to the pre-registered 50-second experiment;
+- on **2026-09-24 06:29 CEST**, the host override was changed from `SEGMENT_SECONDS=3600` to `SEGMENT_SECONDS=900`;
+- the currently running 15-minute segment is the validation run for that mitigation; do not count it unless `segment-evidence.json` is published successfully;
 - Windows AC sleep is disabled; a Windows logon scheduled keep-alive holds WSL open and auto-restarts it on failure;
-- the supplied one-hour systemd segment service/timer is enabled and collection is active.
+- the systemd timer remains enabled and collection is active.
 
 No wallet, API key, account endpoint, order, signer, or capital is involved.
 
@@ -153,12 +158,13 @@ Continue the **existing initialized campaign**; do not reinitialize it and do no
 On a fresh session:
 
 1. connect to the existing collector host through the authorized remote-computer connector;
-2. verify `quant-frontier-segment.service` / `quant-frontier-segment.timer` and free disk;
-3. inspect the latest cumulative report after accepted segments;
-4. continue bounded one-hour segments until `report.total_valid_non_overlapping_windows >= 2952`;
-5. do not stop merely because 41 wall-clock hours passed;
-6. when statistically ready, run the deterministic pre-registered Frontier Gate adjudication;
-7. commit the final evidence result and advance `STATUS.md` according to the gate outcome.
+2. verify `quant-frontier-segment.service` / `quant-frontier-segment.timer`, `SEGMENT_SECONDS=900`, memory, and free disk;
+3. verify that at least one 15-minute segment completes capture + normalization + Parquet materialization + audit and publishes `segment-evidence.json` without OOM;
+4. inspect the cumulative report after each accepted segment;
+5. continue bounded 15-minute segments while this host remains memory-constrained, until `report.total_valid_non_overlapping_windows >= 2952`;
+6. do not stop merely because 41 wall-clock hours passed;
+7. when statistically ready, run the deterministic pre-registered Frontier Gate adjudication;
+8. commit the final evidence result and advance `STATUS.md` according to the gate outcome.
 
 No repository implementation work is currently required before that evidence threshold.
 

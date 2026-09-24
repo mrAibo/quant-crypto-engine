@@ -47,3 +47,31 @@ def test_frontier_split_units_decouple_capture_from_processing() -> None:
         assert "api_key" not in unit.lower()
         assert "private_key" not in unit.lower()
         assert "wallet" not in unit.lower()
+
+
+def test_frontier_split_capture_systemd_is_near_continuous_and_public_only() -> None:
+    service = Path("deploy/systemd/quant-frontier-capture.service").read_text(encoding="utf-8")
+    timer = Path("deploy/systemd/quant-frontier-capture.timer").read_text(encoding="utf-8")
+
+    assert "User=quantcrypto" in service
+    assert "capture-frontier-segment" in service
+    assert "process-next-frontier-segment" not in service
+    assert "OnSuccess=quant-frontier-process.service" in service
+    assert "SEGMENT_SECONDS=900" in service
+    assert "ReadWritePaths=/var/lib/quant-crypto-engine" in service
+    assert "OnUnitInactiveSec=10s" in timer
+    assert "Unit=quant-frontier-capture.service" in timer
+    assert "api_key" not in service.lower()
+    assert "private_key" not in service.lower()
+    assert "wallet" not in service.lower()
+
+
+def test_frontier_split_processor_is_network_independent_from_capture() -> None:
+    service = Path("deploy/systemd/quant-frontier-process.service").read_text(encoding="utf-8")
+
+    assert "User=quantcrypto" in service
+    assert "process-next-frontier-segment" in service
+    assert "capture-frontier-segment" not in service
+    assert "--config" not in service
+    assert "report-frontier-campaign" not in service
+    assert "ReadWritePaths=/var/lib/quant-crypto-engine" in service

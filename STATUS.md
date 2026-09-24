@@ -5,9 +5,9 @@
 ## Project
 
 - Repository: `mrAibo/quant-crypto-engine`
-- Current branch: `main`
+- Current branch: `task-018-frontier-evidence-campaign`
 - Current phase: **Stage 0.5 — Profitability / Economic Frontier**
-- Current work package: **TASK-017 — profitability-frontier measurement contract validated; merge pending**
+- Current work package: **TASK-018 — prospective frontier evidence campaign tooling validated; operational smoke pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -384,30 +384,32 @@ Delivered:
 
 Frontier Gate remains **NOT_EVALUATED**.
 
-## Completed — TASK-012
-
-PR #12, merge commit `9a6e4c801464b1a56036ae6f50c6fab9e7c1c966`.
-
-Delivered:
-
-- verified activeAssetCtx / funding / mark / oracle semantics;
-- measured string-valued wire shape and absence of native timestamp;
-- additive `FundingObservationKind.CURRENT` correction;
-- exact-Decimal funding/mark/oracle normalization;
-- explicit `MISSING_EXCHANGE_TIME`;
-- QCR1 replay determinism;
-- **246 tests PASS** on Python 3.12 and 3.13;
-- Ruff/format/strict mypy PASS.
-
 ## Current task
 
-Read **[`tasks/TASK_013.md`](tasks/TASK_013.md)**.
+Read **[`tasks/TASK_018.md`](tasks/TASK_018.md)**.
 
-Reference feed is now frozen to **Binance USDⓈ-M BTCUSDT/ETHUSDT `aggTrade` + per-symbol `bookTicker`**. This is a research reference only, not an execution decision or lead/lag conclusion.
+TASK-018 implementation now includes:
+
+- immutable pre-registered 50-second / 2,952-window campaign core;
+- no cross-segment or cross-boot movement windows;
+- first-2,952-window deterministic adjudication sample;
+- strict q95 movement vs q50 known-friction rule;
+- tamper-checked TASK-015 dataset loader;
+- dataset bundle + every Parquet table SHA verification;
+- bounded public-only segment runner;
+- capture -> QCR1 -> normalize -> Parquet -> audit -> segment evidence pipeline;
+- frozen campaign config and fee scenario;
+- published/incomplete segment discovery;
+- versioned deterministic aggregate reports;
+- CLI init/run/report commands;
+- fake-server end-to-end test;
+- persistent-host runbook and systemd timer templates.
+
+Campaign-core CI `35937885248` was green with **351 tests** on Python 3.12/3.13, Ruff/format/strict mypy PASS.
 
 ### Exact next action
 
-Re-verify current official Binance USDⓈ-M public WebSocket endpoint, lifecycle, `aggTrade`, and `bookTicker` schemas; then implement public raw capture + ReferenceTrade/ReferenceBBO normalization with network-independent tests and one-shot public probe only if required.
+Obtain a fully green CI run for the complete collection tooling. Then execute one short real public-only operational smoke, remove the temporary network workflow, record its evidence, and only then hand off the long prospective collection to a persistent host.
 
 ## User actions currently required
 

@@ -7,7 +7,7 @@
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `task-018-frontier-evidence-campaign`
 - Current phase: **Stage 0.5 — Profitability / Economic Frontier**
-- Current work package: **TASK-018 — prospective frontier evidence campaign tooling validated; operational smoke pending**
+- Current work package: **TASK-018 — campaign tooling + operational smoke validated; long prospective collection pending**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017**
 - Economic status: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -388,32 +388,35 @@ Frontier Gate remains **NOT_EVALUATED**.
 
 Read **[`tasks/TASK_018.md`](tasks/TASK_018.md)**.
 
-TASK-018 implementation now includes:
+TASK-018 campaign tooling is validated:
 
-- immutable pre-registered 50-second / 2,952-window campaign core;
-- no cross-segment or cross-boot movement windows;
-- first-2,952-window deterministic adjudication sample;
-- strict q95 movement vs q50 known-friction rule;
-- tamper-checked TASK-015 dataset loader;
-- dataset bundle + every Parquet table SHA verification;
-- bounded public-only segment runner;
-- capture -> QCR1 -> normalize -> Parquet -> audit -> segment evidence pipeline;
-- frozen campaign config and fee scenario;
-- published/incomplete segment discovery;
-- versioned deterministic aggregate reports;
-- CLI init/run/report commands;
-- fake-server end-to-end test;
-- persistent-host runbook and systemd timer templates.
+- immutable 50-second / 2,952-window campaign contract;
+- deterministic cross-segment aggregation without cross-boot/segment windows;
+- tamper-checked Parquet/dataset binding;
+- bounded public dual-source segment runner;
+- deterministic campaign reports/adjudication;
+- persistent-host runbook + systemd templates;
+- full CI green with **359 tests** on Python 3.12/3.13;
+- real 30-second public-only end-to-end smoke run `35940052539`:
+  - **10,789** raw frames;
+  - **10,999** normalized events;
+  - segment publication PASS;
+  - 0 incomplete segment directories;
+  - readiness `COLLECTING`;
+  - gate `INCONCLUSIVE`;
+  - 0 valid 50-second windows, expected because smoke duration < target horizon.
 
-Campaign-core CI `35937885248` was green with **351 tests** on Python 3.12/3.13, Ruff/format/strict mypy PASS.
+The temporary network workflow has been removed. Default CI remains network-independent.
 
 ### Exact next action
 
-Obtain a fully green CI run for the complete collection tooling. Then execute one short real public-only operational smoke, remove the temporary network workflow, record its evidence, and only then hand off the long prospective collection to a persistent host.
+Run final network-independent PR-head CI after smoke-workflow removal, merge the validated TASK-018 collection tooling, then start the long prospective campaign on a persistent Linux host/VM. Continue immutable bounded segments until at least **2,952 valid non-overlapping 50-second windows** exist; only then adjudicate the Frontier Gate.
 
 ## User actions currently required
 
-**None.**
+**Persistent host required for the long TASK-018 evidence campaign after the tooling PR is merged.**
+
+The assistant can finish repository/CI work, but the >=~41-hour prospective collection should run on a persistent Linux host/VM rather than GitHub-hosted CI. Use `docs/runbooks/frontier_campaign.md` and the supplied systemd service/timer.
 
 If a future blocker cannot be bypassed safely through available GitHub/CI tooling, provide a complete self-contained task prompt for another harness (for example DeepSeek) rather than weakening tests or quality gates.
 

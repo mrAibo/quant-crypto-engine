@@ -1,0 +1,77 @@
+{
+  "task": "TASK-018",
+  "stage": "0.5",
+  "status": "CAMPAIGN_CORE_IMPLEMENTED_CI_PENDING",
+  "objective": "Restart-safe prospective 50-second frontier evidence campaign before any predictive model.",
+  "pre_registration": {
+    "target_horizon_seconds": 50,
+    "required_valid_non_overlapping_windows": 2952,
+    "dkw_confidence": "0.95",
+    "dkw_maximum_cdf_error": "0.025",
+    "mathematical_minimum_observed_duration_seconds": 147600,
+    "decision_rule": "PASS_FEASIBILITY iff q95 absolute primary-mid movement is strictly greater than q50 known friction floor; equality is not a pass."
+  },
+  "campaign_contract": {
+    "immutable": true,
+    "frozen_sources": [
+      "binance-usdm-reference-public",
+      "hyperliquid-mainnet-public"
+    ],
+    "primary_instrument": "hyperliquid.mainnet.perpetual.btc",
+    "duplicate_dataset_digest": "REJECT",
+    "duplicate_normalized_digest": "REJECT",
+    "overlapping_or_touching_wall_intervals": "REJECT_OR_QUARANTINE_BEFORE_ACCEPTANCE",
+    "append_semantics": "functional immutable add_segment; prior accepted segments are not rewritten"
+  },
+  "windowing": {
+    "cross_segment_windows": false,
+    "cross_causal_domain_windows": false,
+    "cross_boot_monotonic_comparison": false,
+    "per_domain_order": "recv_mono_ns then recv_wall_ns then event_id",
+    "endpoint_selection": "earliest observation at or after +50s target",
+    "gap_rule": "exclude when endpoint overshoot exceeds domain p99 positive BBO inter-arrival",
+    "non_overlap": "next accepted start is at or after previous accepted end",
+    "adjudication_sample": "first 2952 valid windows in deterministic campaign chronology; later windows do not alter the pre-registered first adjudication"
+  },
+  "evidence_classes": {
+    "fee": "SCENARIO",
+    "latency": "UNKNOWN",
+    "funding_boundary": "UNKNOWN",
+    "movement_and_bbo": "OBSERVED"
+  },
+  "unsupported_components": [
+    "actual_project_account_fee_tier",
+    "submit_to_ack_and_fill_latency",
+    "realized_own_order_slippage_and_impact",
+    "boundary_aligned_funding_cost",
+    "maker_economics",
+    "predictability"
+  ],
+  "implemented": [
+    "CampaignConfig validation",
+    "SegmentEvidence validation",
+    "immutable CampaignManifest and deterministic digest",
+    "duplicate/overlap detection",
+    "SegmentData causal-domain validation",
+    "per-domain non-overlapping 50-second window builder",
+    "known friction at observed start BBO",
+    "deterministic first-2952 adjudication",
+    "q50/q75/q90/q95/q97.5/q99 movement quantiles",
+    "q50/q90/q95 friction quantiles",
+    "strict q95-vs-q50 gate rule",
+    "scenario/unknown preservation",
+    "simple serial-dependence diagnostics",
+    "deterministic campaign report digest"
+  ],
+  "pending": [
+    "dataset-to-segment evidence loader",
+    "bounded evidence segment runner",
+    "persistent-host operational runbook",
+    "real 2952-window evidence collection",
+    "final Frontier Gate adjudication"
+  ],
+  "gate_decision": "NOT_EVALUATED",
+  "validation": {
+    "github_ci": "PENDING"
+  }
+}

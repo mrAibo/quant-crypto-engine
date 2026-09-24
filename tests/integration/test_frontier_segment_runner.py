@@ -9,8 +9,14 @@ from pathlib import Path
 from websockets.asyncio.server import ServerConnection, serve
 
 from cryptobot.adapters.binance.public import MARKET_STREAMS, PUBLIC_STREAMS
-from cryptobot.research.campaign import CampaignConfig, CampaignReadiness, GateDecision
+from cryptobot.research.campaign import (
+    CampaignConfig,
+    CampaignReadiness,
+    GateDecision,
+    build_campaign_report,
+)
 from cryptobot.research.campaign_storage import (
+    discover_campaign,
     initialize_campaign_root,
     publish_campaign_report,
 )
@@ -249,5 +255,13 @@ def test_frontier_segment_runner_publishes_only_after_full_pipeline(
         assert published.report.gate_decision is GateDecision.INCONCLUSIVE
         assert published.report.accepted_segment_count == 1
         assert published.report_path.is_file()
+
+        reference_discovery = discover_campaign(campaign_root)
+        reference_report = build_campaign_report(
+            reference_discovery.manifest,
+            tuple(item.data for item in reference_discovery.segments),
+        )
+        assert published.discovery.manifest == reference_discovery.manifest
+        assert published.report.to_json_bytes() == reference_report.to_json_bytes()
 
     asyncio.run(scenario())

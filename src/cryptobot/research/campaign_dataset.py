@@ -6,7 +6,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
-from typing import cast
+from typing import Protocol, cast
 
 import pyarrow as pa
 import pyarrow.parquet as pq
@@ -31,8 +31,22 @@ _REFERENCE_SOURCE = "binance-usdm-reference-public"
 _PRIMARY_INSTRUMENT = "hyperliquid.mainnet.perpetual.btc"
 _REQUIRED_SOURCES = (_REFERENCE_SOURCE, _PRIMARY_SOURCE)
 
+
+class _MemoryPool(Protocol):
+    def release_unused(self) -> None: ...
+
+
 type _ReadTableFn = Callable[..., pa.Table]
+type _DefaultMemoryPoolFn = Callable[[], _MemoryPool]
+
 _READ_TABLE = cast(_ReadTableFn, pq.read_table)
+_DEFAULT_MEMORY_POOL = cast(_DefaultMemoryPoolFn, pa.default_memory_pool)
+
+
+def release_unused_arrow_memory() -> None:
+    """Return unused PyArrow allocator pages after a completed segment load."""
+
+    _DEFAULT_MEMORY_POOL().release_unused()
 
 
 @dataclass(frozen=True, slots=True)

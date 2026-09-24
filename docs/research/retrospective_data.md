@@ -82,6 +82,29 @@ uv run --python 3.12 python -m cryptobot.cli download-binance-retrospective \
 The command downloads the archive and its official checksum, verifies SHA-256, then writes a
 manifest last. Existing files are never overwritten.
 
+## Analyze Binance 50-second trade-price movement
+
+After downloading a contiguous BTCUSDT/ETHUSDT daily range, build a deterministic,
+checksum-reverified descriptive report:
+
+```bash
+uv run --python 3.12 python -m cryptobot.cli analyze-binance-retrospective-50s \
+  --source-root /var/lib/quant-crypto-engine/retrospective \
+  --start-date 2026-08-01 \
+  --end-date 2026-08-07 \
+  --output /var/lib/quant-crypto-engine/retrospective/binance-50s-2026-08-01_07.json
+```
+
+The analyzer re-hashes every ZIP against its previously published retrospective manifest,
+requires the frozen Binance aggTrades CSV schema, and uses exact Decimal arithmetic with
+nearest-rank quantiles. Its metric is absolute first-to-last aggTrade price movement within
+clock-aligned, non-overlapping 50-second buckets.
+
+This report is descriptive context only. Trade price is not Hyperliquid primary BBO mid, it
+does not reproduce local receive-time/gap/host-boot semantics, and it contains no executable
+spread/friction evidence. Therefore its quantiles must never be substituted into the
+TASK-018 Frontier Gate.
+
 ## Hyperliquid Requester Pays
 
 After AWS CLI credentials are configured, planned objects can be copied with the equivalent

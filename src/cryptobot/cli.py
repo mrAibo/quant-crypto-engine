@@ -103,14 +103,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
     if args.command == "run-public-recorder":
-        config = load_public_recorder_config(args.config)
-        summary = asyncio.run(run_public_recorder(config))
+        public_config = load_public_recorder_config(args.config)
+        summary = asyncio.run(run_public_recorder(public_config))
         print(summary.to_json())
         return summary.exit_code
 
     if args.command == "audit-public-recorder":
-        config = load_public_recorder_config(args.config)
-        report = audit_public_recorder(config)
+        public_config = load_public_recorder_config(args.config)
+        report = audit_public_recorder(public_config)
         print(json.dumps(report, sort_keys=True, separators=(",", ":")))
         return 0 if bool(report["clean"]) else 3
 
@@ -142,11 +142,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
 
     if args.command == "run-frontier-segment":
-        config = load_dual_source_recorder_config(args.config)
+        dual_source_config = load_dual_source_recorder_config(args.config)
         try:
             campaign_config = load_campaign_config(args.campaign_root)
             result = run_frontier_evidence_segment_sync(
-                config,
+                dual_source_config,
                 campaign_root=args.campaign_root,
                 run_duration_seconds=args.duration_seconds,
                 fee_scenario_bps_per_side=campaign_config.fee_scenario_bps_per_side,

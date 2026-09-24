@@ -78,9 +78,7 @@ def load_campaign_config(campaign_root: str | Path) -> CampaignConfig:
     if _required_int(raw, "schema_version") != 1:
         raise CampaignValidationError("unsupported campaign config schema_version")
     config_raw = raw.get("campaign_config")
-    if not isinstance(config_raw, dict) or not all(
-        isinstance(key, str) for key in config_raw
-    ):
+    if not isinstance(config_raw, dict) or not all(isinstance(key, str) for key in config_raw):
         raise CampaignValidationError("campaign_config must be an object")
     config = cast(dict[str, object], config_raw)
 
@@ -195,9 +193,7 @@ def _load_published_segment(
         raise CampaignValidationError("segment directory name does not match evidence run_id")
 
     segment_raw = raw.get("segment")
-    if not isinstance(segment_raw, dict) or not all(
-        isinstance(key, str) for key in segment_raw
-    ):
+    if not isinstance(segment_raw, dict) or not all(isinstance(key, str) for key in segment_raw):
         raise CampaignValidationError("published segment evidence must contain segment object")
     segment_dict = cast(dict[str, object], segment_raw)
     segment_id = _required_str(segment_dict, "segment_id")

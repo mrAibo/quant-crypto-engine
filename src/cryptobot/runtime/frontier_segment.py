@@ -20,7 +20,6 @@ from cryptobot.research.campaign_dataset import load_campaign_segment
 from cryptobot.research.frontier_dataset import analyze_frontier_pilot_dataset
 from cryptobot.runtime.dual_source_recorder import (
     DualSourceRecorderConfig,
-    DualSourceRecorderSummary,
     run_dual_source_recorder,
 )
 from cryptobot.runtime.public_recorder import (

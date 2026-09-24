@@ -384,15 +384,30 @@ Delivered:
 
 Frontier Gate remains **NOT_EVALUATED**.
 
+## Completed — TASK-012
+
+PR #12, merge commit `9a6e4c801464b1a56036ae6f50c6fab9e7c1c966`.
+
+Delivered:
+
+- verified activeAssetCtx / funding / mark / oracle semantics;
+- measured string-valued wire shape and absence of native timestamp;
+- additive `FundingObservationKind.CURRENT` correction;
+- exact-Decimal funding/mark/oracle normalization;
+- explicit `MISSING_EXCHANGE_TIME`;
+- QCR1 replay determinism;
+- **246 tests PASS** on Python 3.12 and 3.13;
+- Ruff/format/strict mypy PASS.
+
 ## Current task
 
-Read **[`tasks/TASK_018.md`](tasks/TASK_018.md)**.
+Read **[`tasks/TASK_013.md`](tasks/TASK_013.md)**.
 
-TASK-018 creates a restart-safe prospective evidence campaign, collects the pre-registered 50-second window support, and adjudicates only economic **feasibility** before any predictive model exists.
+Reference feed is now frozen to **Binance USDⓈ-M BTCUSDT/ETHUSDT `aggTrade` + per-symbol `bookTicker`**. This is a research reference only, not an execution decision or lead/lag conclusion.
 
 ### Exact next action
 
-Create the TASK-018 branch and implement the immutable campaign/segment contracts plus deterministic cross-segment 50-second window aggregation first. Do not start a long evidence collection until those contracts and tests are green.
+Re-verify current official Binance USDⓈ-M public WebSocket endpoint, lifecycle, `aggTrade`, and `bookTicker` schemas; then implement public raw capture + ReferenceTrade/ReferenceBBO normalization with network-independent tests and one-shot public probe only if required.
 
 ## User actions currently required
 

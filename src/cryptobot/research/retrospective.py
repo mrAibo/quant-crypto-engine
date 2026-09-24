@@ -1,13 +1,16 @@
 from __future__ import annotations
 
+import csv
 import hashlib
 import json
 import os
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from urllib.request import urlretrieve
+from zipfile import BadZipFile, ZipFile
 
 RETROSPECTIVE_SCHEMA_VERSION = 1
 GATE_ELIGIBILITY = "EXCLUDED_FROM_TASK_018_FRONTIER_GATE"
@@ -15,6 +18,25 @@ _BINANCE_BASE = "https://data.binance.vision/data/futures/um/daily/aggTrades"
 _HYPERLIQUID_BUCKET = "s3://hyperliquid-archive/market_data"
 _BINANCE_SYMBOLS = ("BTCUSDT", "ETHUSDT")
 _HYPERLIQUID_COINS = ("BTC", "ETH")
+
+_RETRO_WINDOW_MS = 50_000
+_AGGTRADES_FIELDS = (
+    "agg_trade_id",
+    "price",
+    "quantity",
+    "first_trade_id",
+    "last_trade_id",
+    "transact_time",
+    "is_buyer_maker",
+)
+_RETRO_QUANTILES = (
+    ("q50", 500),
+    ("q75", 750),
+    ("q90", 900),
+    ("q95", 950),
+    ("q97_5", 975),
+    ("q99", 990),
+)
 
 type RetrieveFn = Callable[[str, str], object]
 
@@ -245,3 +267,202 @@ def _write_new(path: Path, payload: bytes) -> None:
             stream.flush()
     except FileExistsError as exc:
         raise FileExistsError(f"refusing to overwrite retrospective evidence: {path}") from exc
+
+
+def analyze_binance_retrospective_50s(
+    source_root: str | Path,
+    start: date,
+    end: date,
+) -> dict[str, object]:
+    root = Path(source_root)
+    _reject_campaign_destination(root)
+    if end < start:
+        raise RetrospectiveDataError("end date must be on or after start date")
+
+    symbols = [_analyze_binance_symbol_50s(root, symbol, start, end) for symbol in _BINANCE_SYMBOLS]
+    return {
+        "schema_version": RETROSPECTIVE_SCHEMA_VERSION,
+        "purpose": "AUXILIARY_RETROSPECTIVE_SANITY_CHECK",
+        "task_018_gate_eligibility": GATE_ELIGIBILITY,
+        "period": {"start": start.isoformat(), "end": end.isoformat()},
+        "metric": (
+            "absolute first-to-last aggTrade price movement within clock-aligned "
+            "non-overlapping 50-second buckets"
+        ),
+        "limitations": [
+            "trade price is not Hyperliquid primary BBO mid",
+            "no live receive-time/gap/host-boot semantics",
+            "no spread or executable friction inference",
+        ],
+        "symbols": symbols,
+    }
+
+
+def write_binance_retrospective_50s_report(
+    path: str | Path,
+    source_root: str | Path,
+    start: date,
+    end: date,
+) -> Path:
+    destination = Path(path)
+    _reject_campaign_destination(destination)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    report = analyze_binance_retrospective_50s(source_root, start, end)
+    _write_new(destination, serialize_retrospective_plan(report))
+    return destination
+
+
+def _analyze_binance_symbol_50s(
+    root: Path,
+    symbol: str,
+    start: date,
+    end: date,
+) -> dict[str, object]:
+    all_moves: list[Decimal] = []
+    per_day: list[dict[str, object]] = []
+    current = start
+    while current <= end:
+        spec = binance_usdm_daily_aggtrades_spec(current, symbol)
+        day_root = root / "binance" / spec.dataset.lower() / symbol / current.isoformat()
+        archive = day_root / spec.location.rsplit("/", 1)[-1]
+        manifest = day_root / f"{archive.name}.manifest.json"
+        moves = _read_verified_aggtrade_day(archive, manifest, current)
+        all_moves.extend(moves)
+        expected_windows = 86_400_000 // _RETRO_WINDOW_MS
+        per_day.append(
+            {
+                "day": current.isoformat(),
+                "window_count": len(moves),
+                "missing_50s_bucket_count": expected_windows - len(moves),
+                "zero_move_fraction": _fraction_string(
+                    sum(1 for value in moves if value == 0),
+                    len(moves),
+                ),
+                "q95_abs_trade_move_bps": _quantile_string(moves, 950),
+            }
+        )
+        current += timedelta(days=1)
+
+    return {
+        "symbol": symbol,
+        "window_count": len(all_moves),
+        "movement_quantiles_bps": {
+            label: _quantile_string(all_moves, quantile) for label, quantile in _RETRO_QUANTILES
+        },
+        "zero_move_fraction": _fraction_string(
+            sum(1 for value in all_moves if value == 0),
+            len(all_moves),
+        ),
+        "per_day": per_day,
+    }
+
+
+def _read_verified_aggtrade_day(
+    archive: Path,
+    manifest_path: Path,
+    expected_day: date,
+) -> list[Decimal]:
+    try:
+        manifest_raw = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise RetrospectiveDataError(
+            f"cannot read retrospective manifest: {manifest_path}"
+        ) from exc
+    if not isinstance(manifest_raw, dict):
+        raise RetrospectiveDataError("retrospective manifest root must be an object")
+    if manifest_raw.get("task_018_gate_eligibility") != GATE_ELIGIBILITY:
+        raise RetrospectiveDataError("retrospective manifest gate eligibility is invalid")
+    expected_sha_raw = manifest_raw.get("archive_sha256")
+    if not isinstance(expected_sha_raw, str):
+        raise RetrospectiveDataError("retrospective manifest archive_sha256 is invalid")
+    expected_sha = _parse_checksum(expected_sha_raw)
+    if _sha256_file(archive) != expected_sha:
+        raise RetrospectiveDataError(f"retrospective archive hash mismatch: {archive.name}")
+
+    try:
+        with ZipFile(archive) as zipped:
+            names = zipped.namelist()
+            if len(names) != 1 or not names[0].endswith(".csv"):
+                raise RetrospectiveDataError(
+                    f"retrospective archive must contain exactly one CSV: {archive.name}"
+                )
+            with zipped.open(names[0]) as stream:
+                reader = csv.DictReader(line.decode("utf-8") for line in stream)
+                if tuple(reader.fieldnames or ()) != _AGGTRADES_FIELDS:
+                    raise RetrospectiveDataError(f"unexpected aggTrades CSV schema: {archive.name}")
+                return _bucket_aggtrade_rows(reader, expected_day)
+    except (BadZipFile, OSError, UnicodeDecodeError) as exc:
+        raise RetrospectiveDataError(
+            f"cannot decode retrospective archive: {archive.name}"
+        ) from exc
+
+
+def _bucket_aggtrade_rows(
+    rows: Iterable[dict[str, str]],
+    expected_day: date,
+) -> list[Decimal]:
+    moves: list[Decimal] = []
+    bucket: int | None = None
+    first_price: Decimal | None = None
+    last_price: Decimal | None = None
+    previous_ts: int | None = None
+
+    for row in rows:
+        try:
+            timestamp_ms = int(row["transact_time"])
+            price = Decimal(row["price"])
+        except (KeyError, ValueError, InvalidOperation) as exc:
+            raise RetrospectiveDataError("invalid aggTrades timestamp or price") from exc
+        if price <= 0:
+            raise RetrospectiveDataError("aggTrades price must be positive")
+        observed_day = datetime.fromtimestamp(
+            timestamp_ms // 1000,
+            tz=UTC,
+        ).date()
+        if observed_day != expected_day:
+            raise RetrospectiveDataError("aggTrades row is outside expected UTC day")
+        if previous_ts is not None and timestamp_ms < previous_ts:
+            raise RetrospectiveDataError("aggTrades timestamps must be non-decreasing")
+        previous_ts = timestamp_ms
+
+        current_bucket = timestamp_ms // _RETRO_WINDOW_MS
+        if bucket is None:
+            bucket = current_bucket
+            first_price = price
+            last_price = price
+            continue
+        if current_bucket == bucket:
+            last_price = price
+            continue
+
+        assert first_price is not None and last_price is not None
+        moves.append(abs(last_price - first_price) / first_price * Decimal(10_000))
+        bucket = current_bucket
+        first_price = price
+        last_price = price
+
+    if bucket is not None:
+        assert first_price is not None and last_price is not None
+        moves.append(abs(last_price - first_price) / first_price * Decimal(10_000))
+    return moves
+
+
+def _nearest_rank(values: list[Decimal], quantile_thousandths: int) -> Decimal | None:
+    if not values:
+        return None
+    if quantile_thousandths <= 0 or quantile_thousandths > 1000:
+        raise RetrospectiveDataError("quantile must be in (0, 1000]")
+    ordered = sorted(values)
+    rank = (quantile_thousandths * len(ordered) + 999) // 1000
+    return ordered[rank - 1]
+
+
+def _quantile_string(values: list[Decimal], quantile_thousandths: int) -> str | None:
+    value = _nearest_rank(values, quantile_thousandths)
+    return None if value is None else format(value, "f")
+
+
+def _fraction_string(numerator: int, denominator: int) -> str | None:
+    if denominator == 0:
+        return None
+    return format(Decimal(numerator) / Decimal(denominator), "f")

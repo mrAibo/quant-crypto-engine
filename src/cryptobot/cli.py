@@ -26,6 +26,7 @@ from cryptobot.research.retrospective import (
     RetrospectiveDataError,
     binance_usdm_daily_aggtrades_spec,
     download_binance_archive,
+    write_binance_retrospective_50s_report,
     write_retrospective_plan,
 )
 from cryptobot.runtime.dual_source_recorder import load_dual_source_recorder_config
@@ -94,6 +95,15 @@ def build_parser() -> argparse.ArgumentParser:
         required=True,
     )
     retrospective_download.add_argument("--destination", required=True)
+
+    retrospective_analyze = subparsers.add_parser(
+        "analyze-binance-retrospective-50s",
+        help="Analyze checksum-verified Binance aggTrades as non-gating 50-second context.",
+    )
+    retrospective_analyze.add_argument("--source-root", required=True)
+    retrospective_analyze.add_argument("--start-date", required=True)
+    retrospective_analyze.add_argument("--end-date", required=True)
+    retrospective_analyze.add_argument("--output", required=True)
 
     frontier_init = subparsers.add_parser(
         "init-frontier-campaign",
@@ -214,6 +224,36 @@ def main(argv: Sequence[str] | None = None) -> int:
                     "archive_path": str(downloaded.archive_path),
                     "manifest_path": str(downloaded.manifest_path),
                     "sha256": downloaded.sha256,
+                    "task_018_gate_eligibility": GATE_ELIGIBILITY,
+                },
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+        )
+        return 0
+
+    if args.command == "analyze-binance-retrospective-50s":
+        try:
+            output = write_binance_retrospective_50s_report(
+                args.output,
+                args.source_root,
+                date.fromisoformat(args.start_date),
+                date.fromisoformat(args.end_date),
+            )
+        except (RetrospectiveDataError, OSError, ValueError) as exc:
+            print(
+                json.dumps(
+                    {"status": "FAILED", "error": str(exc)},
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+            )
+            return 2
+        print(
+            json.dumps(
+                {
+                    "status": "SUCCESS",
+                    "report_path": str(output),
                     "task_018_gate_eligibility": GATE_ELIGIBILITY,
                 },
                 sort_keys=True,

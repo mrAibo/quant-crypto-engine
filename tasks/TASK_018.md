@@ -2,7 +2,7 @@
 
 ## Status
 
-`PENDING`
+`IN PROGRESS — CAMPAIGN CORE IMPLEMENTED, CI PENDING`
 
 ## Objective
 
@@ -282,3 +282,36 @@ If no persistent host is available, define a separately reviewed chunked collect
 - OMS/signing/orders;
 - account/private capture;
 - capital deployment.
+
+
+## Implementation progress
+
+Implemented first campaign core:
+
+- immutable pre-registered CampaignConfig;
+- immutable SegmentEvidence / CampaignManifest contracts;
+- deterministic manifest/report JSON + SHA-256;
+- duplicate dataset/normalized digest rejection;
+- overlapping/touching segment interval rejection;
+- explicit causal-domain membership validation;
+- per-domain 50-second non-overlapping window construction;
+- no window may cross segment or host/boot boundary;
+- start-BBO known-friction calculation using the documented-base taker fee scenario;
+- deterministic campaign chronology;
+- first-2,952-window adjudication sample to prevent later optional-stopping changes;
+- strict pre-registered `q95 move > q50 friction` rule;
+- equality is FAIL, missing required friction is INCONCLUSIVE;
+- fee remains SCENARIO; latency/funding remain UNKNOWN;
+- simple adjacent-sign / zero-move dependence diagnostics;
+- unit tests for campaign immutability, overlap/digest protection, boot/segment boundaries, readiness, gate outcomes, and deterministic digests;
+- `artifacts/stage_05/frontier_campaign_contract.json`.
+
+Still pending in TASK-018:
+
+- dataset -> immutable segment-evidence loader;
+- reusable bounded segment runner over TASK-016/014/015/017;
+- operational persistent-host runbook;
+- real prospective campaign accumulation to >= 2,952 valid 50-second windows;
+- final Frontier Gate adjudication.
+
+No predictive model, private endpoint, order, signer, or capital logic is present.

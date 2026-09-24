@@ -1,0 +1,21 @@
+[Unit]
+Description=Quant Crypto Engine Stage-0.5 frontier captured-segment processor
+
+[Service]
+Type=oneshot
+User=quantcrypto
+Group=quantcrypto
+WorkingDirectory=/opt/quant-crypto-engine
+ExecStart=/opt/quant-crypto-engine/.venv/bin/python -m cryptobot.cli process-next-frontier-segment --campaign-root /var/lib/quant-crypto-engine/frontier-campaign --registry /opt/quant-crypto-engine/config/instruments.yaml
+Nice=10
+OOMScoreAdjust=250
+TimeoutStartSec=infinity
+TimeoutStopSec=60s
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/quant-crypto-engine
+StandardOutput=journal
+StandardError=journal

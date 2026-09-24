@@ -1,7 +1,7 @@
 {
   "task": "TASK-018",
   "stage": "0.5",
-  "status": "CAMPAIGN_CORE_IMPLEMENTED_CI_PENDING",
+  "status": "COLLECTION_TOOLING_IMPLEMENTED_CI_PENDING",
   "objective": "Restart-safe prospective 50-second frontier evidence campaign before any predictive model.",
   "pre_registration": {
     "target_horizon_seconds": 50,
@@ -61,17 +61,37 @@
     "strict q95-vs-q50 gate rule",
     "scenario/unknown preservation",
     "simple serial-dependence diagnostics",
-    "deterministic campaign report digest"
+    "deterministic campaign report digest",
+    "tamper-checked TASK-015 Parquet segment loader",
+    "dataset manifest bundle-hash recomputation",
+    "per-table SHA-256 verification",
+    "bounded public dual-source segment runner",
+    "QCR1 -> normalize -> Parquet -> audit -> segment-evidence publication",
+    "campaign-config initialization",
+    "published-segment discovery with incomplete-segment quarantine semantics",
+    "bound evidence-file SHA verification",
+    "revisioned deterministic aggregate campaign reports",
+    "campaign CLI init/run/report commands",
+    "fake-server end-to-end segment runner integration test",
+    "persistent-host runbook",
+    "systemd bounded-segment service and timer templates"
   ],
   "pending": [
-    "dataset-to-segment evidence loader",
-    "bounded evidence segment runner",
-    "persistent-host operational runbook",
-    "real 2952-window evidence collection",
+    "full CI validation of collection tooling",
+    "short real public-only operational smoke of the collection path",
+    "persistent-host prospective evidence collection to >=2952 valid 50-second windows",
     "final Frontier Gate adjudication"
   ],
   "gate_decision": "NOT_EVALUATED",
   "validation": {
-    "github_ci": "PENDING"
+    "campaign_core_ci": {
+      "workflow_run": 35937885248,
+      "ruff": "PASS",
+      "ruff_format": "PASS",
+      "mypy_strict": "PASS_68_SOURCE_FILES",
+      "pytest_python_3_12": "PASS_351",
+      "pytest_python_3_13": "PASS_351"
+    },
+    "collection_tooling_ci": "PENDING"
   }
 }

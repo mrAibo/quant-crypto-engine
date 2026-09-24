@@ -107,9 +107,7 @@ def load_campaign_segment(
     wall_start_ns = min(wall_values)
     wall_end_ns = max(wall_values)
     if wall_end_ns <= wall_start_ns:
-        raise CampaignValidationError(
-            "campaign segment must span a positive receive-wall interval"
-        )
+        raise CampaignValidationError("campaign segment must span a positive receive-wall interval")
 
     primary_bbo = _load_primary_bbo(root, event_rows)
     primary_l2_count = _primary_l2_count(event_rows)
@@ -309,10 +307,7 @@ def _frame_source_ids(rows: tuple[dict[str, object], ...]) -> set[str]:
 
 
 def _frame_domains(rows: tuple[dict[str, object], ...]) -> set[tuple[str, str]]:
-    return {
-        (_row_str(row, "host_id"), _row_str(row, "boot_id"))
-        for row in rows
-    }
+    return {(_row_str(row, "host_id"), _row_str(row, "boot_id")) for row in rows}
 
 
 def _frame_wall_ns(rows: tuple[dict[str, object], ...]) -> tuple[int, ...]:

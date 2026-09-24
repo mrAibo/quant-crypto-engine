@@ -145,7 +145,13 @@ Prospective collection started on **2026-09-24** on a persistent Ubuntu WSL2 hos
 - kernel OOM evidence showed the processing Python process reaching about **12.82 GiB** and **13.88 GiB** anonymous RSS on the two failures, while WSL exposed about **14.48 GiB RAM + 4 GiB swap**;
 - this is an operational segment-size problem, not a change to the pre-registered 50-second experiment;
 - on **2026-09-24 06:29 CEST**, the host override was changed from `SEGMENT_SECONDS=3600` to `SEGMENT_SECONDS=900`;
-- the currently running 15-minute segment is the validation run for that mitigation; do not count it unless `segment-evidence.json` is published successfully;
+- the first 900-second validation segment completed successfully at **06:47:24 CEST** with **364,956 raw frames** and **369,682 normalized events**;
+- that segment published dataset bundle SHA-256 `667235899f6c93028698dd6be0a71f58c3e4f9315b014e139a76ac76fc791da3` and segment evidence SHA-256 `a27018446274ba65a4aebfd58a2b66d4c7e2a33a2274813eca839347e0b84e74`;
+- its systemd cgroup memory peak was **97.5 MiB** and no new OOM event occurred;
+- checkpoint campaign-manifest SHA-256 is `fc52b483305339510ec3a97e3992f9885ee31affdf4210e7cfcd41a0d4322c1c`;
+- accepted segments: **2**; total valid non-overlapping 50-second windows: **18** (**17** from the first successful 900-second segment plus the original acceptance window); excluded windows: **6**;
+- readiness remains `COLLECTING`; gate remains `INCONCLUSIVE`;
+- a subsequent 900-second segment started automatically at **06:53:07 CEST** and remains incomplete until immutable publication;
 - Windows AC sleep is disabled; a Windows logon scheduled keep-alive holds WSL open and auto-restarts it on failure;
 - the systemd timer remains enabled and collection is active.
 
@@ -159,12 +165,11 @@ On a fresh session:
 
 1. connect to the existing collector host through the authorized remote-computer connector;
 2. verify `quant-frontier-segment.service` / `quant-frontier-segment.timer`, `SEGMENT_SECONDS=900`, memory, and free disk;
-3. verify that at least one 15-minute segment completes capture + normalization + Parquet materialization + audit and publishes `segment-evidence.json` without OOM;
-4. inspect the cumulative report after each accepted segment;
-5. continue bounded 15-minute segments while this host remains memory-constrained, until `report.total_valid_non_overlapping_windows >= 2952`;
-6. do not stop merely because 41 wall-clock hours passed;
-7. when statistically ready, run the deterministic pre-registered Frontier Gate adjudication;
-8. commit the final evidence result and advance `STATUS.md` according to the gate outcome.
+3. inspect the cumulative report after accepted segments and confirm new 900-second segments continue publishing without OOM;
+4. continue bounded 15-minute segments while this host remains memory-constrained, until `report.total_valid_non_overlapping_windows >= 2952`;
+5. do not stop merely because 41 wall-clock hours passed;
+6. when statistically ready, run the deterministic pre-registered Frontier Gate adjudication;
+7. commit the final evidence result and advance `STATUS.md` according to the gate outcome.
 
 No repository implementation work is currently required before that evidence threshold.
 

@@ -93,5 +93,25 @@
       "pytest_python_3_13": "PASS_351"
     },
     "collection_tooling_ci": "PENDING"
+  },
+  "operational_smoke": {
+    "status": "PASS",
+    "workflow_run": 35940052539,
+    "duration_seconds": 30,
+    "public_only": true,
+    "raw_frame_count": 10789,
+    "normalized_event_count": 10999,
+    "dataset_bundle_sha256": "9d24f826068a89f53b133ca6a8d034fa0680d86d71036936e615455806f1bf72",
+    "dataset_manifest_sha256": "71169bae2617f57e64ef692c575a3dafcef1d5e78c008dd1c48006174f9b6dff",
+    "segment_evidence_sha256": "55341a47b460ddbcc897c665a51b385680dbc9e27491b1b1cbe7e395055a5cd8",
+    "campaign_manifest_sha256": "ad5e9a508ae1851057bf4e33029c6ed097054bb599ad043fe795ca11ae0bd1e2",
+    "published_segment_count": 1,
+    "incomplete_segment_directories": [],
+    "frontier_audit_status": "PILOT_MEASURED",
+    "readiness": "COLLECTING",
+    "gate_decision": "INCONCLUSIVE",
+    "valid_non_overlapping_50s_windows": 0,
+    "expected_zero_window_reason": "30-second smoke is shorter than the pre-registered 50-second horizon",
+    "default_ci_network_dependency": false
   }
 }

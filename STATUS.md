@@ -388,22 +388,28 @@ Frontier Gate remains **NOT_EVALUATED**.
 
 Read **[`tasks/TASK_018.md`](tasks/TASK_018.md)**.
 
-Campaign core now implemented on the feature branch:
+TASK-018 implementation now includes:
 
-- immutable pre-registered 50-second / 2,952-window campaign config;
-- immutable segment manifests and deterministic SHA-bound campaign state;
-- duplicate/overlap protection;
-- no cross-segment or cross-boot causal windowing;
-- deterministic non-overlapping 50-second movement windows;
-- first-2,952-window adjudication sample;
-- pre-registered q95 movement vs q50 known-friction rule;
-- PASS / FAIL_AT_50S / INCONCLUSIVE semantics;
-- scenario/unknown cost separation;
-- unit tests for boundaries, readiness, gate decisions, and deterministic serialization.
+- immutable pre-registered 50-second / 2,952-window campaign core;
+- no cross-segment or cross-boot movement windows;
+- first-2,952-window deterministic adjudication sample;
+- strict q95 movement vs q50 known-friction rule;
+- tamper-checked TASK-015 dataset loader;
+- dataset bundle + every Parquet table SHA verification;
+- bounded public-only segment runner;
+- capture -> QCR1 -> normalize -> Parquet -> audit -> segment evidence pipeline;
+- frozen campaign config and fee scenario;
+- published/incomplete segment discovery;
+- versioned deterministic aggregate reports;
+- CLI init/run/report commands;
+- fake-server end-to-end test;
+- persistent-host runbook and systemd timer templates.
+
+Campaign-core CI `35937885248` was green with **351 tests** on Python 3.12/3.13, Ruff/format/strict mypy PASS.
 
 ### Exact next action
 
-Run full CI on the campaign core. Fix all lint/type/test issues without weakening contracts. After green CI, implement dataset-to-segment loading and the reusable bounded evidence-segment runner before any long real collection.
+Obtain a fully green CI run for the complete collection tooling. Then execute one short real public-only operational smoke, remove the temporary network workflow, record its evidence, and only then hand off the long prospective collection to a persistent host.
 
 ## User actions currently required
 

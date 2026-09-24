@@ -126,52 +126,95 @@ No wallet, API key, private stream, order, signer, or capital logic is required 
 
 ## Persistent-host campaign checkpoint
 
-Prospective collection started on **2026-09-24** on a persistent Ubuntu WSL2 host. **Do not initialize a second campaign.**
+Prospective collection started on **2026-09-24** on the persistent Ubuntu WSL2 host `Aibo`. **Do not initialize a second campaign.**
 
-- deployed collector checkout: `main` at `f01b1fac2c81ccf59d0d05d13ba44dace5367f5f`;
-- host CI-equivalent verification: Python 3.12.3, pinned `uv 0.12.18`, Ruff PASS, Ruff format PASS, strict mypy PASS, **359 pytest PASS**;
+Current deployed state:
+
+- production checkout: `main` at `60821293fa8fe03a90bda35e1195410821f8bc1d`;
+- host verification after deployment: Python 3.12.3, Ruff PASS, Ruff format PASS, strict mypy PASS on **77 source files**, **370 pytest PASS**;
 - campaign root: `/var/lib/quant-crypto-engine/frontier-campaign`;
 - campaign ID: `btc-frontier-50s-v1`;
 - frozen fee scenario: **4.5 bps/side SCENARIO**;
-- first persistent-host acceptance segment: 70 seconds, **69,837** raw frames, **70,281** normalized events;
-- acceptance-segment dataset bundle SHA-256: `50e910e5ffd108e58cd02503125059b059609ce53d734ea078652d15bf609274`;
-- acceptance-segment evidence SHA-256: `3eb1abf0d91431909fcf3be1b6a5927253d287ca3e7e899c2b82f22510d514a8`;
-- checkpoint campaign-manifest SHA-256: `b03185793f345a61a98871381641e5ead41a42930ccf0d5f22ad486bbdaf1dfe`;
-- checkpoint valid 50-second windows: **1**;
-- readiness: `COLLECTING`;
-- gate: `INCONCLUSIVE`;
-- one setup-time systemd segment was interrupted by the WSL lifecycle before keep-alive was added; that incomplete segment is deliberately preserved and is not counted;
-- two later one-hour segments were killed during post-capture processing by WSL memory exhaustion and remain preserved as incomplete evidence;
-- kernel OOM evidence showed the processing Python process reaching about **12.82 GiB** and **13.88 GiB** anonymous RSS on the two failures, while WSL exposed about **14.48 GiB RAM + 4 GiB swap**;
-- this is an operational segment-size problem, not a change to the pre-registered 50-second experiment;
-- on **2026-09-24 06:29 CEST**, the host override was changed from `SEGMENT_SECONDS=3600` to `SEGMENT_SECONDS=900`;
-- the first 900-second validation segment completed successfully at **06:47:24 CEST** with **364,956 raw frames** and **369,682 normalized events**;
-- that segment published dataset bundle SHA-256 `667235899f6c93028698dd6be0a71f58c3e4f9315b014e139a76ac76fc791da3` and segment evidence SHA-256 `a27018446274ba65a4aebfd58a2b66d4c7e2a33a2274813eca839347e0b84e74`;
-- its systemd cgroup memory peak was **97.5 MiB** and no new OOM event occurred;
-- checkpoint campaign-manifest SHA-256 is `fc52b483305339510ec3a97e3992f9885ee31affdf4210e7cfcd41a0d4322c1c`;
-- accepted segments: **2**; total valid non-overlapping 50-second windows: **18** (**17** from the first successful 900-second segment plus the original acceptance window); excluded windows: **6**;
-- readiness remains `COLLECTING`; gate remains `INCONCLUSIVE`;
-- a subsequent 900-second segment started automatically at **06:53:07 CEST** and remains incomplete until immutable publication;
-- Windows AC sleep is disabled; a Windows logon scheduled keep-alive holds WSL open and auto-restarts it on failure;
-- the systemd timer remains enabled and collection is active.
+- operational segment size remains **900 seconds**;
+- Windows AC sleep is disabled and the `QuantCryptoEngine-WSLKeepAlive` scheduled task keeps WSL active;
+- legacy `quant-frontier-segment.timer` is **inactive**;
+- split `quant-frontier-capture.timer` and `quant-frontier-process.timer` are **active**;
+- capture and processing are now decoupled: the next raw capture starts while the previous sealed segment is normalized/materialized;
+- the processor is deliberately lower priority (`Nice=10`, `OOMScoreAdjust=250`).
 
-No wallet, API key, account endpoint, order, signer, or capital is involved.
+The first production split segment completed end to end:
+
+- raw frames: **662,009**;
+- normalized events: **667,554**;
+- dataset bundle SHA-256: `69d28e7d23fb1a63ff1727bba64f6e3ddaa713334079a2dc820d1b3091bd40f8`;
+- dataset manifest SHA-256: `60b14f059d7794d632681fe33fd6648b99f645be59c608bac96153679c3866d4`;
+- segment evidence SHA-256: `557267970a93f221bbfbaf1d7a80f8e45b4628e6d6090df532b8f98105b9b58d`;
+- processor memory peak: about **1.3 GiB**, swap **0 B**;
+- no new OOM was observed;
+- the next capture started while processing ran; measured inter-capture receive-time gap is approximately **60 seconds**, materially below the old combined capture/process downtime.
+
+Latest deterministic campaign checkpoint after that split publication:
+
+- campaign manifest SHA-256: `aca5ccdd792fdfbe9206a024ea7655983b843c39411e5884777710f8ed442aed`;
+- accepted/published segments: **8**;
+- total valid non-overlapping 50-second windows: **120 / 2,952**;
+- excluded candidate windows: **13**;
+- q50 known friction: about **9.1231 bps**;
+- observed q95 absolute primary-mid movement: about **7.9536 bps**;
+- readiness: `COLLECTING`;
+- gate: `INCONCLUSIVE`.
+
+The changing early q95 values are descriptive only. They are evidence for **not** stopping early or changing the pre-registered rule.
+
+All old failed/incomplete segment directories remain preserved. Do not delete, splice, or rewrite them.
+
+## Auxiliary retrospective checkpoint
+
+Retrospective public archives are now an explicitly separate, non-gating research track.
+
+Merged provenance:
+
+- PR #23 / merge `29674aa94ef418499a6761a379cdf176967970d9`: split capture/processing;
+- PR #24 / merge `63aa02d2e8c52cac0c9e49b8832b96fb1c9e3af2`: non-gating retrospective archive planner/downloader;
+- PR #25 / merge `60821293fa8fe03a90bda35e1195410821f8bc1d`: deterministic 50-second Binance retrospective analyzer;
+- PR #25 pre-merge and post-merge CI: green.
+
+Local retrospective root:
+
+`/var/lib/quant-crypto-engine/retrospective`
+
+For **2026-08-01 through 2026-08-07**:
+
+- deterministic plan: **350 sources**;
+- Binance Data Vision: **14/14** BTCUSDT/ETHUSDT daily aggTrades ZIPs downloaded and SHA-256 checked, **14 manifests**, about **128 MiB**;
+- Hyperliquid plan: **336** hourly BTC/ETH L2 objects;
+- every retrospective source/report is labeled `EXCLUDED_FROM_TASK_018_FRONTIER_GATE`.
+
+Checksum-reverified Binance 50-second trade-price context:
+
+- BTCUSDT: **12,096 windows**, q95 absolute first-to-last trade-price movement ≈ **6.8355 bps**;
+- ETHUSDT: **12,096 windows**, q95 ≈ **9.2205 bps**.
+
+These numbers are **not** Hyperliquid primary BBO-mid, do not reproduce live receive-time/gap/host-boot semantics, and must never substitute for the prospective 2,952-window Gate sample.
+
+Hyperliquid historical L2 uses the official S3 Requester Pays archive. It requires an authenticated AWS identity; no suitable AWS/S3 plugin is currently available. This does **not** block TASK-018 prospective collection.
 
 ## Exact next action
 
-Continue the **existing initialized campaign**; do not reinitialize it and do not delete incomplete segments.
+Continue the **existing initialized split campaign**; do not reinitialize it and do not delete incomplete segments.
 
 On a fresh session:
 
-1. connect to the existing collector host through the authorized remote-computer connector;
-2. verify `quant-frontier-segment.service` / `quant-frontier-segment.timer`, `SEGMENT_SECONDS=900`, memory, and free disk;
-3. inspect the cumulative report after accepted segments and confirm new 900-second segments continue publishing without OOM;
-4. continue bounded 15-minute segments while this host remains memory-constrained, until `report.total_valid_non_overlapping_windows >= 2952`;
-5. do not stop merely because 41 wall-clock hours passed;
-6. when statistically ready, run the deterministic pre-registered Frontier Gate adjudication;
-7. commit the final evidence result and advance `STATUS.md` according to the gate outcome.
+1. connect to `Aibo`;
+2. verify split capture/process services, memory, disk, and recent OOM/kernel errors;
+3. rebuild/inspect the cumulative campaign report after new publications;
+4. continue 900-second prospective captures until `report.total_valid_non_overlapping_windows >= 2952`;
+5. do not use retrospective data to fill the prospective sample;
+6. do not stop merely because a wall-clock duration has elapsed;
+7. when statistically ready, run the deterministic pre-registered Frontier Gate;
+8. commit the final evidence result and advance `STATUS.md` according to the gate outcome.
 
-No repository implementation work is currently required before that evidence threshold.
+No predictive modeling, private/account capture, orders, or live trading is allowed before that gate.
 
 ## Frontier Gate outcomes
 

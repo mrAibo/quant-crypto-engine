@@ -1,0 +1,11 @@
+[Unit]
+Description=Schedule Stage-0.5 frontier captured-segment processing
+
+[Timer]
+OnBootSec=3min
+OnUnitInactiveSec=1min
+Persistent=true
+Unit=quant-frontier-process.service
+
+[Install]
+WantedBy=timers.target

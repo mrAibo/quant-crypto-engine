@@ -15,7 +15,11 @@ from cryptobot.research.campaign_storage import (
     publish_campaign_report,
 )
 from cryptobot.runtime.dual_source_recorder import load_dual_source_recorder_config
-from cryptobot.runtime.frontier_segment import run_frontier_evidence_segment
+from cryptobot.runtime.frontier_segment import (
+    capture_frontier_evidence_segment,
+    discover_pending_captured_segments,
+    process_next_frontier_captured_segment,
+)
 from cryptobot.runtime.public_recorder import RuntimeIdentity
 
 
@@ -187,11 +191,10 @@ def test_frontier_segment_runner_publishes_only_after_full_pipeline(
                     fee_scenario_bps_per_side=Decimal("4.5"),
                 ),
             )
-            result = await run_frontier_evidence_segment(
+            capture = await capture_frontier_evidence_segment(
                 config,
                 campaign_root=campaign_root,
                 run_duration_seconds=0.15,
-                fee_scenario_bps_per_side=Decimal("4.5"),
                 identity=RuntimeIdentity(
                     host_id="host-test",
                     boot_id="boot-test",
@@ -199,7 +202,21 @@ def test_frontier_segment_runner_publishes_only_after_full_pipeline(
                 ),
             )
 
-        root = Path(result.segment_root)
+        root = Path(capture.segment_root)
+        assert capture.run_id == "segment-test-run"
+        assert capture.raw_frame_count > 0
+        assert (root / "capture-ready.json").is_file()
+        assert not (root / "processing-started.json").exists()
+        assert not (root / "segment-evidence.json").exists()
+        assert discover_pending_captured_segments(campaign_root) == (root,)
+
+        result = process_next_frontier_captured_segment(
+            campaign_root,
+            fee_scenario_bps_per_side=Decimal("4.5"),
+        )
+        assert result is not None
+        assert discover_pending_captured_segments(campaign_root) == ()
+        assert (root / "processing-started.json").is_file()
         assert result.run_id == "segment-test-run"
         assert result.raw_frame_count > 0
         assert result.normalized_event_count > 0

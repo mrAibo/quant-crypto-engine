@@ -175,9 +175,19 @@ After host reboot or network failure:
 
 Cross-boot monotonic timestamps are never compared.
 
-## Optional systemd timer
+## Recommended split systemd operation
+
+For long prospective collection, prefer decoupled capture and processing so expensive
+normalization/Parquet work does not create market-data gaps.
 
 Templates:
+
+- `deploy/systemd/quant-frontier-capture.service`
+- `deploy/systemd/quant-frontier-capture.timer`
+- `deploy/systemd/quant-frontier-process.service`
+- `deploy/systemd/quant-frontier-process.timer`
+
+The legacy combined templates remain available for bounded/manual compatibility:
 
 - `deploy/systemd/quant-frontier-segment.service`
 - `deploy/systemd/quant-frontier-segment.timer`
@@ -189,37 +199,61 @@ Recommended host layout:
 - campaign data: `/var/lib/quant-crypto-engine/frontier-campaign`;
 - service user/group: `quantcrypto`.
 
-The template defaults to one-hour segments through `SEGMENT_SECONDS=3600`. Override in
-`/etc/quant-crypto-engine/frontier-campaign.env` if desired:
+The split capture template defaults to 900-second segments. Override only the operational
+segment size in `/etc/quant-crypto-engine/frontier-campaign.env`:
 
 ```text
-SEGMENT_SECONDS=3600
+SEGMENT_SECONDS=900
 ```
+
+The capture unit writes `capture-ready.json` only after clean durable raw sealing. The
+processor considers only capture-ready directories that have neither
+`segment-evidence.json` nor `processing-started.json`. It writes the processing marker
+before expensive work, so a crashed/OOM processing attempt is preserved and not retried
+automatically.
+
+The capture timer starts the next raw segment 10 seconds after the prior capture unit becomes
+inactive. Processing is a separate lower-priority unit polled once per minute, so capture can
+continue while the previous sealed segment is normalized/materialized.
 
 Install after initializing the campaign:
 
 ```bash
-sudo install -m 0644 deploy/systemd/quant-frontier-segment.service /etc/systemd/system/
-sudo install -m 0644 deploy/systemd/quant-frontier-segment.timer /etc/systemd/system/
+sudo systemctl disable --now quant-frontier-segment.timer
+
+sudo install -m 0644 deploy/systemd/quant-frontier-capture.service /etc/systemd/system/
+sudo install -m 0644 deploy/systemd/quant-frontier-capture.timer /etc/systemd/system/
+sudo install -m 0644 deploy/systemd/quant-frontier-process.service /etc/systemd/system/
+sudo install -m 0644 deploy/systemd/quant-frontier-process.timer /etc/systemd/system/
+
 sudo systemctl daemon-reload
-sudo systemctl enable --now quant-frontier-segment.timer
+sudo systemctl enable --now quant-frontier-capture.timer quant-frontier-process.timer
 ```
 
 Inspect:
 
 ```bash
-systemctl status quant-frontier-segment.timer
-systemctl status quant-frontier-segment.service
-journalctl -u quant-frontier-segment.service -f
+systemctl status quant-frontier-capture.timer
+systemctl status quant-frontier-capture.service
+systemctl status quant-frontier-process.timer
+systemctl status quant-frontier-process.service
+journalctl -u quant-frontier-capture.service -u quant-frontier-process.service -f
 ```
 
-Stop future segments:
+Build the cumulative report periodically, after published segments or at operational
+checkpoints:
 
 ```bash
-sudo systemctl disable --now quant-frontier-segment.timer
+uv run --python 3.12 python -m cryptobot.cli report-frontier-campaign   --campaign-root /var/lib/quant-crypto-engine/frontier-campaign
 ```
 
-Stopping the timer does not delete prior evidence.
+Stop future capture/processing without deleting evidence:
+
+```bash
+sudo systemctl disable --now quant-frontier-capture.timer quant-frontier-process.timer
+```
+
+Never delete prior accepted or incomplete segment directories during migration.
 
 ## Disk and retention
 

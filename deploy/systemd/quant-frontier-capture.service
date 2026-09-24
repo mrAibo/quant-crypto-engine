@@ -1,0 +1,23 @@
+[Unit]
+Description=Quant Crypto Engine Stage-0.5 frontier raw capture
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=quantcrypto
+Group=quantcrypto
+WorkingDirectory=/opt/quant-crypto-engine
+Environment=SEGMENT_SECONDS=900
+EnvironmentFile=-/etc/quant-crypto-engine/frontier-campaign.env
+ExecStart=/opt/quant-crypto-engine/.venv/bin/python -m cryptobot.cli capture-frontier-segment --config /etc/quant-crypto-engine/dual-source.json --campaign-root /var/lib/quant-crypto-engine/frontier-campaign --duration-seconds ${SEGMENT_SECONDS}
+TimeoutStartSec=infinity
+TimeoutStopSec=60s
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/quant-crypto-engine
+StandardOutput=journal
+StandardError=journal

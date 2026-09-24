@@ -142,7 +142,7 @@ Prospective collection started on **2026-09-24** on a persistent Ubuntu WSL2 hos
 - gate: `INCONCLUSIVE`;
 - one setup-time systemd segment was interrupted by the WSL lifecycle before keep-alive was added; that incomplete segment is deliberately preserved and is not counted;
 - two later one-hour segments were killed during post-capture processing by WSL memory exhaustion and remain preserved as incomplete evidence;
-- kernel OOM evidence showed the processing Python process reaching about **13.44 GiB** and **14.55 GiB** anonymous RSS on the two failures, while WSL exposed about **14 GiB RAM + 4 GiB swap**;
+- kernel OOM evidence showed the processing Python process reaching about **12.82 GiB** and **13.88 GiB** anonymous RSS on the two failures, while WSL exposed about **14.48 GiB RAM + 4 GiB swap**;
 - this is an operational segment-size problem, not a change to the pre-registered 50-second experiment;
 - on **2026-09-24 06:29 CEST**, the host override was changed from `SEGMENT_SECONDS=3600` to `SEGMENT_SECONDS=900`;
 - the currently running 15-minute segment is the validation run for that mitigation; do not count it unless `segment-evidence.json` is published successfully;

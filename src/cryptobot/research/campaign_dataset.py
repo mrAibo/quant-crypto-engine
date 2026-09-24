@@ -3,9 +3,10 @@ from __future__ import annotations
 import hashlib
 import json
 from collections.abc import Callable
+from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, cast
+from typing import cast
 
 import pyarrow as pa
 import pyarrow.parquet as pq

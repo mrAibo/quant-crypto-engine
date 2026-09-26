@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "protocol_version": "stage2-signal-protocol-v1",
+  "frozen_before_candidate_outcome_inspection": true,
+  "source": {
+    "frontier_gate_decision": "PASS_FEASIBILITY",
+    "frontier_gate_report_sha256": "d2289bff1d2d3ffddc246456ff6ea9c6a4ae7663e1805d40cc0802e33891a3b2",
+    "campaign_manifest_sha256": "f82ba391ddaeac85ddb4787aec84d3cb85c17794101486c357cbb5bbd41f161c",
+    "accepted_segment_count": 182
+  },
+  "primary_dataset": {
+    "instrument_id": "hyperliquid.mainnet.perpetual.btc",
+    "role": "PRIMARY",
+    "reference_instrument_id": "binance_usdm.reference.perpetual.btcusdt",
+    "row_count": 3259,
+    "sha256": "3eeb0b405a9db439b7711b453ec9820707068bbfba855bf120124b79aa32b237",
+    "first_decision_recv_wall_ns": 1790212930125341960,
+    "last_decision_recv_wall_ns": 1790418984118337993,
+    "regeneration": "Deterministically regenerated from the frozen Gate report and its 182 verified segment datasets."
+  },
+  "replication": {
+    "instrument_id": "hyperliquid.mainnet.perpetual.eth",
+    "role": "REPLICATION",
+    "reference_instrument_id": "binance_usdm.reference.perpetual.ethusdt",
+    "partition_rule": "Use the PRIMARY BTC wall-time boundaries unchanged; ETH outcomes cannot move partitions or choose the champion.",
+    "selection_role": "No ETH result may select, tune, reverse, or rescue a BTC hypothesis."
+  },
+  "timing": {
+    "target_horizon_ns": 50000000000,
+    "reference_lookback_ns": 5000000000,
+    "max_feature_age_ns": 2000000000,
+    "max_execution_step_ns": 2000000000,
+    "causal_rule": "All feature source availability timestamps must be <= the decision cursor in the same host/boot domain. Future gap knowledge and retrospective repair are forbidden."
+  },
+  "features": {
+    "context_only": {
+      "hl_spread_bps": "10000 * (ask - bid) / ((ask + bid) / 2) at the decision BBO"
+    },
+    "H1": {
+      "hypothesis_id": "S2-H1-BINANCE-REF-5S-SIGN-V1",
+      "feature": "binance_mid_return_5s_bps",
+      "equation": "10000 * (reference_mid_current / reference_mid_anchor - 1)",
+      "availability": "current = latest Binance BBO at/before decision; anchor = latest Binance BBO at/before decision-5s; both same host/boot and <=2s stale",
+      "action": "value > 0 => LONG; value < 0 => SHORT; zero/missing => ABSTAIN"
+    },
+    "H2": {
+      "hypothesis_id": "S2-H2-HL-BBO-IMBALANCE-SIGN-V1",
+      "feature": "hl_bbo_imbalance",
+      "equation": "(bid_size - ask_size) / (bid_size + ask_size) using the exact decision Hyperliquid BBO",
+      "action": "value > 0 => LONG; value < 0 => SHORT; zero/missing => ABSTAIN"
+    }
+  },
+  "label": {
+    "name": "signed_primary_mid_return_50s_bps",
+    "equation": "10000 * (exit_mid / decision_mid - 1)",
+    "direction": "sign(signed_primary_mid_return_50s_bps)",
+    "zero_direction": "Excluded from directional-accuracy denominator but retained in complete opportunity accounting.",
+    "invalid_future_interval": "Recorded as outcome invalid/missing only; never exposed to the decision feature view."
+  },
+  "power_plan": {
+    "family_alpha": "0.05",
+    "hypothesis_count": 2,
+    "per_hypothesis_alpha": "0.025",
+    "planning_power": "0.80",
+    "null_directional_accuracy": "0.50",
+    "selection_alternative_accuracy": "0.55",
+    "selection_min_evaluable": 783,
+    "confirmation_alternative_accuracy": "0.54",
+    "confirmation_min_evaluable": 1225,
+    "note": "Normal-approximation counts are planning floors; directional hit rate is not the optimization target."
+  },
+  "partitions": {
+    "derivation": "PRIMARY decision-time feature availability only; outcome values are not consulted; equal wall timestamps stay in the later partition.",
+    "selection_start_wall_ns": 1790292370076995098,
+    "selection_start_utc": "2026-09-24T23:26:10.076995+00:00",
+    "confirmation_start_wall_ns": 1790341044387002988,
+    "confirmation_start_utc": "2026-09-25T12:57:24.387003+00:00",
+    "development": {
+      "row_count": 1110,
+      "h1_ready": 1046,
+      "h2_ready": 1110,
+      "outcome_use": "Implementation/data-quality checks only. Any outcome-informed protocol change requires a new protocol version and new untouched confirmation."
+    },
+    "selection": {
+      "row_count": 847,
+      "h1_ready": 783,
+      "h2_ready": 847
+    },
+    "confirmation": {
+      "row_count": 1302,
+      "h1_ready": 1225,
+      "h2_ready": 1302,
+      "untouched": true
+    }
+  },
+  "controls": {
+    "no_trade": "TASK-019 NoTradePolicy on identical opportunity rows",
+    "randomized_direction": "TASK-019 RandomizedDirectionPolicy on identical opportunity rows",
+    "random_seed": 2026092601,
+    "controls_are_diagnostic_only": true
+  },
+  "trial_registry": {
+    "sha256": "03b795b4acb4d339f2d243f601592553663e096e19aadb8d916be3dad639781c",
+    "trials": [
+      {
+        "trial_id": "S2-SEL-H1-V1",
+        "hypothesis_id": "S2-H1-BINANCE-REF-5S-SIGN-V1",
+        "partition": "SELECTION"
+      },
+      {
+        "trial_id": "S2-SEL-H2-V1",
+        "hypothesis_id": "S2-H2-HL-BBO-IMBALANCE-SIGN-V1",
+        "partition": "SELECTION"
+      },
+      {
+        "trial_id": "S2-CONFIRM-CHAMPION-V1",
+        "hypothesis_id": "SELECTION_CHAMPION_ONLY",
+        "partition": "CONFIRMATION"
+      }
+    ],
+    "runner_up_rule": "If the selection champion fails untouched confirmation, no runner-up may be tested on that same confirmation partition."
+  },
+  "selection_and_stopping_rules": {
+    "evaluable_directional_row": "Registered feature ready, deterministic action LONG/SHORT, outcome available, and outcome direction is +/-1.",
+    "directional_statistic": "correct_direction_count / evaluable_directional_count",
+    "iid_reference_test": "Exact one-sided binomial upper-tail under p=0.50 at alpha=0.025; report as an IID reference, not as a formal guarantee when serial dependence exists.",
+    "dependence_diagnostic": {
+      "max_lag": 10,
+      "series": "chronological correctness indicator on evaluable rows",
+      "design_effect": "max(1, 1 + 2 * sum(max(rho_k, 0), k=1..10))",
+      "effective_n": "floor(evaluable_n / design_effect)",
+      "adjusted_lower_bound": "One-sided 97.5% Wilson lower bound using observed hit fraction and effective_n; a conservative diagnostic, not a formal IID confidence guarantee."
+    },
+    "necessary_economic_filter": "Mean TASK-019 partial-known-cost PnL per TRADED opportunity must be > 0 under the frozen 4.5 bps/side fee SCENARIO and executable bid/ask prices.",
+    "selection_pass": "Requires minimum evaluable support, IID-reference p <= 0.025, dependence-adjusted lower bound > 0.50, and positive mean partial-known-cost PnL.",
+    "champion": "Among selection-pass hypotheses, highest dependence-adjusted lower bound wins; exact tie breaks lexicographically by hypothesis_id.",
+    "no_selection_champion": "STOP_FAIL_SIGNAL_SELECTION; confirmation is not opened.",
+    "confirmation_pass": "The single frozen champion must independently satisfy confirmation minimum support, IID-reference p <= 0.025, dependence-adjusted lower bound > 0.50, and positive mean partial-known-cost PnL.",
+    "confirmation_fail": "STOP_FAIL_SIGNAL_CONFIRMATION; no runner-up on this holdout.",
+    "optional_stopping": "Forbidden. No peeking-based early success, no threshold/window/sign changes, and no additional hypothesis after registered results are observed."
+  },
+  "business_net_boundary": {
+    "current_status": "NOT_EVALUABLE",
+    "reason": "Actual project-account fee tier, realized submit-to-fill latency, own-order impact/slippage, and boundary-aligned funding remain unsupported/UNKNOWN.",
+    "later_gate1_hurdle": "Positive fully-accounted business-net expectancy with all required costs measured/observed and a dependence-aware lower uncertainty bound above zero on locked confirmation evidence.",
+    "partial_known_cost_pnl_is_not_business_net": true
+  },
+  "do_not_build_before_protocol_exercise": [
+    "logistic regression",
+    "LightGBM",
+    "threshold or lookback sweeps",
+    "broad feature mining",
+    "Jev/GPT runtime",
+    "maker simulation",
+    "OMS/signing/orders",
+    "private/account capture",
+    "capital deployment"
+  ]
+}

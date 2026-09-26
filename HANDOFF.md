@@ -390,9 +390,10 @@ private endpoints, or live trading.
 This checkpoint exists specifically to start a new chat/session without reconstructing
 state from conversational history.
 
-- authoritative `main`: `755adce9213c62e7dbbbae30a041479fc375e030`;
-- PR #38 merged: **TASK-024 complete**;
-- post-merge CI run `36273758772`: **SUCCESS**;
+- project-state base before the handoff docs: `755adce9213c62e7dbbbae30a041479fc375e030`;
+- handoff checkpoint merged by PR #39 at `671830844396bee293b449f8354cee7db2b259b8`;
+- TASK-024 completion CI run `36273758772`: **SUCCESS**;
+- always verify the latest `main` before continuing;
 - current work package: **TASK-025 — Stage 2 Bounded Microstructure Economic Development**;
 - old Stage-2 confirmation: **UNOPENED_AND_EXCLUDED**;
 - fresh registered test evidence after TASK-024: **none**;

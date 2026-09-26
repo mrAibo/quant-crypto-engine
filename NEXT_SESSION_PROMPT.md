@@ -3,10 +3,11 @@
 Continue the project **mrAibo/quant-crypto-engine** autonomously from the repository
 source of truth.
 
-Authoritative checkpoint:
+Repository checkpoint for restart:
 
 - branch: `main`
-- commit: `755adce9213c62e7dbbbae30a041479fc375e030`
+- handoff checkpoint merge commit: `671830844396bee293b449f8354cee7db2b259b8`
+- at session start, verify the latest `main` and prefer it if newer
 - current phase: Stage 2 — Signal-Existence Dataset and Falsification Protocol
 - current task: **TASK-025 — Stage 2 Bounded Microstructure Economic Development**
 - TASK-001 through TASK-024 are complete

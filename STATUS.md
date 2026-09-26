@@ -9,9 +9,9 @@
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `main`
 - Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
-- Current work package: **TASK-022 — Stage 2 Selection Evidence Remediation**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019, TASK-020, TASK-021**
-- Economic status: **Frontier Gate PASS_FEASIBILITY; predictability / net edge UNPROVEN**
+- Current work package: **TASK-023 — Stage 2 New Economic Signal Family Design**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019, TASK-020, TASK-021, TASK-022**
+- Economic status: **Frontier Gate PASS_FEASIBILITY; first registered H1/H2 family STOPPED; net edge UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
 
@@ -556,11 +556,39 @@ H2 `S2-SEL-H2-V1`:
 
 No confirmation outcome was opened. No registered feature, sign, threshold, or lookback was changed after the result.
 
+## Completed — TASK-022 / Selection evidence remediation
+
+Frozen artifact: `artifacts/stage_2/selection_remediation.json`.
+
+- report SHA-256: `fec7cbb77fe67c672a2319fadee7e6a94f79fef013c16c6033b55fbb07f574d5`;
+- decision: **STOP_REGISTERED_H1_H2_FAMILY**;
+- old confirmation: **UNOPENED_AND_EXCLUDED**;
+- historical data role: **development/diagnostics only, not confirmatory**.
+
+H1 support attrition was decomposed as 1,123 total -> 1,059 feature-ready ->
+744 nonzero/actionable -> 663 traded valid executable -> 644
+directional-evaluable. Final directional-evaluable yield was about **57.35%**.
+
+A conservative unchanged-H1 replication was calculated for transparency but **not
+registered**:
+
+- selection: **1,719 fresh rows**;
+- confirmation: **2,688 fresh rows**;
+- total: **4,407 fresh rows**.
+
+The replication is not justified under the registered taker economics because H1
+also failed the frozen partial-known-cost economic filter. H2 remains unpromoted
+despite strong directional diagnostics because it failed the same economic filter.
+
 ## Current task
 
-Read **[`tasks/TASK_022.md`](tasks/TASK_022.md)**.
+Read **[`tasks/TASK_023.md`](tasks/TASK_023.md)**.
 
-TASK-022 adjudicates evidence remediation. It must keep the old confirmation partition unopened, keep H2 unpromoted, and either register a fresh independent H1 replication with a new fresh-evidence power plan or stop the registered H1/H2 family.
+TASK-023 designs a new small economic-signal family. Existing exposed data and
+historical archives may be used for development only. The old confirmation remains
+unopened/excluded. Any new registered family must freeze its protocol before a new
+prospective SELECTION sample is collected, and reserve a later fresh CONFIRMATION
+sample.
 
 ## User actions currently required
 

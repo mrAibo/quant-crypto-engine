@@ -2,7 +2,7 @@
 
 ## Status
 
-**READY TO START**
+**COMPLETE**
 
 ## Context
 
@@ -71,3 +71,40 @@ The task must decide, from the frozen TASK-021 result and non-holdout evidence, 
 - OMS/signing/orders;
 - private/account capture;
 - capital deployment.
+
+
+## Final result — 2026-09-26
+
+TASK-022 is complete.
+
+Machine-readable remediation artifact:
+
+- `artifacts/stage_2/selection_remediation.json`
+- SHA-256 `fec7cbb77fe67c672a2319fadee7e6a94f79fef013c16c6033b55fbb07f574d5`
+- decision: `STOP_REGISTERED_H1_H2_FAMILY`
+- old confirmation: `UNOPENED_AND_EXCLUDED`
+
+H1 attrition:
+
+- 1,123 total rows
+- 1,059 feature-ready
+- 744 nonzero/actionable decisions
+- 663 traded valid executable opportunities
+- 644 directional-evaluable outcomes
+- 57.35% final directional-evaluable yield
+
+Counterfactual unchanged-H1 fresh support, not registered:
+
+- 1,719 selection rows
+- 2,688 confirmation rows
+- 4,407 total rows
+
+The replication is not registered because H1 also failed the frozen
+partial-known-cost economic filter. H2 remains unpromoted because it also failed that
+economic filter despite strong directional diagnostics.
+
+Historical data is approved only for diagnostics/development of a new family.
+Registered selection and confirmation for any new family must use fresh prospective
+evidence collected after its protocol freeze.
+
+Next work package: `tasks/TASK_023.md`.

@@ -8,10 +8,10 @@
 
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `main`
-- Current phase: **Stage 0.5 — Profitability / Economic Frontier**
-- Current work package: **TASK-018 — tooling merged; persistent prospective evidence collection ACTIVE**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017**
-- Economic status: **UNPROVEN**
+- Current phase: **Stage 1 — Minimal Shared Simulator**
+- Current work package: **TASK-019 — Stage 1 Minimal Shared Simulator**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018**
+- Economic status: **Frontier Gate PASS_FEASIBILITY; predictability / net edge UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
 
@@ -386,120 +386,40 @@ Delivered:
 
 Frontier Gate remains **NOT_EVALUATED**.
 
+### Final TASK-018 Frontier Gate — PASS_FEASIBILITY
+
+On **2026-09-26**, the deterministic campaign report reached the pre-registered adjudication floor and froze the first **2,952** valid non-overlapping 50-second windows.
+
+Authoritative Gate checkpoint:
+
+- campaign/report manifest SHA-256: `f82ba391ddaeac85ddb4787aec84d3cb85c17794101486c357cbb5bbd41f161c`;
+- report SHA-256: `d2289bff1d2d3ffddc246456ff6ea9c6a4ae7663e1805d40cc0802e33891a3b2`;
+- accepted segments: **182**;
+- total valid windows available: **3,076**;
+- adjudication windows: **2,952**;
+- excluded candidate windows: **521**;
+- q95 movement: **9.183776917709780722417361000 bps**;
+- q50 known friction: **9.123151337258348319833680000 bps**;
+- margin: **+0.060625580451432402583681000 bps**;
+- q50 friction / q95 movement: `0.9933986222667796459142534313`;
+- readiness: `READY_FOR_FRONTIER_ADJUDICATION`;
+- decision: **`PASS_FEASIBILITY`**;
+- adjacent non-zero sign agreement: `0.5278725824800910125142207053`;
+- zero-move fraction: `0.1063685636856368563685636856`.
+
+The pass is narrow: it establishes only economic plausibility of the 50-second movement region versus the currently known friction scenario. It does **not** establish predictability, positive expectancy, real account fees, own-order impact/slippage, submit-to-fill latency, capacity, maker economics, or funding-boundary cost.
+
+Fee remains `SCENARIO`; latency and funding-boundary evidence remain `UNKNOWN`. The DKW planning count assumed IID; non-overlap reduces mechanical overlap but does not establish independence.
+
+TASK-018 prospective scheduling was stopped after the Gate sample was frozen. Accepted and incomplete evidence remains immutable and preserved.
+
+Artifact: `artifacts/stage_05/frontier_gate_50s.json`.
+
 ## Current task
 
-Read **[`tasks/TASK_018.md`](tasks/TASK_018.md)** and **[`docs/runbooks/frontier_campaign.md`](docs/runbooks/frontier_campaign.md)**.
+Read **[`tasks/TASK_019.md`](tasks/TASK_019.md)**.
 
-TASK-018 repository/tooling work is merged:
-
-- replacement PR #19 → `0a169e2205252bd07863a31e2653ea834fd8e514`;
-- final CI run `35940389564`;
-- **359 tests PASS** on Python 3.12 and 3.13;
-- Ruff/format/strict mypy PASS;
-- real 30-second public-only campaign smoke `35940052539`:
-  - **10,789** raw frames;
-  - **10,999** normalized events;
-  - segment publication PASS;
-  - no incomplete segment directories.
-
-TASK-018 itself remains **IN PROGRESS** because the economic-feasibility evidence requirement is not yet met.
-
-### Persistent-host collection checkpoint — 2026-09-24
-
-The existing `btc-frontier-50s-v1` prospective campaign is active on Ubuntu WSL2 host `Aibo`.
-
-Current production state:
-
-- deployed checkout: `main` at `272506ad9c6f216ad2a279d6730569deb310a820`;
-- host-side verification: Python 3.12.3, Ruff PASS, Ruff format PASS, strict mypy PASS on **77 source files**, **371 pytest PASS**;
-- campaign root: `/var/lib/quant-crypto-engine/frontier-campaign`;
-- fee assumption remains **4.5 bps/side SCENARIO**;
-- `SEGMENT_SECONDS=900`;
-- legacy combined `quant-frontier-segment.timer`: **inactive**;
-- split `quant-frontier-capture.timer` and `quant-frontier-process.timer`: **active and enabled**;
-- processor priority: `Nice=10`, `OOMScoreAdjust=250`;
-- Windows AC sleep remains disabled and WSL keep-alive remains active.
-
-Report scalability:
-
-- PR #27 merged as `272506ad9c6f216ad2a279d6730569deb310a820`;
-- PR-head CI `35994008562` and post-merge CI `35994069207`: green;
-- report loading now filters to the primary BTC BBO/L2 rows needed for the Gate while retaining existing SHA-256/tamper checks;
-- cumulative report aggregation now processes one segment at a time and releases unused Arrow allocator pages;
-- frozen 22-segment equivalence test: old and optimized report JSON had identical SHA-256 `d5f6ede81be6f019e372f2358a618fbcd3da6cdbf823fb7e06041dd442e10dad`;
-- benchmark: **110.76 s / 3,662,312 KiB RSS** legacy vs **35.18 s / 1,194,780 KiB RSS** optimized;
-- live 23-segment production report: **35.26 s / 1,240,964 KiB max RSS**, swap 0;
-- latest disk check: about **927 GiB free**; no new kernel OOM events were observed.
-
-The first production split segment validated the decoupled path:
-
-- **662,009 raw frames**;
-- **667,554 normalized events**;
-- dataset bundle SHA-256: `69d28e7d23fb1a63ff1727bba64f6e3ddaa713334079a2dc820d1b3091bd40f8`;
-- dataset manifest SHA-256: `60b14f059d7794d632681fe33fd6648b99f645be59c608bac96153679c3866d4`;
-- segment evidence SHA-256: `557267970a93f221bbfbaf1d7a80f8e45b4628e6d6090df532b8f98105b9b58d`;
-- processor memory peak about **1.3 GiB**, swap **0 B**;
-- no new OOM;
-- next raw capture started while that segment was processed;
-- actual inter-capture receive-time gap is approximately **60 seconds**, substantially below the old combined capture/process downtime.
-
-Latest cumulative report:
-
-- campaign manifest SHA-256: `6abc46b53572ac91c657f92bc8126a293830785aa7f8168d1d413d831fd9a3eb`;
-- accepted segments: **23**;
-- valid non-overlapping 50-second windows: **375 / 2,952**;
-- excluded candidate windows: **15**;
-- q50 known friction ≈ **9.1234 bps**;
-- q95 observed absolute primary-mid movement ≈ **10.6401 bps**;
-- readiness: `COLLECTING`;
-- gate: `INCONCLUSIVE`.
-
-This intermediate q95 is not a gate decision. Earlier small-sample q95 values moved materially as evidence accumulated, which reinforces the pre-registered no-early-stopping rule.
-
-All incomplete historical campaign segments remain preserved and excluded from accepted statistics.
-
-### Auxiliary retrospective research checkpoint
-
-This track is physically and semantically separate from TASK-018 adjudication.
-
-Merged:
-
-- PR #23: split prospective capture/processing;
-- PR #24: non-gating retrospective archive planner/downloader;
-- PR #25: deterministic checksum-reverified Binance 50-second retrospective analyzer.
-
-Retrospective root: `/var/lib/quant-crypto-engine/retrospective`.
-
-For **2026-08-01..2026-08-07**:
-
-- deterministic source plan: **350** entries;
-- Binance Data Vision: **14/14** BTCUSDT/ETHUSDT daily aggTrades archives verified, **14 manifests**, about **128 MiB**;
-- Hyperliquid: **336** planned hourly BTC/ETH L2 objects, not downloaded yet because the official Requester Pays archive requires an authenticated AWS identity;
-- all retrospective artifacts are labeled `EXCLUDED_FROM_TASK_018_FRONTIER_GATE`.
-
-Deterministic Binance trade-price context:
-
-- BTCUSDT: **12,096 50-second windows**, q95 ≈ **6.8355 bps**;
-- ETHUSDT: **12,096 50-second windows**, q95 ≈ **9.2205 bps**.
-
-These retrospective trade-price statistics are not Hyperliquid BBO-mid evidence and cannot be substituted into the prospective Gate.
-
-### Exact next action
-
-Continue the **existing split prospective campaign** until at least **2,952 valid non-overlapping 50-second windows** exist.
-
-Do **not** run `init-frontier-campaign` again.
-
-For continuation:
-
-- monitor `quant-frontier-capture.service/timer` and `quant-frontier-process.service/timer`;
-- inspect free disk, OOM/kernel errors, capture-ready/processing markers, and immutable publications;
-- rebuild the cumulative report after accepted segments;
-- preserve all incomplete segments;
-- keep retrospective data outside the prospective campaign;
-- adjudicate only with the deterministic first-2,952-window prospective sample.
-
-Do **not** start predictive modeling before the Frontier Gate is adjudicated.
+TASK-019 starts Stage 1 by building the minimal shared causal simulator/accounting foundation. No production execution stack is permitted before Gate 1.
 
 ## User actions currently required
 

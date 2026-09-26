@@ -9,8 +9,8 @@
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `main`
 - Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
-- Current work package: **TASK-020 — Stage 2 Signal-Existence Dataset and Falsification Protocol**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019**
+- Current work package: **TASK-021 — Stage 2 Registered H1/H2 Selection Run**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019, TASK-020**
 - Economic status: **Frontier Gate PASS_FEASIBILITY; predictability / net edge UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
@@ -466,11 +466,48 @@ Validation:
 
 TASK-019 establishes simulator/accounting infrastructure only. Predictability and positive net expectancy remain **UNPROVEN**.
 
+## Completed — TASK-020 / Stage-2 protocol freeze
+
+PR #32 merged as `b3568644c900d5e561597cd5c01b3c10ece0a720`.
+
+Delivered:
+
+- deterministic causal Stage-2 feature-row contract;
+- verified Gate-source dataset builder;
+- H1 `S2-H1-BINANCE-REF-5S-SIGN-V1`;
+- H2 `S2-H2-HL-BBO-IMBALANCE-SIGN-V1`;
+- fixed 50-second label horizon, 5-second H1 lookback and 2-second staleness limits;
+- outcome-independent chronological DEVELOPMENT / SELECTION / untouched CONFIRMATION boundaries;
+- no-trade and seed-provenanced randomized controls;
+- frozen trial registry and champion-only confirmation rule;
+- dependence-aware diagnostics and explicit no-optional-stopping rule;
+- business-net boundary remains NOT_EVALUABLE while real account/execution costs are UNKNOWN;
+- `artifacts/stage_2/signal_protocol.json`;
+- `docs/research/stage2_signal_protocol.md`.
+
+Frozen PRIMARY dataset:
+
+- **3,259** BTC rows from **182** frozen Gate segments;
+- dataset SHA-256: `3eeb0b405a9db439b7711b453ec9820707068bbfba855bf120124b79aa32b237`;
+- DEVELOPMENT: **1,110** rows;
+- SELECTION: **847** rows — H1-ready **783**, H2-ready **847**;
+- untouched CONFIRMATION: **1,302** rows — H1-ready **1,225**, H2-ready **1,302**.
+
+Validation:
+
+- local full suite: **408 PASS** on Python 3.12.3;
+- Ruff/format PASS;
+- strict mypy PASS on **93 source files**;
+- pre-merge CI `36248421789`: green;
+- post-merge CI `36248457686`: green.
+
+No H1/H2 candidate outcome was used to choose the frozen protocol or partitions.
+
 ## Current task
 
-Read **[`tasks/TASK_020.md`](tasks/TASK_020.md)**.
+Read **[`tasks/TASK_021.md`](tasks/TASK_021.md)**.
 
-TASK-020 freezes the Stage-2 causal feature/opportunity dataset and falsification protocol before candidate-policy or model evaluation. No broad feature mining, hyperparameter search, Jev/GPT runtime, private/account capture, OMS/signing, or live trading is permitted.
+TASK-021 runs the two registered H1/H2 trials **only on the frozen SELECTION partition** and selects at most one champion according to the frozen protocol. Untouched CONFIRMATION must not be opened in TASK-021.
 
 ## User actions currently required
 

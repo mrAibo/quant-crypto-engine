@@ -1,0 +1,57 @@
+{
+  "task": "TASK-019",
+  "stage": "1",
+  "artifact_type": "minimal_shared_simulator_contract",
+  "simulator_version": "minimal-simulator-v1",
+  "objective": "Deterministic causal simulator/accounting foundation for falsification before any broad model search.",
+  "causality": {
+    "policy_cursor": "entry QuoteObservation only plus explicitly supplied history at or before the cursor",
+    "future_history": "REJECT",
+    "cross_host_boot_context": "REJECT",
+    "cross_host_boot_entry_exit": "REJECT_BEFORE_MONOTONIC_COMPARISON",
+    "fixed_horizon_builder": "non-overlapping deterministic opportunities within one source/instrument/role/causal domain"
+  },
+  "policy_contract": {
+    "actions": ["ABSTAIN", "LONG", "SHORT"],
+    "io_allowed_in_policy_core": false,
+    "controls": ["NO_TRADE", "DETERMINISTIC_SHA256_RANDOMIZED_DIRECTION"],
+    "random_control_seed_provenance": true
+  },
+  "execution_accounting": {
+    "initial_mode": "TAKER_ONLY",
+    "long_entry": "observed ask",
+    "long_exit": "observed bid",
+    "short_entry": "observed bid",
+    "short_exit": "observed ask",
+    "spread": "embedded in executable bid/ask and never added as a separate cost",
+    "fee": "per-side notional CostInput",
+    "latency": "per-side notional CostInput",
+    "impact": "per-side notional CostInput",
+    "funding": "round-trip entry-notional CostInput",
+    "unknown_cost_rule": "UNKNOWN has null bps; business_net_pnl remains null for traded trials until all required cost components are known/scenario"
+  },
+  "trial_accounting": {
+    "statuses": ["INVALID", "NO_TRADE", "TRADED"],
+    "every_opportunity_counted": true,
+    "invalid_intervals_explicit": true,
+    "exact_decimal_serialization": true,
+    "deterministic_json_sha256": true,
+    "primary_replication_roles_preserved": true
+  },
+  "supported_evidence_adapter": {
+    "normalized_bbo": "cryptobot.data.events.BBO -> QuoteObservation",
+    "frozen_horizon_builder": true
+  },
+  "intentionally_unsupported": [
+    "predictive feature set",
+    "regularized logistic regression",
+    "LightGBM",
+    "Jev or GPT runtime",
+    "maker queue simulation",
+    "OMS/signing/orders",
+    "private/account capture",
+    "capital deployment",
+    "actual account fee inference",
+    "fabricated latency/slippage/funding values"
+  ]
+}

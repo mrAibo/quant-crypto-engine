@@ -385,7 +385,28 @@ Start **TASK-025 — Stage 2 Bounded Microstructure Economic Development**.
 No broad feature mining, new features after DEV_B, LightGBM, Jev, OMS/signing,
 private endpoints, or live trading.
 
-## Frontier Gate outcomes
+## Session checkpoint — 2026-09-27 00:23 CEST
+
+This checkpoint exists specifically to start a new chat/session without reconstructing
+state from conversational history.
+
+- authoritative `main`: `755adce9213c62e7dbbbae30a041479fc375e030`;
+- PR #38 merged: **TASK-024 complete**;
+- post-merge CI run `36273758772`: **SUCCESS**;
+- current work package: **TASK-025 — Stage 2 Bounded Microstructure Economic Development**;
+- old Stage-2 confirmation: **UNOPENED_AND_EXCLUDED**;
+- fresh registered test evidence after TASK-024: **none**;
+- live trading / OMS / signing / private account capture: **FORBIDDEN**;
+- user action required now: **none**.
+
+For a fresh session, trust repository state over chat memory. Read
+`HANDOFF.md` → `STATUS.md` → `tasks/TASK_025.md`, then continue TASK-025
+autonomously until a real external blocker or human gate is reached.
+
+## Historical Frontier Gate outcomes
+
+The section below is retained as historical gate context only. It is **not** the current next action; current work is TASK-025.
+
 
 Only three decisions are allowed:
 
@@ -419,20 +440,25 @@ Next step: evidence-gap remediation.
 
 Do **not**:
 
-- fit logistic regression yet;
-- fit LightGBM yet;
+- open or evaluate the old Stage-2 confirmation partition;
+- inspect TASK-025 DEV_B outcomes before the feature/model/horizon budget is frozen;
+- add new TASK-025 features, thresholds, or horizons after DEV_B exposure;
+- perform broad feature mining or an unrestricted hyperparameter search;
+- fit LightGBM;
 - add Jev or GPT runtime;
-- optimize a strategy;
 - build maker simulation;
 - build OMS/signing/orders;
 - add account/private capture;
 - deploy capital;
-- weaken the 2,952-window requirement;
-- change the q95-vs-q50 criterion after seeing data;
-- delete/rewrite accepted evidence segments;
+- reinterpret historical/development evidence as fresh confirmation;
+- delete/rewrite accepted or failed evidence;
 - compare cross-boot monotonic timestamps.
 
-Preserve failed/incomplete segments for diagnostics.
+The bounded logistic baselines already used in TASK-023/TASK-024 are historical
+completed experiments. TASK-025 permits exactly the model scope declared in
+`tasks/TASK_025.md` and no broader model search.
+
+Preserve failed/incomplete segments and negative experiments for diagnostics.
 
 ## Settled architecture decisions
 

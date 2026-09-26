@@ -9,8 +9,8 @@
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `main`
 - Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
-- Current work package: **TASK-023 — Stage 2 New Economic Signal Family Design**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019, TASK-020, TASK-021, TASK-022**
+- Current work package: **TASK-024 — Stage 2 Longer-Horizon Economic Development**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019, TASK-020, TASK-021, TASK-022, TASK-023**
 - Economic status: **Frontier Gate PASS_FEASIBILITY; first registered H1/H2 family STOPPED; net edge UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
@@ -580,15 +580,31 @@ The replication is not justified under the registered taker economics because H1
 also failed the frozen partial-known-cost economic filter. H2 remains unpromoted
 despite strong directional diagnostics because it failed the same economic filter.
 
+## Completed — TASK-023 / 50-second economic family development
+
+Artifacts:
+
+- `artifacts/stage_2/economic_family_development.json`
+  - SHA-256 `ae62dff1172ca7666b1119c4c8a0f1ca61757f428c30b66b73a208b34c2a3b67`
+  - decision: **DEVELOP_REGULARIZED_LOGISTIC_BASELINE**
+- `artifacts/stage_2/economic_logistic_development.json`
+  - SHA-256 `285775b8febb226414bd838121f99b15b72d5b46edb13383b12398b8c80ccaf8`
+  - decision: **STOP_LOGISTIC_DEVELOPMENT**
+
+No bounded 50-second deterministic candidate produced positive DEV_B known-net
+economics. The fixed L2 logistic baseline selected only one DEV_B trade, which was
+negative. No fresh test evidence is justified for this 50-second family.
+
+The old confirmation partition remains unopened/excluded.
+
 ## Current task
 
-Read **[`tasks/TASK_023.md`](tasks/TASK_023.md)**.
+Read **[`tasks/TASK_024.md`](tasks/TASK_024.md)**.
 
-TASK-023 designs a new small economic-signal family. Existing exposed data and
-historical archives may be used for development only. The old confirmation remains
-unopened/excluded. Any new registered family must freeze its protocol before a new
-prospective SELECTION sample is collected, and reserve a later fresh CONFIRMATION
-sample.
+TASK-024 treats a longer horizon as a new development family. The pre-outcome
+1-2-5 minute context selected 300 seconds for development. Evaluate only the frozen
+300s registry and its single preregistered logistic fallback, still without opening
+old confirmation or collecting fresh test evidence.
 
 ## User actions currently required
 

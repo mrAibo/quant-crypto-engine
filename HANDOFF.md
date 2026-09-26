@@ -7,11 +7,11 @@
 
 - GitHub: `mrAibo/quant-crypto-engine`
 - Branch to start from: `main`
-- Current phase: **Stage 0.5 — Profitability / Economic Frontier**
-- Current task: **TASK-018 — Stage 0.5 Prospective Frontier Evidence Campaign**
-- Economic status: **UNPROVEN**
+- Current phase: **Stage 1 — Minimal Shared Simulator**
+- Current task: **TASK-019 — Stage 1 Minimal Shared Simulator**
+- Frontier Gate: **PASS_FEASIBILITY**
+- Economic edge / predictability: **UNPROVEN**
 - Live trading: **FORBIDDEN**
-- Predictive modeling before Frontier Gate: **FORBIDDEN**
 
 ## Read first in a new session
 
@@ -178,6 +178,42 @@ The changing early q95 values are descriptive only. They are evidence for **not*
 
 All old failed/incomplete segment directories remain preserved. Do not delete, splice, or rewrite them.
 
+## Final TASK-018 Frontier Gate — 2026-09-26
+
+TASK-018 is complete.
+
+The deterministic prospective campaign report crossed the pre-registered readiness threshold and adjudicated the **first 2,952 valid non-overlapping 50-second windows** exactly as frozen in TASK-017/TASK-018.
+
+Final Gate evidence:
+
+- campaign/report manifest SHA-256: `f82ba391ddaeac85ddb4787aec84d3cb85c17794101486c357cbb5bbd41f161c`;
+- campaign report SHA-256: `d2289bff1d2d3ffddc246456ff6ea9c6a4ae7663e1805d40cc0802e33891a3b2`;
+- accepted segments in the Gate report: **182**;
+- total valid 50-second windows available: **3,076**;
+- deterministic adjudication sample: **2,952** windows;
+- excluded candidate windows: **521**;
+- q95 absolute primary-mid movement: **9.183776917709780722417361000 bps**;
+- q50 known friction floor: **9.123151337258348319833680000 bps**;
+- movement minus friction margin: **0.060625580451432402583681000 bps**;
+- q50 friction / q95 movement: **0.9933986222667796459142534313**;
+- readiness: `READY_FOR_FRONTIER_ADJUDICATION`;
+- Gate decision: **`PASS_FEASIBILITY`**.
+
+Interpretation is deliberately narrow: the observed 50-second movement distribution contains an economically plausible region relative to the currently known top-of-book + documented-base-taker friction scenario. This does **not** establish predictability, a tradeable signal, positive net expectancy, actual account fees, live slippage/impact, latency, capacity, or funding economics.
+
+Evidence classes remain unchanged:
+
+- fee: `SCENARIO`;
+- latency: `UNKNOWN`;
+- funding-boundary cost: `UNKNOWN`;
+- actual project-account fee tier, own-order slippage/impact, maker economics, and predictability remain unsupported.
+
+Dependence diagnostics are descriptive only: adjacent non-zero sign agreement = `0.5278725824800910125142207053`; zero-move fraction = `0.1063685636856368563685636856`. Non-overlap does not prove IID, so the DKW count remains a planning bound rather than a formal IID guarantee.
+
+The prospective collection timers were disabled after the Gate sample was frozen. Any segment already in flight may finish and remain preserved, but **must not change the frozen first-2,952-window adjudication**.
+
+Committed Gate artifact: `artifacts/stage_05/frontier_gate_50s.json`.
+
 ## Auxiliary retrospective checkpoint
 
 Retrospective public archives are now an explicitly separate, non-gating research track.
@@ -211,20 +247,19 @@ Hyperliquid historical L2 uses the official S3 Requester Pays archive. It requir
 
 ## Exact next action
 
-Continue the **existing initialized split campaign**; do not reinitialize it and do not delete incomplete segments.
+Start **TASK-019 — Stage 1 Minimal Shared Simulator**.
 
-On a fresh session:
+Read `tasks/TASK_019.md` and implement only the minimal shared causal simulator/accounting foundation required before quantitative falsification:
 
-1. connect to `Aibo`;
-2. verify split capture/process services, memory, disk, and recent OOM/kernel errors;
-3. rebuild/inspect the cumulative campaign report after new publications;
-4. continue 900-second prospective captures until `report.total_valid_non_overlapping_windows >= 2952`;
-5. do not use retrospective data to fill the prospective sample;
-6. do not stop merely because a wall-clock duration has elapsed;
-7. when statistically ready, run the deterministic pre-registered Frontier Gate;
-8. commit the final evidence result and advance `STATUS.md` according to the gate outcome.
+1. frozen event/time input contract using existing immutable normalized evidence;
+2. deterministic strategy/policy interface with no exchange/network/filesystem I/O;
+3. no-trade/accounting control;
+4. deterministic randomized control with explicit seed provenance;
+5. conservative taker execution/accounting primitives that keep unknown latency/funding/account-specific costs explicit rather than fabricating them;
+6. deterministic trial ledger and complete trial accounting;
+7. tests for causality, cost non-double-counting, replay determinism, and control behavior.
 
-No predictive modeling, private/account capture, orders, or live trading is allowed before that gate.
+Do not jump to LightGBM, Jev, OMS/signing, private/account endpoints, or live trading. The Frontier Gate permits predictability testing; it does not prove a signal.
 
 ## Frontier Gate outcomes
 
@@ -293,8 +328,8 @@ Preserve failed/incomplete segments for diagnostics.
 
 ## User action currently required
 
-No command or repository action is required from the user while collection remains healthy.
+No user action is required for the completed Frontier Gate.
 
-Physical requirement: keep the collector machine powered and connected to AC power. Windows AC sleep is disabled for the campaign; battery sleep remains unchanged.
+Prospective TASK-018 scheduling is quiesced. Keep `Aibo` available only when continuing Stage 1 implementation/testing; it no longer needs to remain powered solely to accumulate Frontier Gate evidence.
 
-If host access or external network behavior later blocks progress and cannot be resolved with available tools, document the blocker without weakening tests or evidence rules.
+If host access or external behavior later blocks Stage 1 progress and cannot be resolved with available tools, document the blocker without weakening tests or evidence rules.

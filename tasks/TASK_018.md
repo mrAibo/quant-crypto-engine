@@ -393,3 +393,33 @@ Operational public-only smoke workflow `35940052539`:
 - 50-second valid windows: 0, expected because smoke duration was shorter than the 50-second target horizon.
 
 Remaining TASK-018 work is evidence collection, not repository implementation: accumulate at least **2,952 valid non-overlapping 50-second windows** on a persistent public-only collector, then run deterministic Frontier Gate adjudication.
+
+
+## Final adjudication — 2026-09-26
+
+**TASK-018 COMPLETE. Frontier Gate: `PASS_FEASIBILITY`.**
+
+The final deterministic prospective report used the frozen first-2,952-window adjudication sample exactly as pre-registered.
+
+- campaign/report manifest SHA-256: `f82ba391ddaeac85ddb4787aec84d3cb85c17794101486c357cbb5bbd41f161c`;
+- report SHA-256: `d2289bff1d2d3ffddc246456ff6ea9c6a4ae7663e1805d40cc0802e33891a3b2`;
+- accepted segments: **182**;
+- total valid non-overlapping 50-second windows: **3,076**;
+- adjudication windows: **2,952**;
+- excluded candidate windows: **521**;
+- q95 absolute primary-mid movement: **9.183776917709780722417361000 bps**;
+- q50 known friction floor: **9.123151337258348319833680000 bps**;
+- q95 minus q50: **+0.060625580451432402583681000 bps**;
+- q50 friction / q95 movement: `0.9933986222667796459142534313`;
+- adjacent non-zero sign agreement: `0.5278725824800910125142207053`;
+- zero-move fraction: `0.1063685636856368563685636856`;
+- readiness: `READY_FOR_FRONTIER_ADJUDICATION`;
+- decision: **`PASS_FEASIBILITY`**.
+
+Evidence classes remain: fee = `SCENARIO`; latency = `UNKNOWN`; funding-boundary cost = `UNKNOWN`. Unsupported components remain actual project-account fee tier, submit-to-ACK/fill latency, realized own-order slippage/impact, boundary-aligned funding cost, maker economics, and predictability.
+
+This PASS means only that a 50-second region is economically plausible relative to currently known friction. It is **not** evidence of a predictable or profitable strategy. The DKW planning count assumed IID; the dependence diagnostics do not establish IID.
+
+Committed closeout artifact: `artifacts/stage_05/frontier_gate_50s.json`.
+
+Next work package: `tasks/TASK_019.md` — Stage 1 Minimal Shared Simulator.

@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "artifact_type": "stage_05_frontier_gate_50s",
+  "campaign_id": "btc-frontier-50s-v1",
+  "adjudicated_on": "2026-09-26",
+  "source": {
+    "report_version": "frontier-campaign-v1",
+    "campaign_manifest_sha256": "f82ba391ddaeac85ddb4787aec84d3cb85c17794101486c357cbb5bbd41f161c",
+    "campaign_report_sha256": "d2289bff1d2d3ffddc246456ff6ea9c6a4ae7663e1805d40cc0802e33891a3b2",
+    "accepted_segment_count": 182,
+    "total_valid_non_overlapping_windows": 3076,
+    "adjudication_window_count": 2952,
+    "excluded_window_count": 521
+  },
+  "criterion": {
+    "horizon_seconds": 50,
+    "movement_statistic": "q95_absolute_primary_mid_movement_bps",
+    "friction_statistic": "q50_known_friction_floor_bps",
+    "pass_operator": ">",
+    "q95_move_bps": "9.183776917709780722417361000",
+    "q50_friction_bps": "9.123151337258348319833680000",
+    "move_minus_friction_bps": "0.060625580451432402583681000",
+    "q50_friction_over_q95_move": "0.9933986222667796459142534313"
+  },
+  "readiness": "READY_FOR_FRONTIER_ADJUDICATION",
+  "decision": "PASS_FEASIBILITY",
+  "evidence_classes": {
+    "fee": "SCENARIO",
+    "latency": "UNKNOWN",
+    "funding_boundary": "UNKNOWN"
+  },
+  "dependence_diagnostics": {
+    "adjacent_nonzero_sign_agreement_fraction": "0.5278725824800910125142207053",
+    "zero_move_fraction": "0.1063685636856368563685636856",
+    "iid_guarantee": false,
+    "note": "The DKW planning count assumes IID. Non-overlap removes mechanical overlap but does not establish independence."
+  },
+  "unsupported_components": [
+    "actual_project_account_fee_tier",
+    "submit_to_ack_and_fill_latency",
+    "realized_own_order_slippage_and_impact",
+    "boundary_aligned_funding_cost",
+    "maker_economics",
+    "predictability"
+  ],
+  "interpretation": {
+    "establishes": "Economic plausibility of the observed 50-second movement region relative to currently known top-of-book plus documented-base-taker friction.",
+    "does_not_establish": [
+      "predictability",
+      "tradeable signal",
+      "positive net expectancy",
+      "actual project-account fees",
+      "realized own-order slippage or impact",
+      "submit-to-ACK or fill latency",
+      "capacity",
+      "maker economics",
+      "boundary-aligned funding cost"
+    ]
+  },
+  "next_stage": "Stage 1 — Minimal Shared Simulator"
+}

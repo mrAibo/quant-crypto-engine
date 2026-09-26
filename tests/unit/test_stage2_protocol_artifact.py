@@ -36,11 +36,17 @@ def test_stage2_protocol_artifact_matches_frozen_code_contract() -> None:
     assert payload["trial_registry"]["sha256"] == TRIAL_REGISTRY.sha256
     assert payload["controls"]["random_seed"] == RANDOM_CONTROL_SEED
 
-    assert payload["partitions"]["development"]["row_count"] == 1110
-    assert payload["partitions"]["selection"]["row_count"] == 847
-    assert payload["partitions"]["selection"]["h1_ready"] == 783
-    assert payload["partitions"]["confirmation"]["row_count"] == 1302
-    assert payload["partitions"]["confirmation"]["h1_ready"] == 1225
+    assert payload["protocol_amendment"]["candidate_outcomes_inspected"] is False
+    assert payload["power_plan"]["selection_min_label_available"] == 902
+    assert payload["power_plan"]["confirmation_min_label_available"] == 1411
+    assert payload["partitions"]["development"]["row_count"] == 159
+    assert payload["partitions"]["selection"]["row_count"] == 1123
+    assert payload["partitions"]["selection"]["h1_feature_ready"] == 1059
+    assert payload["partitions"]["selection"]["h1_planning_ready"] == 902
+    assert payload["partitions"]["selection"]["selection_label_overlap_count"] == 0
+    assert payload["partitions"]["confirmation"]["row_count"] == 1977
+    assert payload["partitions"]["confirmation"]["h1_feature_ready"] == 1846
+    assert payload["partitions"]["confirmation"]["h1_planning_ready"] == 1411
 
     assert payload["primary_dataset"]["sha256"] == (
         "3eeb0b405a9db439b7711b453ec9820707068bbfba855bf120124b79aa32b237"

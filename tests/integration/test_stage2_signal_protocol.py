@@ -34,7 +34,7 @@ def _row(index: int) -> SignalFeatureRow:
         host_id="host-a",
         boot_id="boot-a",
         recv_mono_ns=index * 100,
-        recv_wall_ns=1_000_000 + index,
+        recv_wall_ns=1_000_000 + index * 100,
         bid_price=Decimal("100"),
         ask_price=Decimal("101"),
         quality_flags=QualityFlag.NONE,

@@ -503,17 +503,40 @@ Validation:
 
 No H1/H2 candidate outcome was used to choose the frozen protocol or partitions.
 
+### Pre-selection power-buffer amendment
+
+Before TASK-021 candidate evaluation, a planning mismatch was corrected: the original
+783/1,225 floors are directional-evaluable counts, but the original partitions were
+sized only to feature-ready counts. Zero-direction labels are excluded from the
+directional denominator.
+
+Using only the already published Frontier zero-move fraction, frozen DKW error,
+decision-time feature readiness, and label availability/timing metadata:
+
+- conservative nonzero-label lower fraction: `0.8686314363143631436314363144`;
+- buffered SELECTION support floor: **902**;
+- buffered CONFIRMATION support floor: **1,411**;
+- amended SELECTION start: `1790235572690884130`;
+- amended CONFIRMATION start: `1790302269067780894`;
+- DEVELOPMENT: **159 rows**;
+- SELECTION: **1,123 rows**, H1 planning-ready **902**, H2 **962**;
+- untouched CONFIRMATION: **1,977 rows**, H1 planning-ready **1,411**, H2 **1,515**;
+- valid SELECTION labels crossing confirmation start: **0**.
+
+No H1/H2 correctness, PnL, champion result, or confirmation candidate performance was
+inspected. H1/H2 definitions and stopping rules are unchanged.
+
 ## Current task
 
 Read **[`tasks/TASK_021.md`](tasks/TASK_021.md)**.
 
-TASK-021 runs the two registered H1/H2 trials **only on the frozen SELECTION partition** and selects at most one champion according to the frozen protocol. Untouched CONFIRMATION must not be opened in TASK-021.
+TASK-021 runs the two registered H1/H2 trials **only on the amended frozen SELECTION partition** and selects at most one champion according to the frozen protocol. Untouched CONFIRMATION must not be opened in TASK-021. The amended SELECTION interval starts at wall-ns `1790235572690884130` and ends before `1790302269067780894`.
 
 ## User actions currently required
 
 No user action is required for the completed Frontier Gate.
 
-TASK-018 prospective scheduling is quiesced. `Aibo` only needs to be available when Stage 1 implementation/testing is being performed; continuous evidence collection is no longer required for the frozen Gate result.
+TASK-018 prospective scheduling is quiesced. `Aibo` only needs to be available when Stage 2 implementation/testing is being performed; continuous evidence collection is no longer required for the frozen Gate result.
 
 If a future blocker cannot be bypassed safely through available tooling, document the blocker rather than weakening tests, evidence rules, or quality gates.
 

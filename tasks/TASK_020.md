@@ -112,3 +112,40 @@ Artifacts:
 - `docs/research/stage2_signal_protocol.md`.
 
 Next work package: `tasks/TASK_021.md`.
+
+
+## Pre-selection power-buffer amendment — 2026-09-26
+
+Before any registered H1/H2 selection performance was calculated, the frozen power
+design was corrected.
+
+The original partitioning guaranteed feature-ready counts equal to the 783/1,225
+directional-evaluable planning floors. Because zero-direction labels are excluded
+from the directional Bernoulli denominator, that could underpower the registered
+test even when data quality was otherwise healthy.
+
+The amendment uses only:
+
+- decision-time feature readiness;
+- label availability/timing/invalidity metadata, not label sign or magnitude;
+- the already published Frontier Gate zero-move fraction
+  `0.1063685636856368563685636856`;
+- the frozen DKW max CDF error `0.025`.
+
+This yields conservative feature+label-available support floors of **902** for
+SELECTION and **1,411** for CONFIRMATION.
+
+Amended PRIMARY boundaries:
+
+- selection start wall-ns: `1790235572690884130`;
+- confirmation start wall-ns: `1790302269067780894`;
+- DEVELOPMENT: **159 rows**;
+- SELECTION: **1,123 rows**, H1 planning-ready **902**, H2 **962**;
+- CONFIRMATION: **1,977 rows**, H1 planning-ready **1,411**, H2 **1,515**;
+- valid SELECTION labels crossing the confirmation start: **0**.
+
+H1/H2 feature equations, signs, thresholds, trial IDs, alpha, alternative-effect
+planning assumptions, controls, and stopping rules are unchanged.
+
+No H1/H2 directional correctness, PnL, champion result, or confirmation candidate
+performance was inspected when applying this amendment.

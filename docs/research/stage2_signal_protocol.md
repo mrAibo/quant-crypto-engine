@@ -72,19 +72,41 @@ from the Bernoulli directional-accuracy denominator.
 
 ## Chronological partitions
 
-Partition boundaries are derived from PRIMARY decision-time feature availability
-only. Outcome values are not consulted.
+The original protocol used PRIMARY decision-time feature availability only. Before
+any registered H1/H2 selection result was calculated, a power-design defect was
+identified: the 783/1,225 planning floors apply to **directional-evaluable** rows,
+while zero-direction outcomes are excluded from that Bernoulli denominator.
 
-- DEVELOPMENT: 1,110 rows
-- SELECTION: 847 rows
-  - H1-ready: 783
-  - H2-ready: 847
-- CONFIRMATION: 1,302 rows
-  - H1-ready: 1,225
-  - H2-ready: 1,302
+The pre-selection amendment therefore buffers feature+label-available support using
+only information that predates H1/H2 evaluation:
 
-Selection begins at wall-ns `1790292370076995098`.
-Untouched confirmation begins at wall-ns `1790341044387002988`.
+- Frontier Gate zero-move fraction: `0.1063685636856368563685636856`;
+- frozen DKW max CDF error: `0.025`;
+- conservative nonzero-label fraction lower bound: `0.8686314363143631436314363144`;
+- selection minimum feature+label-available support: **902**;
+- confirmation minimum feature+label-available support: **1,411**.
+
+Outcome sign and magnitude, H1/H2 correctness, and H1/H2 PnL were not inspected.
+Only decision-time feature readiness and label availability/timing/invalidity metadata
+were used to place the amended boundaries.
+
+- DEVELOPMENT: **159 rows**
+- SELECTION: **1,123 rows**
+  - H1 feature-ready: **1,059**
+  - H2 feature-ready: **1,123**
+  - label-available: **962**
+  - H1 planning-ready: **902**
+  - H2 planning-ready: **962**
+- CONFIRMATION: **1,977 rows**
+  - H1 feature-ready: **1,846**
+  - H2 feature-ready: **1,977**
+  - label-available: **1,515**
+  - H1 planning-ready: **1,411**
+  - H2 planning-ready: **1,515**
+
+Selection begins at wall-ns `1790235572690884130`.
+Untouched confirmation begins at wall-ns `1790302269067780894`.
+No valid SELECTION label crosses the confirmation boundary.
 
 Equal wall timestamps stay in the later partition.
 
@@ -99,11 +121,13 @@ The family contains exactly two hypotheses.
 - Bonferroni alpha per hypothesis: 0.025
 - planning power: 0.80
 - null directional accuracy: 0.50
-- selection planning alternative: 0.55 -> minimum 783 evaluable rows
-- confirmation planning alternative: 0.54 -> minimum 1,225 evaluable rows
+- selection planning alternative: 0.55 -> minimum **783 evaluable** rows
+- confirmation planning alternative: 0.54 -> minimum **1,225 evaluable** rows
+- buffered selection support floor: **902 feature+label-available** rows
+- buffered confirmation support floor: **1,411 feature+label-available** rows
 
-These are planning assumptions, not optimized targets. Win rate remains descriptive,
-not the project objective.
+The buffer is a pre-selection design correction, not a tuned target. Win rate remains
+descriptive, not the project objective.
 
 ## Selection and stopping
 

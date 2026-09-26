@@ -8,7 +8,7 @@
 - GitHub: `mrAibo/quant-crypto-engine`
 - Branch to start from: `main`
 - Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
-- Current task: **TASK-025 — Stage 2 Bounded Microstructure Economic Development**
+- Current task: **TASK-026 — Stage 2 Economic Bottleneck Adjudication**
 - Frontier Gate: **PASS_FEASIBILITY**
 - Economic edge / predictability: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -19,7 +19,7 @@ In this order:
 
 1. `HANDOFF.md`
 2. `STATUS.md`
-3. `tasks/TASK_025.md`
+3. `tasks/TASK_026.md`
 4. `artifacts/stage_2/selection_remediation.json`
 5. only then inspect implementation/evidence files as needed
 
@@ -367,23 +367,35 @@ Complete.
 The 300s deterministic family remained economically negative and under-supported.
 The fixed 300s logistic fallback selected zero valid DEV_B trades.
 
+## TASK-025 result
+
+Complete.
+
+- decision: **STOP_MICROSTRUCTURE_FAMILY**;
+- registry SHA-256: `d5024ce6cb16c0d3dcce5b65f3f62f6d577b971d3bda7c8342ab67aaa100b130`;
+- decision artifact SHA-256: `6355dd1295ab156757e091191ee686f6f9e63708a3bb556e03611b25285f7172`;
+- 50s: 479 full-feature / 409 valid targets / 24 positive / 385 nonpositive;
+- 300s: 57 full-feature / 21 valid targets / 6 positive / 15 nonpositive;
+- old confirmation: **UNOPENED_AND_EXCLUDED**;
+- fresh development validation started: **false**;
+- fresh registered test started: **false**.
+
+A prior six-feature DEV_B result predated the full eight-feature registry, so all
+pre-cutoff microstructure evidence is treated as exposed development only.
+
 ## Exact next action
 
-Start **TASK-025 — Stage 2 Bounded Microstructure Economic Development**.
+Start **TASK-026 — Stage 2 Economic Bottleneck Adjudication**.
 
-1. keep old confirmation unopened/excluded;
-2. build point-in-time top-5 depth, Hyperliquid 5s trade flow, Binance 5s trade
-   flow, local/reference 5s returns, cross-venue return gap, spread and BBO
-   imbalance;
-3. use only exposed DEVELOPMENT evidence first;
-4. freeze the small feature/model/horizon budget before DEV_B outcomes;
-5. require positive executable partial-known-cost economics before any fresh test
-   campaign;
-6. use Hyperliquid historical requester-pays L2 only as optional development
-   expansion if AWS access is later configured.
+1. quantify the repeated taker-economics bottleneck from completed artifacts;
+2. compare three bounded next paths: development-evidence expansion, actual
+   account-specific fee resolution, or separately gated maker research;
+3. select exactly one primary path before any new predictive family;
+4. keep old confirmation unopened/excluded;
+5. state any real user/external dependency explicitly.
 
-No broad feature mining, new features after DEV_B, LightGBM, Jev, OMS/signing,
-private endpoints, or live trading.
+No broad signal mining, LightGBM, Jev/GPT runtime, OMS/signing/orders, private
+capture, or live trading.
 
 ## Session checkpoint — 2026-09-27 00:23 CEST
 
@@ -394,19 +406,19 @@ state from conversational history.
 - handoff checkpoint merged by PR #39 at `671830844396bee293b449f8354cee7db2b259b8`;
 - TASK-024 completion CI run `36273758772`: **SUCCESS**;
 - always verify the latest `main` before continuing;
-- current work package: **TASK-025 — Stage 2 Bounded Microstructure Economic Development**;
+- current work package: **TASK-026 — Stage 2 Economic Bottleneck Adjudication**;
 - old Stage-2 confirmation: **UNOPENED_AND_EXCLUDED**;
 - fresh registered test evidence after TASK-024: **none**;
 - live trading / OMS / signing / private account capture: **FORBIDDEN**;
 - user action required now: **none**.
 
 For a fresh session, trust repository state over chat memory. Read
-`HANDOFF.md` → `STATUS.md` → `tasks/TASK_025.md`, then continue TASK-025
+`HANDOFF.md` → `STATUS.md` → `tasks/TASK_026.md`, then continue TASK-025
 autonomously until a real external blocker or human gate is reached.
 
 ## Historical Frontier Gate outcomes
 
-The section below is retained as historical gate context only. It is **not** the current next action; current work is TASK-025.
+The section below is retained as historical gate context only. It is **not** the current next action; current work is TASK-026.
 
 
 Only three decisions are allowed:
@@ -457,7 +469,7 @@ Do **not**:
 
 The bounded logistic baselines already used in TASK-023/TASK-024 are historical
 completed experiments. TASK-025 permits exactly the model scope declared in
-`tasks/TASK_025.md` and no broader model search.
+`tasks/TASK_026.md` and no broader model search.
 
 Preserve failed/incomplete segments and negative experiments for diagnostics.
 

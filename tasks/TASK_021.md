@@ -2,7 +2,7 @@
 
 ## Status
 
-**READY TO START**
+**COMPLETE**
 
 ## Context
 
@@ -110,3 +110,39 @@ At minimum:
 - OMS/signing/orders;
 - private/account capture;
 - capital deployment.
+
+
+## Final result — 2026-09-26
+
+TASK-021 is complete.
+
+Frozen selection artifact:
+
+- artifacts/stage_2/selection_result.json
+- SHA-256 e3403ef3eb6016040344dd8c17f4174b9190ca1a3aa5f5a59f54e1af7f7fb5a0
+- 1,123 selection rows
+- decision: INCONCLUSIVE_SELECTION
+- champion: none
+- confirmation_opened=false
+
+H1:
+
+- directional-evaluable 644 < 783 required
+- directional accuracy 54.0373%
+- IID-reference p ≈ 0.02219
+- dependence-adjusted lower bound ≈ 49.9821%
+- mean partial-known-cost PnL ≈ -74.0311 quote units at 1 BTC
+- failed support, dependence-adjusted, and economic filters
+
+H2:
+
+- directional-evaluable 930
+- directional accuracy 58.3871%
+- IID-reference p ≈ 1.7522e-7
+- dependence-adjusted lower bound ≈ 54.8815%
+- mean partial-known-cost PnL ≈ -71.1355 quote units at 1 BTC
+- passed directional diagnostics but failed the required economic filter
+
+No confirmation outcomes were opened. No threshold, sign, lookback, or hypothesis was changed after observing the registered result.
+
+Next work package: tasks/TASK_022.md.

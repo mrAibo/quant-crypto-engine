@@ -103,3 +103,30 @@ At minimum:
 - autonomous strategy mutation.
 
 Regularized logistic regression is part of the later bounded model sequence, not this simulator-foundation task.
+
+
+## Implementation progress — 2026-09-26
+
+Implemented locally for review:
+
+- `src/cryptobot/sim/contracts.py`: causal quote/opportunity, policy, cost, ledger, and report contracts;
+- `src/cryptobot/sim/engine.py`: one shared deterministic taker accounting path;
+- `src/cryptobot/sim/evidence.py`: normalized BBO adapter and deterministic non-overlapping fixed-horizon opportunity builder;
+- `src/cryptobot/sim/policies.py`: no-trade and seed-provenanced SHA-256 randomized-direction controls;
+- exact executable-side LONG/SHORT accounting with spread embedded once in bid/ask;
+- separate fee/latency/impact/funding cost components with UNKNOWN never fabricated as zero;
+- INVALID / NO_TRADE / TRADED complete opportunity accounting;
+- deterministic JSON + SHA-256 ledger/report serialization;
+- PRIMARY/REPLICATION role preservation;
+- Stage-1 simulator contract artifact and research documentation.
+
+Local pre-PR validation:
+
+- Ruff: PASS;
+- Ruff format: PASS;
+- strict mypy: PASS on **85 source files**;
+- pytest Python 3.12.3: **389 PASS**.
+
+GitHub CI validation remains required before TASK-019 can be marked complete.
+
+Next task after merge: `tasks/TASK_020.md`.

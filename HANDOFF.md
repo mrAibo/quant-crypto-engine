@@ -8,7 +8,7 @@
 - GitHub: `mrAibo/quant-crypto-engine`
 - Branch to start from: `main`
 - Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
-- Current task: **TASK-020 — Stage 2 Signal-Existence Dataset and Falsification Protocol**
+- Current task: **TASK-021 — Stage 2 Registered H1/H2 Selection Run**
 - Frontier Gate: **PASS_FEASIBILITY**
 - Economic edge / predictability: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -19,8 +19,8 @@ In this order:
 
 1. `HANDOFF.md`
 2. `STATUS.md`
-3. `tasks/TASK_018.md`
-4. `docs/runbooks/frontier_campaign.md`
+3. `tasks/TASK_021.md`
+4. `artifacts/stage_2/signal_protocol.json`
 5. only then inspect implementation/evidence files as needed
 
 Do not reconstruct project state from chat memory when repository state disagrees.
@@ -272,21 +272,45 @@ Delivered:
 
 No predictive model or strategy edge was established by TASK-019.
 
+## TASK-020 — Stage-2 protocol freeze
+
+Complete.
+
+Provenance:
+
+- PR #32 merged as `b3568644c900d5e561597cd5c01b3c10ece0a720`;
+- pre-merge CI `36248421789`: green on Python 3.12/3.13;
+- post-merge CI `36248457686`: green on Python 3.12/3.13;
+- local final gate: **408 tests PASS**, Ruff/format PASS, strict mypy PASS on **93 source files**;
+- machine-readable protocol: `artifacts/stage_2/signal_protocol.json`;
+- documentation: `docs/research/stage2_signal_protocol.md`.
+
+Frozen PRIMARY dataset:
+
+- 182 Gate segments;
+- **3,259** BTC rows;
+- SHA-256 `3eeb0b405a9db439b7711b453ec9820707068bbfba855bf120124b79aa32b237`;
+- DEVELOPMENT **1,110** rows;
+- SELECTION **847** rows — H1-ready **783**, H2-ready **847**;
+- untouched CONFIRMATION **1,302** rows — H1-ready **1,225**, H2-ready **1,302**.
+
+Registered hypotheses are only H1 5-second Binance reference lead and H2 Hyperliquid BBO size imbalance. No candidate performance was used to derive the feature definitions or chronological boundaries.
+
 ## Exact next action
 
-Start **TASK-020 — Stage 2 Signal-Existence Dataset and Falsification Protocol**.
+Start **TASK-021 — Stage 2 Registered H1/H2 Selection Run**.
 
-Read `tasks/TASK_020.md` and freeze the causal feature/opportunity dataset, chronological partitions, bounded deterministic hypotheses, controls, metrics, and stopping rules **before** evaluating signal economics:
+Evaluate only the frozen BTC SELECTION partition:
 
-1. deterministic causal feature-row contract from existing normalized Hyperliquid + Binance evidence;
-2. no future leakage and no cross-boot monotonic comparison;
-3. chronological development / selection / untouched-confirmation partitions frozen before evaluation;
-4. a deliberately small microstructure/cross-venue feature family;
-5. no-trade and randomized-direction controls on the exact same opportunity rows and TASK-019 accounting path;
-6. dependence-aware uncertainty and complete trial provenance;
-7. at most a small pre-registered set of deterministic hypotheses before any fitting/tuning.
+1. run H1 and H2 exactly once under their registered trial IDs;
+2. compute the frozen directional, dependence, and partial-known-cost metrics;
+3. run no-trade and seeded-random controls on the exact same opportunity rows;
+4. choose a champion only if the pre-registered selection-pass rule is met;
+5. preserve every trial result and digest.
 
-Do not start LightGBM, broad feature/window sweeps, Jev, OMS/signing, private/account endpoints, or live trading. Regularized logistic regression remains a later bounded baseline after this protocol is frozen and exercised.
+**Do not load or evaluate CONFIRMATION outcomes in TASK-021.** If neither H1 nor H2 passes selection, stop the registered family. If a champion exists, the next task may open that single champion on untouched confirmation.
+
+No logistic regression, LightGBM, Jev, OMS/signing, private endpoints, or live trading.
 
 ## Frontier Gate outcomes
 

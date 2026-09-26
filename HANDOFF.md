@@ -328,8 +328,8 @@ Preserve failed/incomplete segments for diagnostics.
 
 ## User action currently required
 
-No command or repository action is required from the user while collection remains healthy.
+No user action is required for the completed Frontier Gate.
 
-Physical requirement: keep the collector machine powered and connected to AC power. Windows AC sleep is disabled for the campaign; battery sleep remains unchanged.
+Prospective TASK-018 scheduling is quiesced. Keep `Aibo` available only when continuing Stage 1 implementation/testing; it no longer needs to remain powered solely to accumulate Frontier Gate evidence.
 
-If host access or external network behavior later blocks progress and cannot be resolved with available tools, document the blocker without weakening tests or evidence rules.
+If host access or external behavior later blocks Stage 1 progress and cannot be resolved with available tools, document the blocker without weakening tests or evidence rules.

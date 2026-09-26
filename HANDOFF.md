@@ -7,8 +7,8 @@
 
 - GitHub: `mrAibo/quant-crypto-engine`
 - Branch to start from: `main`
-- Current phase: **Stage 1 — Minimal Shared Simulator**
-- Current task: **TASK-019 — Stage 1 Minimal Shared Simulator**
+- Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
+- Current task: **TASK-020 — Stage 2 Signal-Existence Dataset and Falsification Protocol**
 - Frontier Gate: **PASS_FEASIBILITY**
 - Economic edge / predictability: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -245,21 +245,48 @@ These numbers are **not** Hyperliquid primary BBO-mid, do not reproduce live rec
 
 Hyperliquid historical L2 uses the official S3 Requester Pays archive. It requires an authenticated AWS identity; no suitable AWS/S3 plugin is currently available. This does **not** block TASK-018 prospective collection.
 
+## TASK-019 — Minimal Shared Simulator
+
+Complete.
+
+Provenance:
+
+- PR #30 merged as `d963dd59c7e2fe9c873bfc61dd029875131dcbef`;
+- pre-merge CI `36238838341`: Ruff PASS, Ruff format PASS, strict mypy PASS on **85 source files**, **389 tests PASS** on Python 3.12 and 3.13;
+- post-merge CI `36238897281`: same checks PASS, **389 tests PASS** on Python 3.12 and 3.13;
+- contract artifact: `artifacts/stage_1/simulator_contract.json`;
+- documentation: `docs/research/simulator.md`.
+
+Delivered:
+
+- causal `QuoteObservation`, `DecisionContext`, and `SimulationOpportunity` contracts;
+- deterministic policy protocol with explicit `ABSTAIN/LONG/SHORT`;
+- no-trade and seed-provenanced SHA-256 randomized-direction controls;
+- one shared taker-only executable-side accounting path;
+- spread embedded exactly once in executable bid/ask prices;
+- separate fee / latency / impact / funding cost components with `OBSERVED/SCENARIO/UNKNOWN` semantics;
+- UNKNOWN costs can never be fabricated as zero; traded `business_net_pnl` remains null while required costs are UNKNOWN;
+- deterministic INVALID / NO_TRADE / TRADED ledger with exact-Decimal JSON and SHA-256;
+- normalized BBO adapter and deterministic fixed-horizon opportunity builder;
+- PRIMARY / REPLICATION separation.
+
+No predictive model or strategy edge was established by TASK-019.
+
 ## Exact next action
 
-Start **TASK-019 — Stage 1 Minimal Shared Simulator**.
+Start **TASK-020 — Stage 2 Signal-Existence Dataset and Falsification Protocol**.
 
-Read `tasks/TASK_019.md` and implement only the minimal shared causal simulator/accounting foundation required before quantitative falsification:
+Read `tasks/TASK_020.md` and freeze the causal feature/opportunity dataset, chronological partitions, bounded deterministic hypotheses, controls, metrics, and stopping rules **before** evaluating signal economics:
 
-1. frozen event/time input contract using existing immutable normalized evidence;
-2. deterministic strategy/policy interface with no exchange/network/filesystem I/O;
-3. no-trade/accounting control;
-4. deterministic randomized control with explicit seed provenance;
-5. conservative taker execution/accounting primitives that keep unknown latency/funding/account-specific costs explicit rather than fabricating them;
-6. deterministic trial ledger and complete trial accounting;
-7. tests for causality, cost non-double-counting, replay determinism, and control behavior.
+1. deterministic causal feature-row contract from existing normalized Hyperliquid + Binance evidence;
+2. no future leakage and no cross-boot monotonic comparison;
+3. chronological development / selection / untouched-confirmation partitions frozen before evaluation;
+4. a deliberately small microstructure/cross-venue feature family;
+5. no-trade and randomized-direction controls on the exact same opportunity rows and TASK-019 accounting path;
+6. dependence-aware uncertainty and complete trial provenance;
+7. at most a small pre-registered set of deterministic hypotheses before any fitting/tuning.
 
-Do not jump to LightGBM, Jev, OMS/signing, private/account endpoints, or live trading. The Frontier Gate permits predictability testing; it does not prove a signal.
+Do not start LightGBM, broad feature/window sweeps, Jev, OMS/signing, private/account endpoints, or live trading. Regularized logistic regression remains a later bounded baseline after this protocol is frozen and exercised.
 
 ## Frontier Gate outcomes
 

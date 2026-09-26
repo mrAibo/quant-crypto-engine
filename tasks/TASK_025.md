@@ -2,7 +2,7 @@
 
 ## Status
 
-**READY TO START**
+**COMPLETE**
 
 ## Context
 
@@ -145,3 +145,39 @@ If it fails, stop the family. Do not add thresholds/features after DEV_B exposur
 - OMS/signing/orders;
 - private/account capture;
 - capital deployment.
+
+
+## Final result — 2026-09-27
+
+TASK-025 is complete.
+
+Frozen registry:
+
+- `artifacts/stage_2/microstructure_development_registry.json`
+- SHA-256 `d5024ce6cb16c0d3dcce5b65f3f62f6d577b971d3bda7c8342ab67aaa100b130`
+
+Decision artifact:
+
+- `artifacts/stage_2/microstructure_decision.json`
+- SHA-256 `6355dd1295ab156757e091191ee686f6f9e63708a3bb556e03611b25285f7172`
+- decision: **STOP_MICROSTRUCTURE_FAMILY**
+
+Evidence:
+
+- 50s: 1,282 rows, 479 full-feature, 409 valid targets,
+  **24 positive / 385 nonpositive**;
+- 300s: 215 rows, 57 full-feature, 21 valid targets,
+  **6 positive / 15 nonpositive**.
+
+The full eight-feature 50s family met feature-count support but failed the frozen
+minimum of 30 positive and 30 nonpositive targets required for a stable logistic fit.
+The 300s family failed both feature support and target-class support.
+
+A prior six-feature DEV_B report existed before the full eight-feature registry.
+Therefore all pre-cutoff evidence is treated as exposed DEVELOPMENT only and is not
+reused as independent DEV_B validation.
+
+No fresh development validation or registered test campaign was started.
+Old confirmation remains **UNOPENED_AND_EXCLUDED**.
+
+Next work package: `tasks/TASK_026.md`.

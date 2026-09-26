@@ -9,9 +9,9 @@
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `main`
 - Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
-- Current work package: **TASK-025 — Stage 2 Bounded Microstructure Economic Development**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019, TASK-020, TASK-021, TASK-022, TASK-023, TASK-024**
-- Economic status: **Frontier Gate PASS_FEASIBILITY; bounded 50s and 300s economic families STOPPED; net edge UNPROVEN**
+- Current work package: **TASK-026 — Stage 2 Economic Bottleneck Adjudication**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019, TASK-020, TASK-021, TASK-022, TASK-023, TASK-024, TASK-025**
+- Economic status: **Frontier Gate PASS_FEASIBILITY; bounded 50s, 300s, and microstructure families STOPPED; net edge UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
 
@@ -23,7 +23,7 @@
 - PR #38: merged;
 - TASK-024 post-merge CI run `36273758772`: **SUCCESS**;
 - always verify the latest `main` before continuing;
-- current work package: **TASK-025 — Stage 2 Bounded Microstructure Economic Development**;
+- current work package: **TASK-026 — Stage 2 Economic Bottleneck Adjudication**;
 - old confirmation: **UNOPENED_AND_EXCLUDED**;
 - no fresh registered test campaign has been started for TASK-025;
 - no user action is currently required.
@@ -32,8 +32,8 @@ Fresh-session read order:
 
 1. `HANDOFF.md`
 2. `STATUS.md`
-3. `tasks/TASK_025.md`
-4. inspect only the implementation/evidence needed for TASK-025
+3. `tasks/TASK_026.md`
+4. inspect only the implementation/evidence needed for TASK-026
 
 Do not recover project state from old chat messages when repository state differs.
 
@@ -637,7 +637,7 @@ was collected.
 
 ## Current task
 
-Read **[`tasks/TASK_025.md`](tasks/TASK_025.md)**.
+Read **[`tasks/TASK_026.md`](tasks/TASK_025.md)**.
 
 TASK-025 evaluates one bounded causal microstructure family using exposed
 development-only L2/trade/reference evidence. The first family is restricted to

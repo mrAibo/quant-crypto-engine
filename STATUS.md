@@ -9,8 +9,8 @@
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `main`
 - Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
-- Current work package: **TASK-021 — Stage 2 Registered H1/H2 Selection Run**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019, TASK-020**
+- Current work package: **TASK-022 — Stage 2 Selection Evidence Remediation**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019, TASK-020, TASK-021**
 - Economic status: **Frontier Gate PASS_FEASIBILITY; predictability / net edge UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
@@ -526,11 +526,41 @@ decision-time feature readiness, and label availability/timing metadata:
 No H1/H2 correctness, PnL, champion result, or confirmation candidate performance was
 inspected. H1/H2 definitions and stopping rules are unchanged.
 
+## Completed — TASK-021 / Registered H1/H2 selection
+
+Frozen artifact: `artifacts/stage_2/selection_result.json`.
+
+- report SHA-256: `e3403ef3eb6016040344dd8c17f4174b9190ca1a3aa5f5a59f54e1af7f7fb5a0`;
+- selection rows: **1,123**;
+- decision: **INCONCLUSIVE_SELECTION**;
+- champion: **none**;
+- confirmation opened: **false**.
+
+H1 `S2-SEL-H1-V1`:
+
+- directional-evaluable **644 < 783 required**;
+- accuracy **54.0373%**;
+- IID-reference p ≈ **0.02219**;
+- dependence-adjusted lower bound ≈ **49.9821%**;
+- mean partial-known-cost PnL ≈ **-74.0311** quote units at 1 BTC;
+- failed support, dependence-adjusted, and economic filters.
+
+H2 `S2-SEL-H2-V1`:
+
+- directional-evaluable **930**;
+- accuracy **58.3871%**;
+- IID-reference p ≈ **1.7522e-7**;
+- dependence-adjusted lower bound ≈ **54.8815%**;
+- mean partial-known-cost PnL ≈ **-71.1355** quote units at 1 BTC;
+- passed directional diagnostics but failed the required economic filter.
+
+No confirmation outcome was opened. No registered feature, sign, threshold, or lookback was changed after the result.
+
 ## Current task
 
-Read **[`tasks/TASK_021.md`](tasks/TASK_021.md)**.
+Read **[`tasks/TASK_022.md`](tasks/TASK_022.md)**.
 
-TASK-021 runs the two registered H1/H2 trials **only on the amended frozen SELECTION partition** and selects at most one champion according to the frozen protocol. Untouched CONFIRMATION must not be opened in TASK-021. The amended SELECTION interval starts at wall-ns `1790235572690884130` and ends before `1790302269067780894`.
+TASK-022 adjudicates evidence remediation. It must keep the old confirmation partition unopened, keep H2 unpromoted, and either register a fresh independent H1 replication with a new fresh-evidence power plan or stop the registered H1/H2 family.
 
 ## User actions currently required
 

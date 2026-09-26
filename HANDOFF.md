@@ -8,7 +8,7 @@
 - GitHub: `mrAibo/quant-crypto-engine`
 - Branch to start from: `main`
 - Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
-- Current task: **TASK-021 — Stage 2 Registered H1/H2 Selection Run**
+- Current task: **TASK-022 — Stage 2 Selection Evidence Remediation**
 - Frontier Gate: **PASS_FEASIBILITY**
 - Economic edge / predictability: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -19,8 +19,8 @@ In this order:
 
 1. `HANDOFF.md`
 2. `STATUS.md`
-3. `tasks/TASK_021.md`
-4. `artifacts/stage_2/signal_protocol.json`
+3. `tasks/TASK_022.md`
+4. `artifacts/stage_2/selection_result.json`
 5. only then inspect implementation/evidence files as needed
 
 Do not reconstruct project state from chat memory when repository state disagrees.
@@ -306,21 +306,31 @@ Amended partitions:
 
 Registered hypotheses are only H1 5-second Binance reference lead and H2 Hyperliquid BBO size imbalance. No H1/H2 correctness, PnL, or champion performance was used to derive the amended boundaries.
 
+## TASK-021 selection result
+
+Complete.
+
+- artifact: `artifacts/stage_2/selection_result.json`;
+- SHA-256: `e3403ef3eb6016040344dd8c17f4174b9190ca1a3aa5f5a59f54e1af7f7fb5a0`;
+- decision: **INCONCLUSIVE_SELECTION**;
+- champion: **none**;
+- confirmation opened: **false**.
+
+H1 had 644 directional-evaluable rows versus 783 required, a 49.9821% dependence-adjusted lower bound, and negative partial-known-cost PnL.
+
+H2 had 930 directional-evaluable rows, 58.3871% directional accuracy and a 54.8815% dependence-adjusted lower bound, but its mean partial-known-cost PnL was negative. It is not promotable on directional evidence alone.
+
 ## Exact next action
 
-Start **TASK-021 — Stage 2 Registered H1/H2 Selection Run**.
+Start **TASK-022 — Stage 2 Selection Evidence Remediation**.
 
-Evaluate only the amended frozen BTC SELECTION partition:
+1. keep TASK-021 immutable;
+2. keep the existing confirmation partition unopened;
+3. keep H2 as a registered selection failure under taker economics;
+4. explain H1 support attrition and derive any fresh-evidence requirement without retroactive tuning;
+5. decide whether to register a fresh independent H1 replication or stop the H1/H2 family.
 
-1. run H1 and H2 exactly once under their registered trial IDs;
-2. compute the frozen directional, dependence, and partial-known-cost metrics;
-3. run no-trade and seeded-random controls on the exact same opportunity rows;
-4. choose a champion only if the pre-registered selection-pass rule is met;
-5. preserve every trial result and digest.
-
-**Do not load or evaluate CONFIRMATION outcomes in TASK-021.** If neither H1 nor H2 passes selection, stop the registered family. If a champion exists, the next task may open that single champion on untouched confirmation.
-
-No logistic regression, LightGBM, Jev, OMS/signing, private endpoints, or live trading.
+No confirmation evaluation, logistic regression, LightGBM, Jev, OMS/signing, private endpoints, or live trading.
 
 ## Frontier Gate outcomes
 
@@ -391,6 +401,6 @@ Preserve failed/incomplete segments for diagnostics.
 
 No user action is required for the completed Frontier Gate.
 
-Prospective TASK-018 scheduling is quiesced. Keep `Aibo` available only when continuing Stage 1 implementation/testing; it no longer needs to remain powered solely to accumulate Frontier Gate evidence.
+Prospective TASK-018 scheduling is quiesced. Keep `Aibo` available only when continuing Stage 2 implementation/testing; it no longer needs to remain powered solely to accumulate Frontier Gate evidence.
 
-If host access or external behavior later blocks Stage 1 progress and cannot be resolved with available tools, document the blocker without weakening tests or evidence rules.
+If host access or external behavior later blocks Stage 2 progress and cannot be resolved with available tools, document the blocker without weakening tests or evidence rules.

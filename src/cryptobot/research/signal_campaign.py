@@ -184,6 +184,7 @@ def load_segment_books(
     *,
     primary_instrument_id: str,
     reference_instrument_id: str,
+    max_recv_wall_ns_exclusive: int | None = None,
 ) -> tuple[
     tuple[TopOfBookFeatureObservation, ...],
     tuple[TopOfBookFeatureObservation, ...],
@@ -193,11 +194,13 @@ def load_segment_books(
         root / "events.parquet",
         event_type="BBO",
         instrument_id=primary_instrument_id,
+        max_recv_wall_ns_exclusive=max_recv_wall_ns_exclusive,
     )
     reference_meta = _load_event_metadata(
         root / "events.parquet",
         event_type="REFERENCE_BBO",
         instrument_id=reference_instrument_id,
+        max_recv_wall_ns_exclusive=max_recv_wall_ns_exclusive,
     )
     primary = _load_payload_books(
         root / "bbo.parquet",
@@ -208,6 +211,103 @@ def load_segment_books(
         metadata=reference_meta,
     )
     return primary, reference
+
+
+def build_gate_feature_dataset_before_wall(
+    *,
+    campaign_root: str | Path,
+    gate_report_path: str | Path,
+    expected_gate_report_sha256: str,
+    instrument_id: str,
+    reference_instrument_id: str,
+    role: InstrumentRole,
+    decision_end_wall_ns_exclusive: int,
+) -> Stage2FeatureDataset:
+    if (
+        isinstance(decision_end_wall_ns_exclusive, bool)
+        or not isinstance(decision_end_wall_ns_exclusive, int)
+        or decision_end_wall_ns_exclusive <= 0
+    ):
+        raise SignalCampaignValidationError(
+            "decision_end_wall_ns_exclusive must be a positive integer"
+        )
+
+    root = Path(campaign_root)
+    source = load_gate_dataset_source(
+        gate_report_path,
+        expected_report_sha256=expected_gate_report_sha256,
+    )
+    segment_roots = _discover_segment_roots(root)
+
+    rows: list[SignalFeatureRow] = []
+    segment_digests: list[tuple[str, str]] = []
+    for segment_id in source.segment_ids:
+        segment_root = segment_roots.get(segment_id)
+        if segment_root is None:
+            raise SignalCampaignValidationError(
+                f"frozen gate segment is missing locally: {segment_id}"
+            )
+        dataset_root = segment_root / "dataset"
+        verified = load_campaign_segment(dataset_root, segment_id=segment_id)
+        primary_books, reference_books = load_segment_books(
+            dataset_root,
+            primary_instrument_id=instrument_id,
+            reference_instrument_id=reference_instrument_id,
+            max_recv_wall_ns_exclusive=decision_end_wall_ns_exclusive,
+        )
+        quotes = tuple(
+            QuoteObservation(
+                event_id=item.event_id,
+                source_id=item.source_id,
+                instrument_id=item.instrument_id,
+                role=role,
+                host_id=item.host_id,
+                boot_id=item.boot_id,
+                recv_mono_ns=item.recv_mono_ns,
+                recv_wall_ns=item.recv_wall_ns,
+                bid_price=item.bid_price,
+                ask_price=item.ask_price,
+                quality_flags=item.quality_flags,
+            )
+            for item in primary_books
+        )
+        opportunities = build_fixed_horizon_opportunities(
+            quotes,
+            horizon_ns=HORIZON_NS,
+            max_step_ns=MAX_EXECUTION_STEP_NS,
+        )
+        segment_rows = build_signal_feature_rows(
+            segment_id=segment_id,
+            opportunities=opportunities,
+            primary_books=primary_books,
+            reference_books=reference_books,
+            reference_instrument_id=reference_instrument_id,
+        )
+        rows.extend(
+            row
+            for row in segment_rows
+            if row.decision_recv_wall_ns < decision_end_wall_ns_exclusive
+        )
+        segment_digests.append((segment_id, verified.data.evidence.dataset_bundle_sha256))
+        del verified, primary_books, reference_books, quotes, opportunities, segment_rows
+        release_unused_arrow_memory()
+
+    ordered_rows = tuple(
+        sorted(
+            rows,
+            key=lambda item: (
+                item.decision_recv_wall_ns,
+                item.decision_recv_mono_ns,
+                item.row_id,
+            ),
+        )
+    )
+    return Stage2FeatureDataset(
+        source_gate_report_sha256=source.gate_report_sha256,
+        source_campaign_manifest_sha256=source.campaign_manifest_sha256,
+        source_segment_digests=tuple(segment_digests),
+        rows=ordered_rows,
+    )
 
 
 def write_frozen_feature_dataset(
@@ -234,7 +334,23 @@ def _load_event_metadata(
     *,
     event_type: str,
     instrument_id: str,
+    max_recv_wall_ns_exclusive: int | None = None,
 ) -> dict[str, tuple[str, str, str, str, int, int, int]]:
+    filters: list[tuple[str, str, object]] = [
+        ("event_type", "=", event_type),
+        ("instrument_id", "=", instrument_id),
+    ]
+    if max_recv_wall_ns_exclusive is not None:
+        if (
+            isinstance(max_recv_wall_ns_exclusive, bool)
+            or not isinstance(max_recv_wall_ns_exclusive, int)
+            or max_recv_wall_ns_exclusive <= 0
+        ):
+            raise SignalCampaignValidationError(
+                "max_recv_wall_ns_exclusive must be null or a positive integer"
+            )
+        filters.append(("recv_wall_ns", "<", max_recv_wall_ns_exclusive))
+
     try:
         table = _READ_TABLE(
             path,
@@ -248,10 +364,7 @@ def _load_event_metadata(
                 "recv_wall_ns",
                 "quality_flags",
             ],
-            filters=[
-                ("event_type", "=", event_type),
-                ("instrument_id", "=", instrument_id),
-            ],
+            filters=filters,
             use_threads=False,
         )
     except Exception as exc:

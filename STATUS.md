@@ -15,17 +15,17 @@
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
 
-## New-session checkpoint — 2026-09-27 00:23 CEST
+## New-session checkpoint — post TASK-025 closeout
 
 - project-state base before the handoff docs: `755adce9213c62e7dbbbae30a041479fc375e030`;
 - handoff checkpoint merged by PR #39 at `671830844396bee293b449f8354cee7db2b259b8`;
-- latest completed work package: **TASK-024**;
-- PR #38: merged;
-- TASK-024 post-merge CI run `36273758772`: **SUCCESS**;
+- latest completed work package: **TASK-025**;
+- TASK-025 closeout merged by PR #41 at `37456e497cb0ab856ece48b384b8cbea1c9f856f`;
+- PR #41 pre-merge CI run `36278783155`: **SUCCESS**;
 - always verify the latest `main` before continuing;
 - current work package: **TASK-026 — Stage 2 Economic Bottleneck Adjudication**;
 - old confirmation: **UNOPENED_AND_EXCLUDED**;
-- no fresh registered test campaign has been started for TASK-025;
+- no fresh development validation or registered test campaign was started for TASK-025;
 - no user action is currently required.
 
 Fresh-session read order:
@@ -637,7 +637,7 @@ was collected.
 
 ## Current task
 
-Read **[`tasks/TASK_026.md`](tasks/TASK_025.md)**.
+Read **[`tasks/TASK_026.md`](tasks/TASK_026.md)**.
 
 TASK-025 evaluates one bounded causal microstructure family using exposed
 development-only L2/trade/reference evidence. The first family is restricted to

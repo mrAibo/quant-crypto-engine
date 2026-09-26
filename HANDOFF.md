@@ -20,7 +20,7 @@ In this order:
 1. `HANDOFF.md`
 2. `STATUS.md`
 3. `tasks/TASK_026.md`
-4. `artifacts/stage_2/selection_remediation.json`
+4. `artifacts/stage_2/microstructure_decision.json`
 5. only then inspect implementation/evidence files as needed
 
 Do not reconstruct project state from chat memory when repository state disagrees.
@@ -397,23 +397,23 @@ Start **TASK-026 — Stage 2 Economic Bottleneck Adjudication**.
 No broad signal mining, LightGBM, Jev/GPT runtime, OMS/signing/orders, private
 capture, or live trading.
 
-## Session checkpoint — 2026-09-27 00:23 CEST
+## Session checkpoint — post TASK-025 closeout
 
 This checkpoint exists specifically to start a new chat/session without reconstructing
 state from conversational history.
 
-- project-state base before the handoff docs: `755adce9213c62e7dbbbae30a041479fc375e030`;
-- handoff checkpoint merged by PR #39 at `671830844396bee293b449f8354cee7db2b259b8`;
-- TASK-024 completion CI run `36273758772`: **SUCCESS**;
+- TASK-025 closeout merged by PR #41 at `37456e497cb0ab856ece48b384b8cbea1c9f856f`;
+- PR #41 pre-merge CI run `36278783155`: **SUCCESS**;
 - always verify the latest `main` before continuing;
 - current work package: **TASK-026 — Stage 2 Economic Bottleneck Adjudication**;
 - old Stage-2 confirmation: **UNOPENED_AND_EXCLUDED**;
-- fresh registered test evidence after TASK-024: **none**;
+- fresh development validation after TASK-025: **none**;
+- fresh registered test evidence after TASK-025: **none**;
 - live trading / OMS / signing / private account capture: **FORBIDDEN**;
 - user action required now: **none**.
 
 For a fresh session, trust repository state over chat memory. Read
-`HANDOFF.md` → `STATUS.md` → `tasks/TASK_026.md`, then continue TASK-025
+`HANDOFF.md` → `STATUS.md` → `tasks/TASK_026.md`, then continue TASK-026
 autonomously until a real external blocker or human gate is reached.
 
 ## Historical Frontier Gate outcomes
@@ -467,9 +467,9 @@ Do **not**:
 - delete/rewrite accepted or failed evidence;
 - compare cross-boot monotonic timestamps.
 
-The bounded logistic baselines already used in TASK-023/TASK-024 are historical
-completed experiments. TASK-025 permits exactly the model scope declared in
-`tasks/TASK_026.md` and no broader model search.
+The bounded logistic baselines used in TASK-023/TASK-024 and the bounded
+microstructure family in TASK-025 are completed experiments. TASK-026 must select
+one next evidence/economics path before any new predictive model search.
 
 Preserve failed/incomplete segments and negative experiments for diagnostics.
 

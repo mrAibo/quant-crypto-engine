@@ -8,7 +8,7 @@
 - GitHub: `mrAibo/quant-crypto-engine`
 - Branch to start from: `main`
 - Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
-- Current task: **TASK-024 — Stage 2 Longer-Horizon Economic Development**
+- Current task: **TASK-025 — Stage 2 Bounded Microstructure Economic Development**
 - Frontier Gate: **PASS_FEASIBILITY**
 - Economic edge / predictability: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -19,7 +19,7 @@ In this order:
 
 1. `HANDOFF.md`
 2. `STATUS.md`
-3. `tasks/TASK_024.md`
+3. `tasks/TASK_025.md`
 4. `artifacts/stage_2/selection_remediation.json`
 5. only then inspect implementation/evidence files as needed
 
@@ -352,19 +352,38 @@ Artifacts:
 - `artifacts/stage_2/economic_logistic_development.json`
   SHA-256 `285775b8febb226414bd838121f99b15b72d5b46edb13383b12398b8c80ccaf8`.
 
+## TASK-024 result
+
+Complete.
+
+- decision: **STOP_300S_FAMILY**;
+- decision artifact:
+  `artifacts/stage_2/economic_300s_decision.json`;
+- SHA-256:
+  `b36027ab6436258b4970e974280ee3669813c585d7deb96a29f00079aca12eb6`;
+- old confirmation: **UNOPENED_AND_EXCLUDED**;
+- fresh registered test evidence collected: **false**.
+
+The 300s deterministic family remained economically negative and under-supported.
+The fixed 300s logistic fallback selected zero valid DEV_B trades.
+
 ## Exact next action
 
-Start **TASK-024 — Stage 2 Longer-Horizon Economic Development**.
+Start **TASK-025 — Stage 2 Bounded Microstructure Economic Development**.
 
-1. preserve old confirmation unopened/excluded;
-2. bind the development-only 60/120/300s horizon context and pre-outcome 300s registry;
-3. reproduce the 300s development cache from evidence before the old confirmation wall;
-4. evaluate exactly the frozen four deterministic candidates;
-5. only if they all fail, evaluate the already preregistered 300s logistic fallback;
-6. commit FREEZE_300S_FAMILY or STOP_300S_FAMILY.
+1. keep old confirmation unopened/excluded;
+2. build point-in-time top-5 depth, Hyperliquid 5s trade flow, Binance 5s trade
+   flow, local/reference 5s returns, cross-venue return gap, spread and BBO
+   imbalance;
+3. use only exposed DEVELOPMENT evidence first;
+4. freeze the small feature/model/horizon budget before DEV_B outcomes;
+5. require positive executable partial-known-cost economics before any fresh test
+   campaign;
+6. use Hyperliquid historical requester-pays L2 only as optional development
+   expansion if AWS access is later configured.
 
-No new thresholds after 300s outcomes, no broad horizon sweep, LightGBM, Jev,
-OMS/signing, private endpoints, or live trading.
+No broad feature mining, new features after DEV_B, LightGBM, Jev, OMS/signing,
+private endpoints, or live trading.
 
 ## Frontier Gate outcomes
 

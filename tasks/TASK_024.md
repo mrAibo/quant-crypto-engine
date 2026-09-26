@@ -2,7 +2,7 @@
 
 ## Status
 
-**READY TO START**
+**COMPLETE**
 
 ## Context
 
@@ -108,3 +108,38 @@ and does not replace prospective receive-time evidence.
 - OMS/signing/orders;
 - private/account capture;
 - capital deployment.
+
+
+## Final result — 2026-09-26
+
+TASK-024 is complete.
+
+Frozen development chain:
+
+- horizon context SHA-256
+  `effefa74fe611bc2e77bc40177cf652193632b1163768a384870a3eb579dc722`;
+- horizon decision SHA-256
+  `626f85a08ca187d0c1762cdc7a22c49dfe2301baa97ad9d09c1fdd5acfb164e6`;
+- pre-outcome 300s registry SHA-256
+  `f0290fc70dda2911afab02f1a92b4f4262ff6ec1883a25fa86cb129fd4d2a7a8`;
+- 300s development cache SHA-256
+  `459e85a618f5026862428eadd34a652fe1bc63d59d19580e3ea38cf0d3d243b4`;
+- deterministic result SHA-256
+  `b7555046b013a6564560095d36c4cd2a7638fc4b5b880e8359acd08919920201`;
+- logistic fallback SHA-256
+  `a11358926b8b69f764e3e0a595f913d17baec8f133521efb81f1f9578ce456d0`.
+
+Decision artifact:
+
+- `artifacts/stage_2/economic_300s_decision.json`;
+- SHA-256
+  `b36027ab6436258b4970e974280ee3669813c585d7deb96a29f00079aca12eb6`;
+- decision: **STOP_300S_FAMILY**.
+
+No deterministic candidate passed. The fixed logistic fallback selected zero valid
+DEV_B trades at both preregistered score gates.
+
+The old confirmation partition remains unopened/excluded. No fresh test evidence was
+collected.
+
+Next work package: `tasks/TASK_025.md`.

@@ -9,9 +9,9 @@
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `main`
 - Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
-- Current work package: **TASK-024 — Stage 2 Longer-Horizon Economic Development**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019, TASK-020, TASK-021, TASK-022, TASK-023**
-- Economic status: **Frontier Gate PASS_FEASIBILITY; first registered H1/H2 family STOPPED; net edge UNPROVEN**
+- Current work package: **TASK-025 — Stage 2 Bounded Microstructure Economic Development**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019, TASK-020, TASK-021, TASK-022, TASK-023, TASK-024**
+- Economic status: **Frontier Gate PASS_FEASIBILITY; bounded 50s and 300s economic families STOPPED; net edge UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
 
@@ -597,14 +597,30 @@ negative. No fresh test evidence is justified for this 50-second family.
 
 The old confirmation partition remains unopened/excluded.
 
+## Completed — TASK-024 / longer-horizon development
+
+Frozen decision artifact:
+
+- `artifacts/stage_2/economic_300s_decision.json`
+- SHA-256 `b36027ab6436258b4970e974280ee3669813c585d7deb96a29f00079aca12eb6`
+- decision: **STOP_300S_FAMILY**
+
+The 60/120/300s development context selected 300 seconds before Hyperliquid 300s
+outcomes were evaluated. The frozen 300s deterministic family failed its economic /
+support gate and the preregistered logistic fallback selected zero valid DEV_B trades
+at both frozen score gates.
+
+Old confirmation remains **UNOPENED_AND_EXCLUDED**. No fresh registered test evidence
+was collected.
+
 ## Current task
 
-Read **[`tasks/TASK_024.md`](tasks/TASK_024.md)**.
+Read **[`tasks/TASK_025.md`](tasks/TASK_025.md)**.
 
-TASK-024 treats a longer horizon as a new development family. The pre-outcome
-1-2-5 minute context selected 300 seconds for development. Evaluate only the frozen
-300s registry and its single preregistered logistic fallback, still without opening
-old confirmation or collecting fresh test evidence.
+TASK-025 evaluates one bounded causal microstructure family using exposed
+development-only L2/trade/reference evidence. The first family is restricted to
+predeclared depth, trade-flow, short-return, cross-venue-gap, spread and BBO features.
+No fresh registered test data is collected unless development economics pass.
 
 ## User actions currently required
 

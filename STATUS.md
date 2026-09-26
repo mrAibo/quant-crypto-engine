@@ -415,6 +415,32 @@ TASK-018 prospective scheduling was stopped after the Gate sample was frozen. Ac
 
 Artifact: `artifacts/stage_05/frontier_gate_50s.json`.
 
+### Auxiliary retrospective research checkpoint
+
+This track remains physically and semantically separate from the frozen TASK-018 adjudication, but can provide non-gating research context for later stages.
+
+Merged provenance:
+
+- PR #23: split prospective capture/processing;
+- PR #24: non-gating retrospective archive planner/downloader;
+- PR #25: deterministic checksum-reverified Binance 50-second retrospective analyzer.
+
+Retrospective root: `/var/lib/quant-crypto-engine/retrospective`.
+
+For **2026-08-01..2026-08-07**:
+
+- deterministic source plan: **350** entries;
+- Binance Data Vision: **14/14** BTCUSDT/ETHUSDT daily aggTrades archives verified, **14 manifests**, about **128 MiB**;
+- Hyperliquid: **336** planned hourly BTC/ETH L2 objects remain unavailable locally because the official Requester Pays archive requires an authenticated AWS identity;
+- all retrospective artifacts remain labeled `EXCLUDED_FROM_TASK_018_FRONTIER_GATE`.
+
+Deterministic Binance trade-price context:
+
+- BTCUSDT: **12,096 50-second windows**, q95 ≈ **6.8355 bps**;
+- ETHUSDT: **12,096 50-second windows**, q95 ≈ **9.2205 bps**.
+
+These retrospective trade-price statistics are not Hyperliquid BBO-mid evidence and were not substituted into the prospective Gate.
+
 ## Current task
 
 Read **[`tasks/TASK_019.md`](tasks/TASK_019.md)**.
@@ -423,9 +449,9 @@ TASK-019 starts Stage 1 by building the minimal shared causal simulator/accounti
 
 ## User actions currently required
 
-No command or repository action is currently required from the user while collection remains healthy.
+No user action is required for the completed Frontier Gate.
 
-Physical requirement: keep the collector machine powered and on AC power. AC sleep has been disabled for the campaign; battery sleep remains unchanged.
+TASK-018 prospective scheduling is quiesced. `Aibo` only needs to be available when Stage 1 implementation/testing is being performed; continuous evidence collection is no longer required for the frozen Gate result.
 
 If a future blocker cannot be bypassed safely through available tooling, document the blocker rather than weakening tests, evidence rules, or quality gates.
 

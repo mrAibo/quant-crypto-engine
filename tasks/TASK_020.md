@@ -2,7 +2,7 @@
 
 ## Status
 
-**NEXT AFTER TASK-019**
+**COMPLETE**
 
 ## Context
 
@@ -90,3 +90,25 @@ This list is a design boundary, not permission to exhaustively search transforma
 
 Regularized logistic regression remains a later bounded baseline after the deterministic
 signal-existence protocol is frozen and exercised.
+
+
+## Final implementation — 2026-09-26
+
+TASK-020 is complete.
+
+- implementation PR #32 merged as `b3568644c900d5e561597cd5c01b3c10ece0a720`;
+- pre-merge CI `36248421789`: green;
+- post-merge CI `36248457686`: green;
+- local final gate: **408 tests PASS**, Ruff/format PASS, strict mypy PASS on **93 source files**;
+- frozen BTC dataset: **3,259 rows**, SHA-256 `3eeb0b405a9db439b7711b453ec9820707068bbfba855bf120124b79aa32b237`;
+- DEVELOPMENT / SELECTION / CONFIRMATION boundaries were derived from decision-time feature availability only, before H1/H2 evaluation;
+- registered family contains only H1 and H2 plus diagnostic controls;
+- confirmation is champion-only and runner-up reuse is forbidden;
+- business-net remains NOT_EVALUABLE while required real-world costs remain UNKNOWN.
+
+Artifacts:
+
+- `artifacts/stage_2/signal_protocol.json`;
+- `docs/research/stage2_signal_protocol.md`.
+
+Next work package: `tasks/TASK_021.md`.

@@ -8,9 +8,9 @@
 
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `main`
-- Current phase: **Stage 1 — Minimal Shared Simulator**
-- Current work package: **TASK-019 — Stage 1 Minimal Shared Simulator**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018**
+- Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
+- Current work package: **TASK-020 — Stage 2 Signal-Existence Dataset and Falsification Protocol**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019**
 - Economic status: **Frontier Gate PASS_FEASIBILITY; predictability / net edge UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
@@ -441,11 +441,36 @@ Deterministic Binance trade-price context:
 
 These retrospective trade-price statistics are not Hyperliquid BBO-mid evidence and were not substituted into the prospective Gate.
 
+### Completed — TASK-019 / Stage-1 simulator foundation
+
+PR #30 merged as `d963dd59c7e2fe9c873bfc61dd029875131dcbef`.
+
+Delivered:
+
+- causal quote/opportunity/policy contracts;
+- no-trade and deterministic seeded randomized-direction controls;
+- one shared taker executable-price accounting path;
+- exact separation of fee, latency, impact and funding components;
+- spread embedded in executable prices and not double-counted;
+- UNKNOWN costs remain null rather than fabricated as zero;
+- deterministic complete trial ledger/report + SHA-256;
+- normalized BBO adapter and fixed-horizon opportunity builder;
+- BTC PRIMARY / ETH REPLICATION separation;
+- `artifacts/stage_1/simulator_contract.json`;
+- `docs/research/simulator.md`.
+
+Validation:
+
+- pre-merge CI `36238838341`: Ruff/format/strict-mypy PASS, **389 tests PASS** on Python 3.12 and 3.13;
+- post-merge CI `36238897281`: Ruff/format/strict-mypy PASS, **389 tests PASS** on Python 3.12 and 3.13.
+
+TASK-019 establishes simulator/accounting infrastructure only. Predictability and positive net expectancy remain **UNPROVEN**.
+
 ## Current task
 
-Read **[`tasks/TASK_019.md`](tasks/TASK_019.md)**.
+Read **[`tasks/TASK_020.md`](tasks/TASK_020.md)**.
 
-TASK-019 starts Stage 1 by building the minimal shared causal simulator/accounting foundation. No production execution stack is permitted before Gate 1.
+TASK-020 freezes the Stage-2 causal feature/opportunity dataset and falsification protocol before candidate-policy or model evaluation. No broad feature mining, hyperparameter search, Jev/GPT runtime, private/account capture, OMS/signing, or live trading is permitted.
 
 ## User actions currently required
 

@@ -26,6 +26,8 @@ _PER_HYPOTHESIS_ALPHA = Decimal("0.025")
 _POWER = Decimal("0.80")
 _SELECTION_ALT_ACCURACY = Decimal("0.55")
 _CONFIRMATION_ALT_ACCURACY = Decimal("0.54")
+_FRONTIER_ZERO_MOVE_FRACTION = Decimal("0.1063685636856368563685636856")
+_FRONTIER_DKW_MAX_CDF_ERROR = Decimal("0.025")
 _NULL_ACCURACY = Decimal("0.50")
 _Z_975 = Decimal("1.959963984540054")
 _Z_80 = Decimal("0.8416212335729143")
@@ -350,6 +352,29 @@ class PowerPlan:
     def confirmation_min_evaluable(self) -> int:
         return directional_accuracy_planning_count(self.confirmation_alternative_accuracy)
 
+    @property
+    def nonzero_fraction_lower_bound(self) -> Decimal:
+        lower = Decimal(1) - _FRONTIER_ZERO_MOVE_FRACTION - _FRONTIER_DKW_MAX_CDF_ERROR
+        if lower <= 0 or lower > 1:
+            raise SignalProtocolValidationError(
+                "frozen nonzero-label planning bound must lie in (0, 1]"
+            )
+        return lower
+
+    @property
+    def selection_min_label_available(self) -> int:
+        return _buffered_label_available_count(
+            self.selection_min_evaluable,
+            self.nonzero_fraction_lower_bound,
+        )
+
+    @property
+    def confirmation_min_label_available(self) -> int:
+        return _buffered_label_available_count(
+            self.confirmation_min_evaluable,
+            self.nonzero_fraction_lower_bound,
+        )
+
     def as_dict(self) -> dict[str, object]:
         return {
             "family_alpha": serialize_exact_decimal(self.family_alpha),
@@ -365,9 +390,18 @@ class PowerPlan:
                 self.confirmation_alternative_accuracy
             ),
             "confirmation_min_evaluable": self.confirmation_min_evaluable,
+            "frontier_zero_move_fraction": serialize_exact_decimal(_FRONTIER_ZERO_MOVE_FRACTION),
+            "frontier_dkw_max_cdf_error": serialize_exact_decimal(_FRONTIER_DKW_MAX_CDF_ERROR),
+            "nonzero_fraction_lower_bound": serialize_exact_decimal(
+                self.nonzero_fraction_lower_bound
+            ),
+            "selection_min_label_available": self.selection_min_label_available,
+            "confirmation_min_label_available": self.confirmation_min_label_available,
             "planning_note": (
-                "Normal-approximation directional-accuracy support is a planning floor; "
-                "directional hit rate is not the optimization target."
+                "Normal-approximation directional-accuracy support is the evaluable-row "
+                "floor. Feature+label-available support is buffered using the already "
+                "published Frontier zero-move fraction plus frozen DKW error; H1/H2 "
+                "candidate outcome signs or performance are not consulted."
             ),
         }
 
@@ -379,10 +413,17 @@ class PartitionPlan:
     development_row_count: int
     selection_row_count: int
     confirmation_row_count: int
-    selection_h1_ready: int
-    selection_h2_ready: int
-    confirmation_h1_ready: int
-    confirmation_h2_ready: int
+    selection_h1_feature_ready: int
+    selection_h2_feature_ready: int
+    selection_label_available: int
+    selection_h1_planning_ready: int
+    selection_h2_planning_ready: int
+    confirmation_h1_feature_ready: int
+    confirmation_h2_feature_ready: int
+    confirmation_label_available: int
+    confirmation_h1_planning_ready: int
+    confirmation_h2_planning_ready: int
+    selection_label_overlap_count: int
     power_plan: PowerPlan
 
     def __post_init__(self) -> None:
@@ -399,14 +440,42 @@ class PartitionPlan:
             raise SignalProtocolValidationError(
                 "development partition must contain at least one row"
             )
-        if self.selection_h1_ready < self.power_plan.selection_min_evaluable:
-            raise SignalProtocolValidationError("selection H1 support is insufficient")
-        if self.selection_h2_ready < self.power_plan.selection_min_evaluable:
-            raise SignalProtocolValidationError("selection H2 support is insufficient")
-        if self.confirmation_h1_ready < self.power_plan.confirmation_min_evaluable:
-            raise SignalProtocolValidationError("confirmation H1 support is insufficient")
-        if self.confirmation_h2_ready < self.power_plan.confirmation_min_evaluable:
-            raise SignalProtocolValidationError("confirmation H2 support is insufficient")
+        if self.selection_h1_planning_ready < self.power_plan.selection_min_label_available:
+            raise SignalProtocolValidationError(
+                "selection H1 buffered planning support is insufficient"
+            )
+        if self.selection_h2_planning_ready < self.power_plan.selection_min_label_available:
+            raise SignalProtocolValidationError(
+                "selection H2 buffered planning support is insufficient"
+            )
+        if self.confirmation_h1_planning_ready < self.power_plan.confirmation_min_label_available:
+            raise SignalProtocolValidationError(
+                "confirmation H1 buffered planning support is insufficient"
+            )
+        if self.confirmation_h2_planning_ready < self.power_plan.confirmation_min_label_available:
+            raise SignalProtocolValidationError(
+                "confirmation H2 buffered planning support is insufficient"
+            )
+        if self.selection_label_overlap_count != 0:
+            raise SignalProtocolValidationError(
+                "selection valid labels must not cross confirmation start"
+            )
+
+    @property
+    def selection_h1_ready(self) -> int:
+        return self.selection_h1_planning_ready
+
+    @property
+    def selection_h2_ready(self) -> int:
+        return self.selection_h2_planning_ready
+
+    @property
+    def confirmation_h1_ready(self) -> int:
+        return self.confirmation_h1_planning_ready
+
+    @property
+    def confirmation_h2_ready(self) -> int:
+        return self.confirmation_h2_planning_ready
 
     def partition_for(self, decision_recv_wall_ns: int) -> DatasetPartition:
         if decision_recv_wall_ns < self.selection_start_wall_ns:
@@ -422,15 +491,28 @@ class PartitionPlan:
             "development_row_count": self.development_row_count,
             "selection_row_count": self.selection_row_count,
             "confirmation_row_count": self.confirmation_row_count,
+            "selection_h1_feature_ready": self.selection_h1_feature_ready,
+            "selection_h2_feature_ready": self.selection_h2_feature_ready,
+            "selection_label_available": self.selection_label_available,
+            "selection_h1_planning_ready": self.selection_h1_planning_ready,
+            "selection_h2_planning_ready": self.selection_h2_planning_ready,
+            "confirmation_h1_feature_ready": self.confirmation_h1_feature_ready,
+            "confirmation_h2_feature_ready": self.confirmation_h2_feature_ready,
+            "confirmation_label_available": self.confirmation_label_available,
+            "confirmation_h1_planning_ready": self.confirmation_h1_planning_ready,
+            "confirmation_h2_planning_ready": self.confirmation_h2_planning_ready,
+            "selection_label_overlap_count": self.selection_label_overlap_count,
             "selection_h1_ready": self.selection_h1_ready,
             "selection_h2_ready": self.selection_h2_ready,
             "confirmation_h1_ready": self.confirmation_h1_ready,
             "confirmation_h2_ready": self.confirmation_h2_ready,
             "power_plan": self.power_plan.as_dict(),
             "boundary_semantics": (
-                "Derived from PRIMARY decision-time feature availability only; "
-                "future outcomes are not consulted. Equal wall timestamps stay in "
-                "the later partition."
+                "Derived before candidate evaluation from PRIMARY decision-time feature "
+                "availability plus label-availability/timing metadata only. Outcome sign "
+                "and magnitude are not consulted. Required support is buffered from the "
+                "already published Frontier zero-move fraction plus frozen DKW error. "
+                "Equal wall timestamps stay in the later partition."
             ),
         }
 
@@ -573,14 +655,14 @@ def derive_partition_plan(
     confirmation_start = _suffix_start_for_support(
         rows,
         end=len(rows),
-        minimum=plan.confirmation_min_evaluable,
+        minimum=plan.confirmation_min_label_available,
     )
     confirmation_start = _first_equal_wall_index(rows, confirmation_start)
 
     selection_start = _suffix_start_for_support(
         rows,
         end=confirmation_start,
-        minimum=plan.selection_min_evaluable,
+        minimum=plan.selection_min_label_available,
     )
     selection_start = _first_equal_wall_index(rows, selection_start)
 
@@ -594,16 +676,33 @@ def derive_partition_plan(
 
     selection_rows = rows[selection_start:confirmation_start]
     confirmation_rows = rows[confirmation_start:]
+    confirmation_wall_ns = rows[confirmation_start].decision_recv_wall_ns
     return PartitionPlan(
         selection_start_wall_ns=rows[selection_start].decision_recv_wall_ns,
-        confirmation_start_wall_ns=rows[confirmation_start].decision_recv_wall_ns,
+        confirmation_start_wall_ns=confirmation_wall_ns,
         development_row_count=selection_start,
         selection_row_count=len(selection_rows),
         confirmation_row_count=len(confirmation_rows),
-        selection_h1_ready=_ready_count(selection_rows, H1_ID),
-        selection_h2_ready=_ready_count(selection_rows, H2_ID),
-        confirmation_h1_ready=_ready_count(confirmation_rows, H1_ID),
-        confirmation_h2_ready=_ready_count(confirmation_rows, H2_ID),
+        selection_h1_feature_ready=_ready_count(selection_rows, H1_ID),
+        selection_h2_feature_ready=_ready_count(selection_rows, H2_ID),
+        selection_label_available=_label_available_count(selection_rows),
+        selection_h1_planning_ready=_planning_ready_count(selection_rows, H1_ID),
+        selection_h2_planning_ready=_planning_ready_count(selection_rows, H2_ID),
+        confirmation_h1_feature_ready=_ready_count(confirmation_rows, H1_ID),
+        confirmation_h2_feature_ready=_ready_count(confirmation_rows, H2_ID),
+        confirmation_label_available=_label_available_count(confirmation_rows),
+        confirmation_h1_planning_ready=_planning_ready_count(
+            confirmation_rows,
+            H1_ID,
+        ),
+        confirmation_h2_planning_ready=_planning_ready_count(
+            confirmation_rows,
+            H2_ID,
+        ),
+        selection_label_overlap_count=_selection_label_overlap_count(
+            selection_rows,
+            confirmation_wall_ns=confirmation_wall_ns,
+        ),
         power_plan=plan,
     )
 
@@ -651,9 +750,9 @@ def _suffix_start_for_support(
     h1 = 0
     h2 = 0
     for index in range(end - 1, -1, -1):
-        view = rows[index].decision_view()
-        h1 += int(view.feature_ready(H1_ID))
-        h2 += int(view.feature_ready(H2_ID))
+        row = rows[index]
+        h1 += int(_planning_ready(row, H1_ID))
+        h2 += int(_planning_ready(row, H2_ID))
         if h1 >= minimum and h2 >= minimum:
             return index
     raise SignalProtocolValidationError(
@@ -676,6 +775,49 @@ def _ready_count(
     hypothesis_id: str,
 ) -> int:
     return sum(row.decision_view().feature_ready(hypothesis_id) for row in rows)
+
+
+def _label_available_count(rows: tuple[SignalFeatureRow, ...]) -> int:
+    return sum(row.outcome.available for row in rows)
+
+
+def _planning_ready(row: SignalFeatureRow, hypothesis_id: str) -> bool:
+    return row.decision_view().feature_ready(hypothesis_id) and row.outcome.available
+
+
+def _planning_ready_count(
+    rows: tuple[SignalFeatureRow, ...],
+    hypothesis_id: str,
+) -> int:
+    return sum(_planning_ready(row, hypothesis_id) for row in rows)
+
+
+def _selection_label_overlap_count(
+    rows: tuple[SignalFeatureRow, ...],
+    *,
+    confirmation_wall_ns: int,
+) -> int:
+    return sum(
+        row.outcome.available
+        and row.outcome.exit_recv_wall_ns is not None
+        and row.outcome.exit_recv_wall_ns >= confirmation_wall_ns
+        for row in rows
+    )
+
+
+def _buffered_label_available_count(
+    minimum_evaluable: int,
+    nonzero_fraction_lower_bound: Decimal,
+) -> int:
+    if minimum_evaluable <= 0:
+        raise SignalProtocolValidationError("minimum_evaluable must be positive")
+    if nonzero_fraction_lower_bound <= 0 or nonzero_fraction_lower_bound > 1:
+        raise SignalProtocolValidationError("nonzero_fraction_lower_bound must lie in (0, 1]")
+    return int(
+        (Decimal(minimum_evaluable) / nonzero_fraction_lower_bound).to_integral_value(
+            rounding=ROUND_CEILING
+        )
+    )
 
 
 def _row_sort_key(row: SignalFeatureRow) -> tuple[int, int, str]:

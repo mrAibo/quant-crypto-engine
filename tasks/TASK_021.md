@@ -18,11 +18,13 @@ Evaluate the two pre-registered deterministic hypotheses exactly once on the fro
 
 - protocol: `artifacts/stage_2/signal_protocol.json`;
 - BTC dataset SHA-256: `3eeb0b405a9db439b7711b453ec9820707068bbfba855bf120124b79aa32b237`;
-- SELECTION wall interval begins at `1790292370076995098` and ends before `1790341044387002988`;
-- SELECTION rows: **847**;
-- H1-ready rows: **783**;
-- H2-ready rows: **847**;
-- confirmation rows/outcomes are forbidden input.
+- amended SELECTION wall interval begins at `1790235572690884130` and ends before `1790302269067780894`;
+- SELECTION rows: **1,123**;
+- H1 feature-ready rows: **1,059**; H1 planning-ready rows: **902**;
+- H2 feature-ready rows: **1,123**; H2 planning-ready rows: **962**;
+- the original directional-evaluable planning floor remains **783**;
+- confirmation rows/outcomes are forbidden input;
+- the amendment was frozen before any registered H1/H2 candidate performance was calculated.
 
 ## Registered trials
 

@@ -69,7 +69,7 @@ def _row(
     h1_ready: bool = True,
     h2_ready: bool = True,
 ) -> SignalFeatureRow:
-    decision_wall = 1_000_000 + index if wall is None else wall
+    decision_wall = 1_000_000 + index * 100 if wall is None else wall
     entry = _quote(
         f"entry-{index}",
         index * 100,
@@ -135,6 +135,9 @@ def test_directional_planning_counts_are_frozen_and_derived() -> None:
     plan = PowerPlan()
     assert plan.selection_min_evaluable == 783
     assert plan.confirmation_min_evaluable == 1225
+    assert plan.nonzero_fraction_lower_bound == Decimal("0.8686314363143631436314363144")
+    assert plan.selection_min_label_available == 902
+    assert plan.confirmation_min_label_available == 1411
     assert plan.per_hypothesis_alpha == Decimal("0.025")
 
 
@@ -200,25 +203,71 @@ def test_partition_plan_uses_feature_availability_not_outcomes() -> None:
     second = derive_partition_plan(inverted)
 
     assert first == second
-    assert first.development_row_count == 492
-    assert first.selection_row_count == 783
-    assert first.confirmation_row_count == 1225
-    assert first.selection_h1_ready == 783
-    assert first.confirmation_h2_ready == 1225
+    assert first.development_row_count == 187
+    assert first.selection_row_count == 902
+    assert first.confirmation_row_count == 1411
+    assert first.selection_h1_feature_ready == 902
+    assert first.selection_h1_planning_ready == 902
+    assert first.confirmation_h2_feature_ready == 1411
+    assert first.confirmation_h2_planning_ready == 1411
+    assert first.selection_label_overlap_count == 0
+
+
+def test_partition_plan_uses_label_availability_metadata_not_label_sign() -> None:
+    rows = list(_row(index, outcome_sign=1) for index in range(2600))
+    baseline = derive_partition_plan(tuple(rows))
+
+    unavailable_index = (baseline.confirmation_start_wall_ns - 1_000_000) // 100
+    unavailable = rows[unavailable_index]
+    rows[unavailable_index] = replace(
+        unavailable,
+        outcome=OutcomeLabel(
+            signed_mid_return_bps=None,
+            direction=None,
+            exit_event_id=None,
+            exit_recv_mono_ns=None,
+            exit_recv_wall_ns=None,
+            invalid_reasons=("OUTCOME_UNAVAILABLE_FOR_TEST",),
+        ),
+    )
+
+    shifted = derive_partition_plan(tuple(rows))
+    assert shifted.confirmation_start_wall_ns < baseline.confirmation_start_wall_ns
+    assert shifted.confirmation_h1_planning_ready >= 1411
+    assert shifted.confirmation_h2_planning_ready >= 1411
+
+    def invert_available_outcome(row: SignalFeatureRow) -> SignalFeatureRow:
+        if not row.outcome.available:
+            return row
+        signed = row.outcome.signed_mid_return_bps
+        direction = row.outcome.direction
+        assert signed is not None
+        assert direction is not None
+        return replace(
+            row,
+            outcome=replace(
+                row.outcome,
+                signed_mid_return_bps=-signed,
+                direction=-direction,
+            ),
+        )
+
+    inverted = tuple(invert_available_outcome(row) for row in rows)
+    assert derive_partition_plan(inverted) == shifted
 
 
 def test_equal_wall_timestamps_stay_in_later_partition() -> None:
     rows = list(_row(index) for index in range(2500))
     base = derive_partition_plan(tuple(rows))
-    boundary_wall = rows[base.confirmation_start_wall_ns - 1_000_000].decision_recv_wall_ns
+    index = (base.confirmation_start_wall_ns - 1_000_000) // 100
+    boundary_wall = rows[index].decision_recv_wall_ns
     # Make the immediately preceding row share the confirmation boundary wall.
-    index = base.confirmation_start_wall_ns - 1_000_000
     rows[index - 1] = _row(index - 1, wall=boundary_wall)
 
     shifted = derive_partition_plan(tuple(rows))
 
     assert shifted.confirmation_start_wall_ns == boundary_wall
-    assert shifted.confirmation_row_count == 1226
+    assert shifted.confirmation_row_count == 1412
 
 
 def test_partition_rows_preserves_identical_row_objects_for_controls() -> None:

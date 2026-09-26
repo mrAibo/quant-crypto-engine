@@ -67,29 +67,44 @@
     "selection_min_evaluable": 783,
     "confirmation_alternative_accuracy": "0.54",
     "confirmation_min_evaluable": 1225,
-    "note": "Normal-approximation counts are planning floors; directional hit rate is not the optimization target."
+    "note": "Directional-evaluable planning floors remain 783/1225. Pre-selection support is buffered to 902/1411 feature+label-available rows using the already published Frontier zero-move fraction plus DKW error; H1/H2 candidate outcome signs or performance were not consulted.",
+    "frontier_zero_move_fraction": "0.1063685636856368563685636856",
+    "frontier_dkw_max_cdf_error": "0.025",
+    "nonzero_fraction_lower_bound": "0.8686314363143631436314363144",
+    "selection_min_label_available": 902,
+    "confirmation_min_label_available": 1411
   },
   "partitions": {
-    "derivation": "PRIMARY decision-time feature availability only; outcome values are not consulted; equal wall timestamps stay in the later partition.",
-    "selection_start_wall_ns": 1790292370076995098,
-    "selection_start_utc": "2026-09-24T23:26:10.076995+00:00",
-    "confirmation_start_wall_ns": 1790341044387002988,
-    "confirmation_start_utc": "2026-09-25T12:57:24.387003+00:00",
+    "derivation": "PRIMARY decision-time feature availability plus label availability/timing metadata only; outcome sign/magnitude are not consulted. Support is buffered using the already published Frontier zero-move fraction plus frozen DKW error. Equal wall timestamps stay in the later partition.",
+    "selection_start_wall_ns": 1790235572690884130,
+    "selection_start_utc": "2026-09-24T07:39:32.690884+00:00",
+    "confirmation_start_wall_ns": 1790302269067780894,
+    "confirmation_start_utc": "2026-09-25T02:11:09.067781+00:00",
     "development": {
-      "row_count": 1110,
-      "h1_ready": 1046,
-      "h2_ready": 1110,
-      "outcome_use": "Implementation/data-quality checks only. Any outcome-informed protocol change requires a new protocol version and new untouched confirmation."
+      "row_count": 159,
+      "h1_feature_ready": 149,
+      "h2_feature_ready": 159,
+      "label_available": 139,
+      "h1_planning_ready": 129,
+      "h2_planning_ready": 139,
+      "outcome_use": "No outcome sign or magnitude was inspected for the amendment."
     },
     "selection": {
-      "row_count": 847,
-      "h1_ready": 783,
-      "h2_ready": 847
+      "row_count": 1123,
+      "h1_feature_ready": 1059,
+      "h2_feature_ready": 1123,
+      "label_available": 962,
+      "h1_planning_ready": 902,
+      "h2_planning_ready": 962,
+      "selection_label_overlap_count": 0
     },
     "confirmation": {
-      "row_count": 1302,
-      "h1_ready": 1225,
-      "h2_ready": 1302,
+      "row_count": 1977,
+      "h1_feature_ready": 1846,
+      "h2_feature_ready": 1977,
+      "label_available": 1515,
+      "h1_planning_ready": 1411,
+      "h2_planning_ready": 1515,
       "untouched": true
     }
   },
@@ -155,5 +170,24 @@
     "OMS/signing/orders",
     "private/account capture",
     "capital deployment"
-  ]
+  ],
+  "protocol_amendment": {
+    "amendment_id": "S2-PRESELECTION-POWER-BUFFER-V1",
+    "applied_before_registered_selection_run": true,
+    "candidate_outcomes_inspected": false,
+    "reason": "The original partition derivation guaranteed feature-ready counts equal to directional-evaluable planning floors, but zero-direction labels are excluded from the Bernoulli denominator. The amendment buffers feature+label-available support using only the already published Frontier zero-move fraction plus frozen DKW error.",
+    "allowed_inputs": [
+      "decision-time feature readiness",
+      "label availability/timing/invalidity metadata without sign or magnitude",
+      "Frontier Gate zero_move_fraction",
+      "Frontier Gate DKW max CDF error"
+    ],
+    "forbidden_inputs": [
+      "H1 directional correctness",
+      "H2 directional correctness",
+      "H1/H2 PnL",
+      "selection champion result",
+      "confirmation candidate performance"
+    ]
+  }
 }

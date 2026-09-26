@@ -290,17 +290,27 @@ Frozen PRIMARY dataset:
 - 182 Gate segments;
 - **3,259** BTC rows;
 - SHA-256 `3eeb0b405a9db439b7711b453ec9820707068bbfba855bf120124b79aa32b237`;
-- DEVELOPMENT **1,110** rows;
-- SELECTION **847** rows — H1-ready **783**, H2-ready **847**;
-- untouched CONFIRMATION **1,302** rows — H1-ready **1,225**, H2-ready **1,302**.
+The pre-selection power-buffer amendment was applied before any H1/H2 candidate
+performance was calculated. It uses only the published Frontier zero-move fraction
+plus frozen DKW error, decision-time feature readiness, and label
+availability/timing metadata.
 
-Registered hypotheses are only H1 5-second Binance reference lead and H2 Hyperliquid BBO size imbalance. No candidate performance was used to derive the feature definitions or chronological boundaries.
+Amended partitions:
+
+- DEVELOPMENT **159** rows;
+- SELECTION **1,123** rows — H1 planning-ready **902**, H2 **962**;
+- untouched CONFIRMATION **1,977** rows — H1 planning-ready **1,411**, H2 **1,515**;
+- selection start wall-ns `1790235572690884130`;
+- confirmation start wall-ns `1790302269067780894`;
+- selection valid-label overlap into confirmation: **0**.
+
+Registered hypotheses are only H1 5-second Binance reference lead and H2 Hyperliquid BBO size imbalance. No H1/H2 correctness, PnL, or champion performance was used to derive the amended boundaries.
 
 ## Exact next action
 
 Start **TASK-021 — Stage 2 Registered H1/H2 Selection Run**.
 
-Evaluate only the frozen BTC SELECTION partition:
+Evaluate only the amended frozen BTC SELECTION partition:
 
 1. run H1 and H2 exactly once under their registered trial IDs;
 2. compute the frozen directional, dependence, and partial-known-cost metrics;

@@ -15,6 +15,26 @@
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
 
+## New-session checkpoint — 2026-09-27 00:23 CEST
+
+- authoritative `main`: `755adce9213c62e7dbbbae30a041479fc375e030`;
+- latest completed work package: **TASK-024**;
+- PR #38: merged;
+- post-merge CI run `36273758772`: **SUCCESS**;
+- current work package: **TASK-025 — Stage 2 Bounded Microstructure Economic Development**;
+- old confirmation: **UNOPENED_AND_EXCLUDED**;
+- no fresh registered test campaign has been started for TASK-025;
+- no user action is currently required.
+
+Fresh-session read order:
+
+1. `HANDOFF.md`
+2. `STATUS.md`
+3. `tasks/TASK_025.md`
+4. inspect only the implementation/evidence needed for TASK-025
+
+Do not recover project state from old chat messages when repository state differs.
+
 ## Primary objective
 
 Determine whether an automated crypto strategy can produce reproducible **positive net expectancy after all real costs**, using the shortest scientifically defensible path. If evidence survives, evolve the same architecture toward unattended 24/7 trading.

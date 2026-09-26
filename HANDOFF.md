@@ -8,7 +8,7 @@
 - GitHub: `mrAibo/quant-crypto-engine`
 - Branch to start from: `main`
 - Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
-- Current task: **TASK-022 — Stage 2 Selection Evidence Remediation**
+- Current task: **TASK-023 — Stage 2 New Economic Signal Family Design**
 - Frontier Gate: **PASS_FEASIBILITY**
 - Economic edge / predictability: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -19,8 +19,8 @@ In this order:
 
 1. `HANDOFF.md`
 2. `STATUS.md`
-3. `tasks/TASK_022.md`
-4. `artifacts/stage_2/selection_result.json`
+3. `tasks/TASK_023.md`
+4. `artifacts/stage_2/selection_remediation.json`
 5. only then inspect implementation/evidence files as needed
 
 Do not reconstruct project state from chat memory when repository state disagrees.
@@ -320,17 +320,36 @@ H1 had 644 directional-evaluable rows versus 783 required, a 49.9821% dependence
 
 H2 had 930 directional-evaluable rows, 58.3871% directional accuracy and a 54.8815% dependence-adjusted lower bound, but its mean partial-known-cost PnL was negative. It is not promotable on directional evidence alone.
 
+## TASK-022 remediation result
+
+Complete.
+
+- artifact: `artifacts/stage_2/selection_remediation.json`;
+- SHA-256: `fec7cbb77fe67c672a2319fadee7e6a94f79fef013c16c6033b55fbb07f574d5`;
+- decision: **STOP_REGISTERED_H1_H2_FAMILY**;
+- old confirmation: **UNOPENED_AND_EXCLUDED**.
+
+H1 attrition was 1,123 total -> 1,059 feature-ready -> 744 actionable -> 663 traded
+-> 644 directional-evaluable. A conservative unchanged-H1 replication would require
+1,719 fresh selection rows and 2,688 fresh confirmation rows, but it is not
+registered because H1 also failed frozen taker partial-known-cost economics.
+
+Historical data is now explicitly development/diagnostic evidence only.
+
 ## Exact next action
 
-Start **TASK-022 — Stage 2 Selection Evidence Remediation**.
+Start **TASK-023 — Stage 2 New Economic Signal Family Design**.
 
-1. keep TASK-021 immutable;
-2. keep the existing confirmation partition unopened;
-3. keep H2 as a registered selection failure under taker economics;
-4. explain H1 support attrition and derive any fresh-evidence requirement without retroactive tuning;
-5. decide whether to register a fresh independent H1 replication or stop the H1/H2 family.
+1. use already exposed/non-holdout and historical evidence only for development;
+2. target executable economic value rather than directional accuracy alone;
+3. keep the candidate family small and the testing budget explicit;
+4. keep the old confirmation unopened/excluded;
+5. freeze the new protocol before collecting its test evidence;
+6. use new prospective Hyperliquid + Binance data for the new registered SELECTION
+   and later untouched CONFIRMATION.
 
-No confirmation evaluation, logistic regression, LightGBM, Jev, OMS/signing, private endpoints, or live trading.
+No old-confirmation evaluation, broad feature sweep, LightGBM by default, Jev,
+OMS/signing, private endpoints, or live trading.
 
 ## Frontier Gate outcomes
 

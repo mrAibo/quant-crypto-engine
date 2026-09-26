@@ -8,7 +8,7 @@
 - GitHub: `mrAibo/quant-crypto-engine`
 - Branch to start from: `main`
 - Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
-- Current task: **TASK-023 — Stage 2 New Economic Signal Family Design**
+- Current task: **TASK-024 — Stage 2 Longer-Horizon Economic Development**
 - Frontier Gate: **PASS_FEASIBILITY**
 - Economic edge / predictability: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -19,7 +19,7 @@ In this order:
 
 1. `HANDOFF.md`
 2. `STATUS.md`
-3. `tasks/TASK_023.md`
+3. `tasks/TASK_024.md`
 4. `artifacts/stage_2/selection_remediation.json`
 5. only then inspect implementation/evidence files as needed
 
@@ -336,19 +336,34 @@ registered because H1 also failed frozen taker partial-known-cost economics.
 
 Historical data is now explicitly development/diagnostic evidence only.
 
+## TASK-023 development result
+
+Complete.
+
+- deterministic 50s family: no positive DEV_B economic candidate;
+- fixed regularized logistic baseline: `STOP_LOGISTIC_DEVELOPMENT`;
+- no fresh 50s test campaign is justified;
+- old confirmation remains **UNOPENED_AND_EXCLUDED**.
+
+Artifacts:
+
+- `artifacts/stage_2/economic_family_development.json`
+  SHA-256 `ae62dff1172ca7666b1119c4c8a0f1ca61757f428c30b66b73a208b34c2a3b67`;
+- `artifacts/stage_2/economic_logistic_development.json`
+  SHA-256 `285775b8febb226414bd838121f99b15b72d5b46edb13383b12398b8c80ccaf8`.
+
 ## Exact next action
 
-Start **TASK-023 — Stage 2 New Economic Signal Family Design**.
+Start **TASK-024 — Stage 2 Longer-Horizon Economic Development**.
 
-1. use already exposed/non-holdout and historical evidence only for development;
-2. target executable economic value rather than directional accuracy alone;
-3. keep the candidate family small and the testing budget explicit;
-4. keep the old confirmation unopened/excluded;
-5. freeze the new protocol before collecting its test evidence;
-6. use new prospective Hyperliquid + Binance data for the new registered SELECTION
-   and later untouched CONFIRMATION.
+1. preserve old confirmation unopened/excluded;
+2. bind the development-only 60/120/300s horizon context and pre-outcome 300s registry;
+3. reproduce the 300s development cache from evidence before the old confirmation wall;
+4. evaluate exactly the frozen four deterministic candidates;
+5. only if they all fail, evaluate the already preregistered 300s logistic fallback;
+6. commit FREEZE_300S_FAMILY or STOP_300S_FAMILY.
 
-No old-confirmation evaluation, broad feature sweep, LightGBM by default, Jev,
+No new thresholds after 300s outcomes, no broad horizon sweep, LightGBM, Jev,
 OMS/signing, private endpoints, or live trading.
 
 ## Frontier Gate outcomes

@@ -402,19 +402,23 @@ Complete.
 
 ## Exact next action
 
-TASK-027 frozen capture is **running** on Aibo.
+TASK-027 frozen capture is **COLLECTING** on Aibo and its fixed window is established.
+TASK-028 is a parallel historical DEVELOPMENT import that must not alter TASK-027.
 
-1. verify the first in-progress segment successfully seals to `capture-ready.json`;
-2. verify `campaign-start.json` freezes the start/deadline from that earliest successful attempt;
-3. record the exact start/deadline checkpoint in the repository;
-4. keep capture/process timers healthy until the fixed 72-hour wall deadline;
-5. after collection, publish deterministic coverage/support evidence only;
-6. do not use outcomes to alter duration, features, horizons, thresholds, or collection rules.
+1. keep TASK-027 capture/process timers healthy until the immutable
+   **2026-09-30 12:38:55.742461 CEST** deadline;
+2. merge the frozen TASK-028 Tardis protocol before bulk historical download;
+3. download exactly 80 archives covering 20 first-of-month days / 480 hours;
+4. verify gzip/schema/SHA provenance for every TASK-028 archive;
+5. freeze a later historical feature-build/training/evaluation task before consuming
+   TASK-028 outcomes for model adjudication;
+6. after TASK-027 collection, publish its deterministic coverage/support evidence;
+7. do not use outcomes to alter duration, dates, features, horizons, thresholds, or rules.
 
 No private account access, AWS requester-pays credentials, wallet, capital, maker
 orders, registered SELECTION/CONFIRMATION evidence, or live trading.
 
-## Session checkpoint — TASK-027 first capture in progress
+## Session checkpoint — TASK-027 collecting; TASK-028 protocol prepared
 
 This checkpoint exists specifically to start a new chat/session without reconstructing
 state from conversational history.
@@ -426,17 +430,28 @@ state from conversational history.
   `8bf2a31ec634b475f1e3b559663bb35e16950c1c721ab73ddc5812cd6b1f03e1`;
 - protocol package PR #45 merged as
   `b3de5b4c15138ccc1df81c9a055d04920cad237c` after green CI run `36312921369`;
-- Aibo deployed checkout: `b3de5b4c15138ccc1df81c9a055d04920cad237c`;
-- TASK-027 capture state: **FIRST_CAPTURE_IN_PROGRESS**;
-- first attempt run ID:
+- TASK-027 launch checkout: `b3de5b4c15138ccc1df81c9a055d04920cad237c`;
+- TASK-027 capture state: **COLLECTING**;
+- first accepted run ID:
   `run-1790505535742461344-86b3a1307196c582cdde`;
+- fixed start: `1790505535742461344`
+  (**2026-09-27 12:38:55.742461 CEST**);
+- fixed deadline: `1790764735742461344`
+  (**2026-09-30 12:38:55.742461 CEST**);
 - capture/process timers: **ACTIVE**;
-- current campaign state: `PRESTART` until first successful seal establishes start/deadline;
+- checkpoint: 3 published/bound segments, fourth capture attempt in progress,
+  pending/incomplete processing = 0;
+- TASK-028 protocol SHA-256:
+  `8d08ffa54eb64a3ecf11b9a73e3eea5d815f60560e7a93ad6796c63d2760b735`;
+- TASK-028: 20 first-of-month days / 480 hours / 80 Tardis archives,
+  **DEVELOPMENT_ONLY_EXTERNAL_RECEIVE_TIME**;
+- TASK-028 bulk download: **NOT_STARTED — merge protocol first**;
 - TASK-026 artifact SHA-256:
   `4c90657accb99a0caff44336bbca091b887f99cd9caedada01fd15364b77b39b`;
 - selected primary path: **PROSPECTIVE_DEVELOPMENT_EVIDENCE_EXPANSION**;
 - always verify the latest `main` before continuing;
-- current work package: **TASK-027 — Stage 2 Prospective Development Evidence Expansion**;
+- primary work package: **TASK-027 — Stage 2 Prospective Development Evidence Expansion**;
+- parallel work package: **TASK-028 — Tardis Historical Microstructure DEVELOPMENT Corpus**;
 - old Stage-2 confirmation: **UNOPENED_AND_EXCLUDED**;
 - new model/test evidence consumed during TASK-026: **none**;
 - fresh registered test evidence after TASK-026: **none**;
@@ -444,8 +459,8 @@ state from conversational history.
 - user action required now: **none**.
 
 For a fresh session, trust repository state over chat memory. Read
-`HANDOFF.md` → `STATUS.md` → `tasks/TASK_027.md`, then continue TASK-027
-autonomously until a real external blocker or human gate is reached.
+`HANDOFF.md` → `STATUS.md` → `tasks/TASK_027.md` → `tasks/TASK_028.md`, then
+continue both bounded tracks without mixing their evidence roles.
 
 ## Historical Frontier Gate outcomes
 

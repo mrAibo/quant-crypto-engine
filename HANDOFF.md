@@ -27,7 +27,8 @@ In this order:
 8. `tasks/TASK_029.md`
 9. `artifacts/stage_2/tardis_historical_training_protocol.json`
 10. `artifacts/stage_2/tardis_lakehouse_manifest.json`
-11. only then inspect implementation/evidence files as needed
+11. `artifacts/stage_2/tardis_historical_feature_build_report.json`
+12. only then inspect implementation/evidence files as needed
 
 Do not reconstruct project state from chat memory when repository state disagrees.
 
@@ -412,11 +413,11 @@ TASK-028 historical DEVELOPMENT corpus is **COMPLETE** and remains separate from
 
 1. keep TASK-027 capture/process timers healthy until the immutable
    **2026-09-30 12:38:55.742461 CEST** deadline;
-2. merge the prepared TASK-029 deterministic feature builder/trainer with green CI
-   **before** running it on the real 480-hour corpus;
-3. after that merge, build immutable 50s/300s feature caches and freeze their SHA
-   values in the feature-build report before model fitting;
-4. only then fit DEV_A and adjudicate DEV_B under the already-merged frozen protocol;
+2. merge the TASK-029 real feature-build checkpoint with the exact report/cache SHA
+   values **before** model fitting;
+3. only after that merge, fit DEV_A and adjudicate DEV_B using the exact frozen
+   feature-build report SHA;
+4. do not rebuild or replace the frozen feature caches based on evaluation results;
 5. use TASK-028 only as DEVELOPMENT data under that frozen protocol;
 6. after TASK-027 collection, publish its deterministic coverage/support evidence;
 7. do not use outcomes to alter duration, dates, features, horizons, thresholds, or rules.
@@ -424,7 +425,7 @@ TASK-028 historical DEVELOPMENT corpus is **COMPLETE** and remains separate from
 No private account access, AWS requester-pays credentials, wallet, capital, maker
 orders, registered SELECTION/CONFIRMATION evidence, or live trading.
 
-## Session checkpoint — TASK-027 collecting; TASK-029 implementation ready before historical outcome use
+## Session checkpoint — TASK-027 collecting; TASK-029 feature caches frozen before economic evaluation
 
 This checkpoint exists specifically to start a new chat/session without reconstructing
 state from conversational history.
@@ -460,7 +461,7 @@ state from conversational history.
 - TASK-028 economic outcomes consumed: **false**; model fitted: **false**;
 - TASK-029 protocol SHA-256:
   `75fc97ab0ee68185704a06c81fd9fce06c0b1df5e32871dbac6247133ab53da1`;
-- TASK-029 state: **IMPLEMENTATION_READY — historical economic outcomes not yet consumed**;
+- TASK-029 state: **FEATURE_CACHES_FROZEN — DEV_A/DEV_B economic evaluation not yet run**;
 - TASK-029 split: **12 whole UTC days DEV_A / 8 whole UTC days DEV_B**;
 - TASK-029 horizons: **50s / 300s only**; no sweeps;
 - TASK-029 derived storage: **Parquet ZSTD + DuckDB 1.5.5**, rebuildable from raw;
@@ -470,8 +471,15 @@ state from conversational history.
   `c5032eda1f33421a6d71560e42e0f3e042b1ccd78647e358ea8b0390b4fc0e5f`;
 - Parquet-set SHA-256:
   `4d451076c74fa706d57b3565a16cc5aa78875664c68fb934ab72c687257a7a2b`;
-- feature/training implementation: **READY FOR PR; real 480h build/evaluation not run**;
-- feature-build report freezes cache SHA values before evaluation;
+- feature/training implementation: **MERGED**;
+- real feature build: **COMPLETE — 33,965 rows at 50s; 5,756 rows at 300s**;
+- feature-build report SHA-256:
+  `645e247ea9589935f4b7a09cb98559d0df704ebc6c60287863d72303f6e68195`;
+- 50s cache SHA-256:
+  `409ef9c60bfcbb048b593fc16f1d34cc84da1f0087ea372b7c4c799d3d030640`;
+- 300s cache SHA-256:
+  `49fea618533a359727cfce3d95d2b50ee876c6fa2d75931f4b4e305e3938b3b3`;
+- economic summary computed: **false**; model fitted: **false**;
 - evaluation requires exact feature-build report SHA;
 - TASK-027 may not be repurposed as future SELECTION;
 - TASK-026 artifact SHA-256:

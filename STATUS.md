@@ -17,7 +17,7 @@
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
 
-## New-session checkpoint — TASK-027 collecting; TASK-029 implementation ready before historical outcome use
+## New-session checkpoint — TASK-027 collecting; TASK-029 feature caches frozen before economic evaluation
 
 - latest completed work package: **TASK-028**;
 - TASK-027 protocol package: PR #45 merged as
@@ -52,7 +52,7 @@
 - TASK-028 economic outcomes consumed: **false**; model fitted: **false**;
 - TASK-029 training protocol SHA-256:
   `75fc97ab0ee68185704a06c81fd9fce06c0b1df5e32871dbac6247133ab53da1`;
-- TASK-029 state: **IMPLEMENTATION_READY — historical economic outcomes not yet consumed**;
+- TASK-029 state: **FEATURE_CACHES_FROZEN — DEV_A/DEV_B economic evaluation not yet run**;
 - TASK-029 frozen split: **12 whole UTC days DEV_A / 8 whole UTC days DEV_B**;
 - TASK-029 horizons: **50s / 300s only**; no feature/threshold/hyperparameter sweep;
 - TASK-029 derived storage: **Parquet ZSTD + DuckDB 1.5.5**, rebuildable from TASK-028 raw;
@@ -62,8 +62,15 @@
   `c5032eda1f33421a6d71560e42e0f3e042b1ccd78647e358ea8b0390b4fc0e5f`;
 - TASK-029 Parquet-set SHA-256:
   `4d451076c74fa706d57b3565a16cc5aa78875664c68fb934ab72c687257a7a2b`;
-- TASK-029 feature/training implementation: **READY FOR PR; real 480h build/evaluation not run**;
-- TASK-029 feature-build provenance: protocol -> lakehouse -> immutable build report -> 50s/300s cache SHA;
+- TASK-029 feature/training implementation: **MERGED**;
+- TASK-029 real feature build: **COMPLETE — 33,965 rows at 50s; 5,756 rows at 300s**;
+- TASK-029 feature-build report SHA-256:
+  `645e247ea9589935f4b7a09cb98559d0df704ebc6c60287863d72303f6e68195`;
+- TASK-029 50s cache SHA-256:
+  `409ef9c60bfcbb048b593fc16f1d34cc84da1f0087ea372b7c4c799d3d030640`;
+- TASK-029 300s cache SHA-256:
+  `49fea618533a359727cfce3d95d2b50ee876c6fa2d75931f4b4e305e3938b3b3`;
+- TASK-029 economic summary computed: **false**; model fitted: **false**;
 - TASK-029 evaluation: exact feature-build report SHA required before DEV_A fit / DEV_B adjudication;
 - TASK-029 current TASK-027 repurposing as SELECTION: **forbidden**;
 - TASK-026 decision artifact SHA-256:
@@ -88,7 +95,8 @@ Fresh-session read order:
 8. `artifacts/stage_2/tardis_historical_corpus_manifest.json`
 9. `artifacts/stage_2/tardis_historical_training_protocol.json`
 10. `artifacts/stage_2/tardis_lakehouse_manifest.json`
-11. inspect only the implementation/evidence needed for the active bounded tracks
+11. `artifacts/stage_2/tardis_historical_feature_build_report.json`
+12. inspect only the implementation/evidence needed for the active bounded tracks
 
 Do not recover project state from old chat messages when repository state differs.
 

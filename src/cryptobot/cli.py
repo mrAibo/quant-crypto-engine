@@ -53,6 +53,14 @@ from cryptobot.research.tardis_historical import (
 from cryptobot.research.tardis_historical import (
     write_corpus_manifest as write_tardis_corpus_manifest,
 )
+from cryptobot.research.tardis_historical_training import (
+    TardisHistoricalTrainingError,
+    build_feature_caches,
+    evaluate_historical_development,
+    load_feature_build_report,
+    write_development_report,
+    write_feature_build_report,
+)
 from cryptobot.research.tardis_lakehouse import (
     TardisLakehouseError,
     write_lakehouse_manifest,
@@ -239,6 +247,24 @@ def build_parser() -> argparse.ArgumentParser:
     tardis_lakehouse.add_argument("--corpus-manifest", required=True)
     tardis_lakehouse.add_argument("--output-root", required=True)
     tardis_lakehouse.add_argument("--manifest-output", required=True)
+
+    tardis_features = subparsers.add_parser(
+        "build-tardis-training-features",
+        help="Build the frozen TASK-029 50s/300s historical feature caches.",
+    )
+    tardis_features.add_argument("--catalog", required=True)
+    tardis_features.add_argument("--lakehouse-manifest", required=True)
+    tardis_features.add_argument("--output-root", required=True)
+    tardis_features.add_argument("--report-output", required=True)
+
+    tardis_evaluate = subparsers.add_parser(
+        "evaluate-tardis-historical-development",
+        help="Fit DEV_A and adjudicate DEV_B under the frozen TASK-029 protocol.",
+    )
+    tardis_evaluate.add_argument("--feature-root", required=True)
+    tardis_evaluate.add_argument("--feature-build-report", required=True)
+    tardis_evaluate.add_argument("--feature-build-report-sha256", required=True)
+    tardis_evaluate.add_argument("--output", required=True)
     return parser
 
 
@@ -622,6 +648,84 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(
             json.dumps(
                 {"status": "SUCCESS", "manifest_path": str(lakehouse_manifest)},
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+        )
+        return 0
+
+    if args.command == "build-tardis-training-features":
+        try:
+            feature_report = build_feature_caches(
+                catalog_path=args.catalog,
+                lakehouse_manifest_path=args.lakehouse_manifest,
+                output_root=args.output_root,
+            )
+            feature_report_path = write_feature_build_report(
+                feature_report,
+                args.report_output,
+            )
+        except (TardisHistoricalTrainingError, OSError, ValueError) as exc:
+            print(
+                json.dumps(
+                    {"status": "FAILED", "error": str(exc)},
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+            )
+            return 2
+        print(
+            json.dumps(
+                {
+                    "status": "SUCCESS",
+                    "report_path": str(feature_report_path),
+                    "report_sha256": feature_report.sha256,
+                    "cache_50s_sha256": feature_report.cache_50s_sha256,
+                    "cache_300s_sha256": feature_report.cache_300s_sha256,
+                    "row_count_50s": feature_report.row_count_50s,
+                    "row_count_300s": feature_report.row_count_300s,
+                },
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+        )
+        return 0
+
+    if args.command == "evaluate-tardis-historical-development":
+        try:
+            build_report_sha, cache_50s_sha, cache_300s_sha = load_feature_build_report(
+                args.feature_build_report,
+                expected_sha256=args.feature_build_report_sha256,
+            )
+            historical_report = evaluate_historical_development(
+                feature_root=args.feature_root,
+                feature_build_report_sha256=build_report_sha,
+                expected_cache_50s_sha256=cache_50s_sha,
+                expected_cache_300s_sha256=cache_300s_sha,
+            )
+            historical_report_path = write_development_report(
+                historical_report,
+                args.output,
+            )
+        except (TardisHistoricalTrainingError, OSError, ValueError) as exc:
+            print(
+                json.dumps(
+                    {"status": "FAILED", "error": str(exc)},
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+            )
+            return 2
+        print(
+            json.dumps(
+                {
+                    "status": "SUCCESS",
+                    "feature_build_report_sha256": build_report_sha,
+                    "report_path": str(historical_report_path),
+                    "report_sha256": historical_report.sha256,
+                    "decision": historical_report.decision,
+                    "selected_horizon_seconds": historical_report.selected_horizon_seconds,
+                },
                 sort_keys=True,
                 separators=(",", ":"),
             )

@@ -81,13 +81,17 @@ Frozen TASK-029 state:
 - storage conversion materializes no labels/PnL/economic outcomes
 - DEV_B: frozen support/economic pass rules only
 - current TASK-027 cannot be repurposed as fresh SELECTION
+- feature/training implementation is **READY FOR PR**, but has not run on the real 480h corpus
+- feature build freezes 50s/300s cache SHA values before evaluation
+- evaluation requires the exact feature-build report SHA
 - historical economic outcomes are **not yet consumed**
 
 Exact next actions:
 
-1. merge the TASK-029 lakehouse checkpoint with its immutable manifest;
-2. implement and merge the deterministic historical feature builder/trainer under the already-merged frozen TASK-029 protocol;
-3. then build/train/evaluate the fixed TASK-028 corpus for 50s/300s only;
+1. merge the prepared TASK-029 feature builder/trainer with green CI before real outcome use;
+2. build the immutable real 50s/300s feature caches and freeze their SHA values in
+   the feature-build report;
+3. only then fit DEV_A and adjudicate DEV_B using the exact feature-build report SHA;
 4. in parallel keep TASK-027 healthy until its fixed deadline;
 5. after TASK-027 deadline publish deterministic prospective coverage/support evidence.
 

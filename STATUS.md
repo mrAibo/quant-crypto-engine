@@ -17,7 +17,7 @@
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
 
-## New-session checkpoint — TASK-027 collecting; TASK-029 protocol ready before historical outcome use
+## New-session checkpoint — TASK-027 collecting; TASK-029 lakehouse complete before historical outcome use
 
 - latest completed work package: **TASK-028**;
 - TASK-027 protocol package: PR #45 merged as
@@ -36,7 +36,7 @@
 - `deadline_wall_ns = 1790764735742461344`
   (**2026-09-30 12:38:55.742461 CEST**);
 - capture/process timers: **ACTIVE**;
-- checkpoint: 4 published/bound segments, fifth capture attempt in progress,
+- checkpoint: 12 published/bound segments, thirteenth capture attempt in progress,
   pending processing 0, incomplete processing 0;
 - TASK-028 frozen historical protocol SHA-256:
   `8d08ffa54eb64a3ecf11b9a73e3eea5d815f60560e7a93ad6796c63d2760b735`;
@@ -52,11 +52,16 @@
 - TASK-028 economic outcomes consumed: **false**; model fitted: **false**;
 - TASK-029 training protocol SHA-256:
   `75fc97ab0ee68185704a06c81fd9fce06c0b1df5e32871dbac6247133ab53da1`;
-- TASK-029 state: **PROTOCOL_READY — historical economic outcomes not yet consumed**;
+- TASK-029 state: **LAKEHOUSE_COMPLETE — historical economic outcomes not yet consumed**;
 - TASK-029 frozen split: **12 whole UTC days DEV_A / 8 whole UTC days DEV_B**;
 - TASK-029 horizons: **50s / 300s only**; no feature/threshold/hyperparameter sweep;
 - TASK-029 derived storage: **Parquet ZSTD + DuckDB 1.5.5**, rebuildable from TASK-028 raw;
 - TASK-029 storage conversion materializes economic outcomes: **false**;
+- TASK-029 lakehouse: **80/80 Parquet files, 103,817,053 rows**;
+- TASK-029 lakehouse manifest SHA-256:
+  `c5032eda1f33421a6d71560e42e0f3e042b1ccd78647e358ea8b0390b4fc0e5f`;
+- TASK-029 Parquet-set SHA-256:
+  `4d451076c74fa706d57b3565a16cc5aa78875664c68fb934ab72c687257a7a2b`;
 - TASK-029 current TASK-027 repurposing as SELECTION: **forbidden**;
 - TASK-026 decision artifact SHA-256:
   `4c90657accb99a0caff44336bbca091b887f99cd9caedada01fd15364b77b39b`;
@@ -79,7 +84,8 @@ Fresh-session read order:
 7. `artifacts/stage_2/tardis_historical_development_protocol.json`
 8. `artifacts/stage_2/tardis_historical_corpus_manifest.json`
 9. `artifacts/stage_2/tardis_historical_training_protocol.json`
-10. inspect only the implementation/evidence needed for the active bounded tracks
+10. `artifacts/stage_2/tardis_lakehouse_manifest.json`
+11. inspect only the implementation/evidence needed for the active bounded tracks
 
 Do not recover project state from old chat messages when repository state differs.
 

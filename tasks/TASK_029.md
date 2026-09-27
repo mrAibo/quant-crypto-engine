@@ -2,7 +2,7 @@
 
 ## Status
 
-**PROTOCOL READY — HISTORICAL ECONOMIC OUTCOMES NOT YET CONSUMED**
+**LAKEHOUSE COMPLETE — HISTORICAL ECONOMIC OUTCOMES NOT YET CONSUMED**
 
 ## Context
 
@@ -62,6 +62,29 @@ Frozen storage rules:
 - the DuckDB file stores query views and metadata, not a second source of truth;
 - economic outcomes/labels/PnL are **not materialized during storage conversion**;
 - the entire Parquet/DuckDB layer must be reproducible from TASK-028 raw archives.
+
+### Lakehouse completion checkpoint
+
+The merged TASK-029 storage implementation built successfully on Aibo:
+
+- Parquet partitions: **80/80**;
+- total analytical rows: **103,817,053**;
+- lakehouse manifest:
+  `artifacts/stage_2/tardis_lakehouse_manifest.json`;
+- lakehouse manifest SHA-256:
+  `c5032eda1f33421a6d71560e42e0f3e042b1ccd78647e358ea8b0390b4fc0e5f`;
+- Parquet-set SHA-256:
+  `4d451076c74fa706d57b3565a16cc5aa78875664c68fb934ab72c687257a7a2b`;
+- DuckDB catalog: `/var/lib/quant-crypto-engine/tardis-lakehouse/catalog/historical.duckdb`;
+- Hyperliquid top-5 rows: **3,030,252**;
+- Hyperliquid trade rows: **7,170,696**;
+- Binance quote rows: **25,002,943**;
+- Binance trade rows: **68,613,162**;
+- storage conversion economic outcomes materialized: **false**;
+- model fitted: **false**.
+
+Raw TASK-028 archives remain the source of truth. The lakehouse is rebuildable and
+may now be used by the frozen historical feature builder/trainer.
 
 ## Historical causal semantics
 

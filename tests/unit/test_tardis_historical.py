@@ -114,3 +114,27 @@ def test_status_reports_missing_archives_without_outcome_logic(tmp_path: Path) -
     assert status["verified_archive_count"] == 0
     assert status["missing_archive_count"] == 80
     assert status["complete"] is False
+
+
+def test_corpus_manifest_binds_all_frozen_archives(tmp_path: Path) -> None:
+    root = tmp_path / "history"
+    for spec in th.frozen_specs():
+
+        def retrieve(url: str, destination: Path, *, current: th.TardisArchiveSpec = spec) -> None:
+            assert url == current.url
+            _write_fake_gzip(destination, current.expected_header)
+
+        th.download_archive(spec, root, retrieve=retrieve)
+
+    report = th.build_corpus_manifest(root)
+
+    assert report["complete"] is True
+    assert report["archive_count"] == 80
+    assert isinstance(report["archive_set_sha256"], str)
+    assert len(report["archive_set_sha256"]) == 64
+    assert report["economic_outcomes_consumed"] is False
+    assert report["model_fitted"] is False
+    assert report["old_confirmation_status"] == "UNOPENED_AND_EXCLUDED"
+    archives = report["archives"]
+    assert isinstance(archives, list)
+    assert len(archives) == 80

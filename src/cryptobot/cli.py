@@ -50,6 +50,9 @@ from cryptobot.research.tardis_historical import (
 from cryptobot.research.tardis_historical import (
     load_protocol as load_tardis_historical_protocol,
 )
+from cryptobot.research.tardis_historical import (
+    write_corpus_manifest as write_tardis_corpus_manifest,
+)
 from cryptobot.runtime.dual_source_recorder import load_dual_source_recorder_config
 from cryptobot.runtime.frontier_segment import (
     FrontierSegmentError,
@@ -216,6 +219,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="Verify frozen TASK-028 Tardis DEVELOPMENT archives.",
     )
     tardis_status.add_argument("--destination", required=True)
+
+    tardis_report = subparsers.add_parser(
+        "report-tardis-historical",
+        help="Write the deterministic TASK-028 corpus manifest.",
+    )
+    tardis_report.add_argument("--destination", required=True)
+    tardis_report.add_argument("--output", required=True)
     return parser
 
 
@@ -555,6 +565,28 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
             return 2
         print(json.dumps(tardis_status_result, sort_keys=True, separators=(",", ":")))
+        return 0
+
+    if args.command == "report-tardis-historical":
+        try:
+            tardis_report_path = write_tardis_corpus_manifest(
+                args.output,
+                args.destination,
+            )
+        except (TardisHistoricalError, OSError, ValueError) as exc:
+            print(
+                json.dumps(
+                    {"status": "FAILED", "error": str(exc)}, sort_keys=True, separators=(",", ":")
+                )
+            )
+            return 2
+        print(
+            json.dumps(
+                {"status": "SUCCESS", "report_path": str(tardis_report_path)},
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+        )
         return 0
 
     if args.command != "validate-recorder-runtime":

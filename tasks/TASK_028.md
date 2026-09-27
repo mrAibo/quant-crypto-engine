@@ -2,7 +2,7 @@
 
 ## Status
 
-**IMPLEMENTATION READY — BULK DOWNLOAD NOT STARTED**
+**COMPLETE — 80/80 ARCHIVES VERIFIED AND FROZEN**
 
 ## Role
 
@@ -124,3 +124,31 @@ SHA-256, compressed byte size, frozen protocol SHA, expected schema, and evidenc
 - OMS/signing/live trading;
 - capital deployment;
 - reinterpretation of historical DEVELOPMENT as confirmation.
+
+## Closeout result
+
+TASK-028 completed without consuming strategy/economic outcomes.
+
+Verified corpus:
+
+- 20 frozen first-of-month UTC days;
+- 480 nominal historical hours;
+- 80/80 archives verified;
+- 0 missing archives;
+- total compressed bytes: **1,180,336,813**;
+- protocol SHA-256:
+  `8d08ffa54eb64a3ecf11b9a73e3eea5d815f60560e7a93ad6796c63d2760b735`;
+- deterministic corpus artifact:
+  `artifacts/stage_2/tardis_historical_corpus_manifest.json`;
+- corpus artifact SHA-256:
+  `9696dca5f57fe160a8438236f1af82947a1588d2476a882fdf627f4cbd26e5e8`;
+- archive-set SHA-256:
+  `8e545456b34c6d1dabdb4e31fc13a0cb174bb96fef01eb137d9c32fa1dcb37fc`;
+- economic outcomes consumed: **false**;
+- model fitted: **false**;
+- old confirmation: **UNOPENED_AND_EXCLUDED**;
+- TASK-027 replaced or shortened: **false**.
+
+The next bounded work package may construct/train on this historical DEVELOPMENT
+corpus only after its feature-build, chronological split, training procedure, and
+development evaluation rule are frozen before outcome inspection.

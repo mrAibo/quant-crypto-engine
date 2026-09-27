@@ -2,7 +2,7 @@
 
 ## Status
 
-**IMPLEMENTATION READY — CAPTURE NOT STARTED**
+**CAPTURE STARTED — FIRST SEGMENT IN PROGRESS**
 
 ## Context
 
@@ -117,10 +117,14 @@ rather than substituting private data or weakening provenance rules.
 - retrospective extension of collection based on observed results.
 
 
-## Protocol implementation checkpoint
+## Operational capture checkpoint
 
-The capture protocol and orchestration are implemented but **capture must not start
-until this exact commit has passed CI and merged to main**.
+The frozen protocol implementation passed CI and merged before any TASK-027 capture.
+PR #45 merged as `b3de5b4c15138ccc1df81c9a055d04920cad237c`; pre-merge CI run
+`36312921369` passed both `quality` and `test-python-313`.
+
+The exact merged commit is deployed on Aibo. The dedicated capture/process timers are
+active and the first public capture attempt is in progress:
 
 Frozen protocol artifact:
 
@@ -137,9 +141,17 @@ transport as a superset. ETH and Hyperliquid `activeAssetCtx` frames are preserv
 raw because the validated adapter captures them, but TASK-027 eligibility is frozen
 to Hyperliquid BTC L2/BBO/trades and Binance BTCUSDT bookTicker/aggTrade only.
 
-Campaign root after merge:
+Campaign root:
 
 `/var/lib/quant-crypto-engine/stage2-development-campaign`
+
+Current first attempt:
+
+- run ID: `run-1790505535742461344-86b3a1307196c582cdde`;
+- `capture_attempt_count = 1`;
+- first QCR1 `.raw.open` is growing, confirming live public evidence arrival;
+- campaign state remains `PRESTART` until this segment seals successfully;
+- `started_wall_ns` and `deadline_wall_ns` therefore remain null for now.
 
 The first failed capture attempt does not start the 72-hour clock. The immutable
 campaign start/deadline is derived from the earliest attempt that successfully

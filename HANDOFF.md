@@ -402,19 +402,19 @@ Complete.
 
 ## Exact next action
 
-TASK-027 protocol implementation is frozen but **capture has not started**.
+TASK-027 frozen capture is **running** on Aibo.
 
-1. require green CI and merge the exact protocol/runtime implementation;
-2. deploy that merged `main` to Aibo;
-3. initialize the new campaign root and start capture/process timers;
-4. verify the first successful capture establishes an immutable start/deadline;
-5. record the operational checkpoint in the repository;
-6. continue collection until the fixed 72-hour wall deadline without using outcomes to alter collection.
+1. verify the first in-progress segment successfully seals to `capture-ready.json`;
+2. verify `campaign-start.json` freezes the start/deadline from that earliest successful attempt;
+3. record the exact start/deadline checkpoint in the repository;
+4. keep capture/process timers healthy until the fixed 72-hour wall deadline;
+5. after collection, publish deterministic coverage/support evidence only;
+6. do not use outcomes to alter duration, features, horizons, thresholds, or collection rules.
 
 No private account access, AWS requester-pays credentials, wallet, capital, maker
 orders, registered SELECTION/CONFIRMATION evidence, or live trading.
 
-## Session checkpoint — TASK-027 protocol frozen, capture not started
+## Session checkpoint — TASK-027 first capture in progress
 
 This checkpoint exists specifically to start a new chat/session without reconstructing
 state from conversational history.
@@ -424,7 +424,14 @@ state from conversational history.
   `1ab9a735f512dd301392ba568b49ebd0f1e80d676f073b3d502bf73d111bc1d3`;
 - TASK-027 runtime profile SHA-256:
   `8bf2a31ec634b475f1e3b559663bb35e16950c1c721ab73ddc5812cd6b1f03e1`;
-- TASK-027 capture state: **NOT_STARTED — merge before capture**;
+- protocol package PR #45 merged as
+  `b3de5b4c15138ccc1df81c9a055d04920cad237c` after green CI run `36312921369`;
+- Aibo deployed checkout: `b3de5b4c15138ccc1df81c9a055d04920cad237c`;
+- TASK-027 capture state: **FIRST_CAPTURE_IN_PROGRESS**;
+- first attempt run ID:
+  `run-1790505535742461344-86b3a1307196c582cdde`;
+- capture/process timers: **ACTIVE**;
+- current campaign state: `PRESTART` until first successful seal establishes start/deadline;
 - TASK-026 artifact SHA-256:
   `4c90657accb99a0caff44336bbca091b887f99cd9caedada01fd15364b77b39b`;
 - selected primary path: **PROSPECTIVE_DEVELOPMENT_EVIDENCE_EXPANSION**;

@@ -8,7 +8,7 @@ Current state:
 - phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
 - current task: **TASK-027 — Stage 2 Prospective Development Evidence Expansion**
 - TASK-001 through TASK-026 are complete
-- TASK-027 protocol implementation is frozen; capture is **NOT STARTED**
+- TASK-027 frozen public DEVELOPMENT capture is **RUNNING** on Aibo
 - old Stage-2 confirmation: **UNOPENED_AND_EXCLUDED**
 - live trading / OMS / signing / capital deployment: **FORBIDDEN**
 - no private account/API key/wallet/AWS requester-pays access is required
@@ -41,14 +41,22 @@ Only Hyperliquid BTC L2/BBO/trades and Binance BTCUSDT bookTicker/aggTrade are
 TASK-027 eligible. ETH and Hyperliquid activeAssetCtx remain preserved raw but
 excluded from TASK-027 features/targets.
 
+Operational checkpoint:
+
+- PR #45 merged as `b3de5b4c15138ccc1df81c9a055d04920cad237c` after green CI run `36312921369`;
+- the same merge commit is deployed on Aibo;
+- campaign root is `/var/lib/quant-crypto-engine/stage2-development-campaign`;
+- capture/process timers are active;
+- first attempt is `run-1790505535742461344-86b3a1307196c582cdde`;
+- QCR1 raw evidence is growing;
+- campaign state is still `PRESTART` until that attempt successfully seals.
+
 Exact next action:
 
-1. require green CI and merge this exact protocol implementation;
-2. deploy merged `main` to Aibo;
-3. initialize `/var/lib/quant-crypto-engine/stage2-development-campaign`;
-4. enable the new `quant-development-*` capture/process timers;
-5. verify the first successful capture freezes start and deadline;
-6. commit an operational checkpoint, then collect until the fixed deadline.
+1. verify the first successful capture freezes start and deadline;
+2. commit the exact start/deadline checkpoint;
+3. keep the fixed 72-hour public DEVELOPMENT collection healthy;
+4. after the deadline, publish deterministic coverage/support evidence only.
 
 Do not fit a model, inspect performance to change collection, open old confirmation,
 change features/horizons, or introduce private/account/maker/live execution.

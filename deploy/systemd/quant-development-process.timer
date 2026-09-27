@@ -1,0 +1,11 @@
+[Unit]
+Description=Schedule Stage-2 DEVELOPMENT captured-segment processing
+
+[Timer]
+OnBootSec=3min
+OnUnitInactiveSec=1min
+Persistent=true
+Unit=quant-development-process.service
+
+[Install]
+WantedBy=timers.target

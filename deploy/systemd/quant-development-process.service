@@ -1,0 +1,21 @@
+[Unit]
+Description=Quant Crypto Engine Stage-2 DEVELOPMENT captured-segment processor
+
+[Service]
+Type=oneshot
+User=quantcrypto
+Group=quantcrypto
+WorkingDirectory=/opt/quant-crypto-engine
+ExecStart=/opt/quant-crypto-engine/.venv/bin/python -m cryptobot.cli process-next-development-segment --campaign-root /var/lib/quant-crypto-engine/stage2-development-campaign --registry /opt/quant-crypto-engine/config/instruments.yaml
+Nice=10
+OOMScoreAdjust=250
+TimeoutStartSec=infinity
+TimeoutStopSec=60s
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/quant-crypto-engine/stage2-development-campaign
+StandardOutput=journal
+StandardError=journal

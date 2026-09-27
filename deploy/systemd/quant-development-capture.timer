@@ -1,0 +1,11 @@
+[Unit]
+Description=Schedule near-continuous Stage-2 DEVELOPMENT raw capture
+
+[Timer]
+OnBootSec=2min
+OnUnitInactiveSec=10s
+Persistent=true
+Unit=quant-development-capture.service
+
+[Install]
+WantedBy=timers.target

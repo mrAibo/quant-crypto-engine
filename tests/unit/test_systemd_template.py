@@ -47,3 +47,28 @@ def test_frontier_split_units_decouple_capture_from_processing() -> None:
         assert "api_key" not in unit.lower()
         assert "private_key" not in unit.lower()
         assert "wallet" not in unit.lower()
+
+
+def test_development_units_are_bounded_public_capture_only() -> None:
+    capture = Path("deploy/systemd/quant-development-capture.service").read_text(encoding="utf-8")
+    processor = Path("deploy/systemd/quant-development-process.service").read_text(encoding="utf-8")
+    capture_timer = Path("deploy/systemd/quant-development-capture.timer").read_text(
+        encoding="utf-8"
+    )
+    process_timer = Path("deploy/systemd/quant-development-process.timer").read_text(
+        encoding="utf-8"
+    )
+
+    assert "capture-development-segment" in capture
+    assert "--duration" not in capture
+    assert "process-next-development-segment" in processor
+    assert "Nice=10" in processor
+    assert "OOMScoreAdjust=250" in processor
+    assert "OnUnitInactiveSec=10s" in capture_timer
+    assert "OnUnitInactiveSec=1min" in process_timer
+    for unit in (capture, processor):
+        assert "stage2-development-campaign" in unit
+        assert "frontier-campaign" not in unit
+        assert "api_key" not in unit.lower()
+        assert "private_key" not in unit.lower()
+        assert "wallet" not in unit.lower()

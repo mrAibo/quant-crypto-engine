@@ -1,8 +1,6 @@
 # Prompt for the next ChatGPT session
 
-Continue the project **mrAibo/quant-crypto-engine** autonomously from the repository
-source of truth.
-
+Continue **mrAibo/quant-crypto-engine** autonomously from GitHub source of truth.
 At session start, verify the latest `main` and prefer it over chat memory.
 
 Current state:
@@ -10,9 +8,10 @@ Current state:
 - phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
 - current task: **TASK-027 — Stage 2 Prospective Development Evidence Expansion**
 - TASK-001 through TASK-026 are complete
+- TASK-027 protocol implementation is frozen; capture is **NOT STARTED**
 - old Stage-2 confirmation: **UNOPENED_AND_EXCLUDED**
 - live trading / OMS / signing / capital deployment: **FORBIDDEN**
-- no new model/test evidence was consumed during TASK-026
+- no private account/API key/wallet/AWS requester-pays access is required
 - no user action is currently required
 
 Read in this order:
@@ -20,33 +19,36 @@ Read in this order:
 1. `HANDOFF.md`
 2. `STATUS.md`
 3. `tasks/TASK_027.md`
-4. `artifacts/stage_2/economic_bottleneck_adjudication.json`
-5. only then inspect implementation/evidence as needed
+4. `artifacts/stage_2/development_campaign_protocol.json`
+5. `artifacts/stage_2/economic_bottleneck_adjudication.json`
+6. only then inspect implementation/evidence as needed
 
-Latest completed decision:
 
-- TASK-026 selected **PROSPECTIVE_DEVELOPMENT_EVIDENCE_EXPANSION**
-- decision SHA-256:
-  `4c90657accb99a0caff44336bbca091b887f99cd9caedada01fd15364b77b39b`
-- strongest new 50s DEV_B candidate E3 implied mean fee break-even:
-  about **0.758 bps/side**
-- rechecked published tier-6 plus Diamond fee context: **1.44 bps/side**
-- E3 mean remains negative at that documented context before UNKNOWN costs
-- TASK-025 support remains 24 positive 50s targets and 6 positive 300s targets
+Frozen TASK-027 inputs:
 
-TASK-027 protocol:
+- protocol SHA-256:
+  `1ab9a735f512dd301392ba568b49ebd0f1e80d676f073b3d502bf73d111bc1d3`
+- runtime profile SHA-256:
+  `8bf2a31ec634b475f1e3b559663bb35e16950c1c721ab73ddc5812cd6b1f03e1`
+- fixed duration: **72 hours**
+- ordinary segment duration: **900 seconds**
+- horizons: **50s / 300s only**
+- TASK-025 eight-feature family unchanged
+- evidence role: **DEVELOPMENT_ONLY**
 
-- collect exactly **72 hours** of prospective public-only DEVELOPMENT evidence on Aibo;
-- do not extend or stop the duration based on outcomes;
-- use Hyperliquid public L2/BBO/trades plus Binance public reference BBO/trades;
-- preserve immutable QCR1/segment provenance and causal receive-time/host/boot boundaries;
-- keep the TASK-025 eight-feature definitions and 50s/300s horizons unchanged;
-- do not fit a predictive model in TASK-027;
-- publish deterministic coverage, missingness, support, and source-digest evidence;
-- do not open old confirmation or create registered SELECTION/CONFIRMATION evidence.
+Transport reuses the validated Stage-0 public dual-source recorder as a superset.
+Only Hyperliquid BTC L2/BBO/trades and Binance BTCUSDT bookTicker/aggTrade are
+TASK-027 eligible. ETH and Hyperliquid activeAssetCtx remain preserved raw but
+excluded from TASK-027 features/targets.
 
-No Hyperliquid account, API key, wallet, deposit, AWS requester-pays credential,
-maker order, or capital is required for this package.
+Exact next action:
 
-Every code change requires tests and green CI before merge. Update STATUS.md,
-HANDOFF.md, and NEXT_SESSION_PROMPT.md after material decisions.
+1. require green CI and merge this exact protocol implementation;
+2. deploy merged `main` to Aibo;
+3. initialize `/var/lib/quant-crypto-engine/stage2-development-campaign`;
+4. enable the new `quant-development-*` capture/process timers;
+5. verify the first successful capture freezes start and deadline;
+6. commit an operational checkpoint, then collect until the fixed deadline.
+
+Do not fit a model, inspect performance to change collection, open old confirmation,
+change features/horizons, or introduce private/account/maker/live execution.

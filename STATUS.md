@@ -15,9 +15,14 @@
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
 
-## New-session checkpoint — post TASK-026 adjudication
+## New-session checkpoint — TASK-027 protocol frozen, capture not started
 
 - latest completed work package: **TASK-026**;
+- TASK-027 protocol artifact SHA-256:
+  `1ab9a735f512dd301392ba568b49ebd0f1e80d676f073b3d502bf73d111bc1d3`;
+- TASK-027 runtime profile SHA-256:
+  `8bf2a31ec634b475f1e3b559663bb35e16950c1c721ab73ddc5812cd6b1f03e1`;
+- TASK-027 capture state: **NOT_STARTED — protocol must merge before capture**;
 - TASK-026 decision artifact SHA-256:
   `4c90657accb99a0caff44336bbca091b887f99cd9caedada01fd15364b77b39b`;
 - selected primary path: **PROSPECTIVE_DEVELOPMENT_EVIDENCE_EXPANSION**;
@@ -33,8 +38,9 @@ Fresh-session read order:
 1. `HANDOFF.md`
 2. `STATUS.md`
 3. `tasks/TASK_027.md`
-4. `artifacts/stage_2/economic_bottleneck_adjudication.json`
-5. inspect only the implementation/evidence needed for TASK-027
+4. `artifacts/stage_2/development_campaign_protocol.json`
+5. `artifacts/stage_2/economic_bottleneck_adjudication.json`
+6. inspect only the implementation/evidence needed for TASK-027
 
 Do not recover project state from old chat messages when repository state differs.
 
@@ -654,6 +660,25 @@ The 300s family remains negative/under-supported, while TASK-025 exposed only
 24 positive full-feature targets at 50s and 6 at 300s. TASK-026 therefore selected
 a fixed **72-hour public-only prospective DEVELOPMENT** collection. No new model/test
 evidence was consumed and old confirmation remains **UNOPENED_AND_EXCLUDED**.
+
+## TASK-027 protocol freeze checkpoint
+
+Implementation is prepared, but the 72-hour campaign has **not started**. Capture is
+forbidden until the protocol commit passes CI and is merged/deployed from `main`.
+
+Frozen inputs:
+
+- protocol: `artifacts/stage_2/development_campaign_protocol.json`,
+  SHA-256 `1ab9a735f512dd301392ba568b49ebd0f1e80d676f073b3d502bf73d111bc1d3`;
+- public transport profile: `config/runtime/stage2-development-public.json`,
+  SHA-256 `8bf2a31ec634b475f1e3b559663bb35e16950c1c721ab73ddc5812cd6b1f03e1`;
+- campaign root after merge:
+  `/var/lib/quant-crypto-engine/stage2-development-campaign`.
+
+The validated Stage-0 public recorder is reused as a transport superset. ETH and
+Hyperliquid `activeAssetCtx` remain preserved raw but are explicitly excluded from
+TASK-027 feature/target eligibility. Only Hyperliquid BTC L2/BBO/trades and Binance
+BTCUSDT bookTicker/aggTrade are eligible.
 
 ## Current task
 

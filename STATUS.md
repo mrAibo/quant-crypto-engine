@@ -9,31 +9,32 @@
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `main`
 - Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
-- Current work package: **TASK-026 — Stage 2 Economic Bottleneck Adjudication**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019, TASK-020, TASK-021, TASK-022, TASK-023, TASK-024, TASK-025**
-- Economic status: **Frontier Gate PASS_FEASIBILITY; bounded 50s, 300s, and microstructure families STOPPED; net edge UNPROVEN**
+- Current work package: **TASK-027 — Stage 2 Prospective Development Evidence Expansion**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019, TASK-020, TASK-021, TASK-022, TASK-023, TASK-024, TASK-025, TASK-026**
+- Economic status: **Frontier Gate PASS_FEASIBILITY; bounded 50s, 300s, and microstructure families STOPPED; TASK-026 selected prospective DEVELOPMENT evidence expansion; net edge UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
 
-## New-session checkpoint — post TASK-025 closeout
+## New-session checkpoint — post TASK-026 adjudication
 
-- project-state base before the handoff docs: `755adce9213c62e7dbbbae30a041479fc375e030`;
-- handoff checkpoint merged by PR #39 at `671830844396bee293b449f8354cee7db2b259b8`;
-- latest completed work package: **TASK-025**;
-- TASK-025 closeout merged by PR #41 at `37456e497cb0ab856ece48b384b8cbea1c9f856f`;
-- PR #41 pre-merge CI run `36278783155`: **SUCCESS**;
+- latest completed work package: **TASK-026**;
+- TASK-026 decision artifact SHA-256:
+  `4c90657accb99a0caff44336bbca091b887f99cd9caedada01fd15364b77b39b`;
+- selected primary path: **PROSPECTIVE_DEVELOPMENT_EVIDENCE_EXPANSION**;
 - always verify the latest `main` before continuing;
-- current work package: **TASK-026 — Stage 2 Economic Bottleneck Adjudication**;
+- current work package: **TASK-027 — Stage 2 Prospective Development Evidence Expansion**;
 - old confirmation: **UNOPENED_AND_EXCLUDED**;
-- no fresh development validation or registered test campaign was started for TASK-025;
+- no new model/test evidence was consumed during TASK-026;
+- no private account, AWS requester-pays, wallet, deposit, or capital access is required now;
 - no user action is currently required.
 
 Fresh-session read order:
 
 1. `HANDOFF.md`
 2. `STATUS.md`
-3. `tasks/TASK_026.md`
-4. inspect only the implementation/evidence needed for TASK-026
+3. `tasks/TASK_027.md`
+4. `artifacts/stage_2/economic_bottleneck_adjudication.json`
+5. inspect only the implementation/evidence needed for TASK-027
 
 Do not recover project state from old chat messages when repository state differs.
 
@@ -635,20 +636,41 @@ at both frozen score gates.
 Old confirmation remains **UNOPENED_AND_EXCLUDED**. No fresh registered test evidence
 was collected.
 
+## Completed — TASK-026 / economic bottleneck adjudication
+
+Frozen artifact:
+
+- `artifacts/stage_2/economic_bottleneck_adjudication.json`;
+- SHA-256 `4c90657accb99a0caff44336bbca091b887f99cd9caedada01fd15364b77b39b`;
+- selected path: **PROSPECTIVE_DEVELOPMENT_EVIDENCE_EXPANSION**.
+
+The strongest new 50s DEV_B candidate, E3, implied a taker-fee break-even of only
+about **0.758 bps/side** on its observed mean gross edge. The rechecked published
+tier-6 plus Diamond staking schedule context is **1.44 bps/side**, under which that
+same mean remains negative before UNKNOWN latency, own-order impact/slippage, and
+funding. Actual project-account fees remain UNKNOWN.
+
+The 300s family remains negative/under-supported, while TASK-025 exposed only
+24 positive full-feature targets at 50s and 6 at 300s. TASK-026 therefore selected
+a fixed **72-hour public-only prospective DEVELOPMENT** collection. No new model/test
+evidence was consumed and old confirmation remains **UNOPENED_AND_EXCLUDED**.
+
 ## Current task
 
-Read **[`tasks/TASK_026.md`](tasks/TASK_026.md)**.
+Read **[`tasks/TASK_027.md`](tasks/TASK_027.md)**.
 
-TASK-025 evaluates one bounded causal microstructure family using exposed
-development-only L2/trade/reference evidence. The first family is restricted to
-predeclared depth, trade-flow, short-return, cross-venue-gap, spread and BBO features.
-No fresh registered test data is collected unless development economics pass.
+TASK-027 freezes and runs one fixed-duration public-only DEVELOPMENT evidence
+expansion on Aibo. It does not fit a new predictive model, open old confirmation,
+use private/account data, or collect registered SELECTION/CONFIRMATION evidence.
 
 ## User actions currently required
 
-No user action is required for the completed Frontier Gate.
+No user action is required now.
 
-TASK-018 prospective scheduling is quiesced. `Aibo` only needs to be available when Stage 2 implementation/testing is being performed; continuous evidence collection is no longer required for the frozen Gate result.
+TASK-018 scheduling remains quiesced. TASK-027 will use Aibo for a separately frozen
+72-hour public DEVELOPMENT campaign only after its committed protocol is deployed.
+The host is currently available; no credential, wallet, deposit, AWS, or account
+action is required from the user.
 
 If a future blocker cannot be bypassed safely through available tooling, document the blocker rather than weakening tests, evidence rules, or quality gates.
 

@@ -28,7 +28,8 @@ Read in this order:
 7. `artifacts/stage_2/tardis_historical_corpus_manifest.json`
 8. `tasks/TASK_029.md`
 9. `artifacts/stage_2/tardis_historical_training_protocol.json`
-10. only then inspect implementation/evidence as needed
+10. `artifacts/stage_2/tardis_lakehouse_manifest.json`
+11. only then inspect implementation/evidence as needed
 
 Frozen TASK-027 state:
 
@@ -72,6 +73,11 @@ Frozen TASK-029 state:
 - features: exact TASK-025 eight-feature family
 - model: deterministic Decimal L2 logistic; DEV_A standardization/training/gate only
 - derived storage: Parquet ZSTD + DuckDB 1.5.5; raw TASK-028 remains source of truth
+- lakehouse: **80/80 Parquet files, 103,817,053 rows**
+- lakehouse manifest SHA-256:
+  `c5032eda1f33421a6d71560e42e0f3e042b1ccd78647e358ea8b0390b4fc0e5f`
+- Parquet-set SHA-256:
+  `4d451076c74fa706d57b3565a16cc5aa78875664c68fb934ab72c687257a7a2b`
 - storage conversion materializes no labels/PnL/economic outcomes
 - DEV_B: frozen support/economic pass rules only
 - current TASK-027 cannot be repurposed as fresh SELECTION
@@ -79,9 +85,9 @@ Frozen TASK-029 state:
 
 Exact next actions:
 
-1. require green CI and merge this exact TASK-029 protocol before outcome use;
-2. implement and merge the deterministic historical builder/trainer under that protocol;
-3. only then build/train/evaluate the fixed TASK-028 corpus;
+1. merge the TASK-029 lakehouse checkpoint with its immutable manifest;
+2. implement and merge the deterministic historical feature builder/trainer under the already-merged frozen TASK-029 protocol;
+3. then build/train/evaluate the fixed TASK-028 corpus for 50s/300s only;
 4. in parallel keep TASK-027 healthy until its fixed deadline;
 5. after TASK-027 deadline publish deterministic prospective coverage/support evidence.
 

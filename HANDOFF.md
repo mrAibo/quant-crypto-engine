@@ -26,7 +26,8 @@ In this order:
 7. `artifacts/stage_2/tardis_historical_corpus_manifest.json`
 8. `tasks/TASK_029.md`
 9. `artifacts/stage_2/tardis_historical_training_protocol.json`
-10. only then inspect implementation/evidence files as needed
+10. `artifacts/stage_2/tardis_lakehouse_manifest.json`
+11. only then inspect implementation/evidence files as needed
 
 Do not reconstruct project state from chat memory when repository state disagrees.
 
@@ -421,7 +422,7 @@ TASK-028 historical DEVELOPMENT corpus is **COMPLETE** and remains separate from
 No private account access, AWS requester-pays credentials, wallet, capital, maker
 orders, registered SELECTION/CONFIRMATION evidence, or live trading.
 
-## Session checkpoint — TASK-027 collecting; TASK-029 protocol ready before historical outcome use
+## Session checkpoint — TASK-027 collecting; TASK-029 lakehouse complete before historical outcome use
 
 This checkpoint exists specifically to start a new chat/session without reconstructing
 state from conversational history.
@@ -442,7 +443,7 @@ state from conversational history.
 - fixed deadline: `1790764735742461344`
   (**2026-09-30 12:38:55.742461 CEST**);
 - capture/process timers: **ACTIVE**;
-- checkpoint: 4 published/bound segments, fifth capture attempt in progress,
+- checkpoint: 12 published/bound segments, thirteenth capture attempt in progress,
   pending/incomplete processing = 0;
 - TASK-028 protocol SHA-256:
   `8d08ffa54eb64a3ecf11b9a73e3eea5d815f60560e7a93ad6796c63d2760b735`;
@@ -457,11 +458,16 @@ state from conversational history.
 - TASK-028 economic outcomes consumed: **false**; model fitted: **false**;
 - TASK-029 protocol SHA-256:
   `75fc97ab0ee68185704a06c81fd9fce06c0b1df5e32871dbac6247133ab53da1`;
-- TASK-029 state: **PROTOCOL_READY — historical economic outcomes not yet consumed**;
+- TASK-029 state: **LAKEHOUSE_COMPLETE — historical economic outcomes not yet consumed**;
 - TASK-029 split: **12 whole UTC days DEV_A / 8 whole UTC days DEV_B**;
 - TASK-029 horizons: **50s / 300s only**; no sweeps;
 - TASK-029 derived storage: **Parquet ZSTD + DuckDB 1.5.5**, rebuildable from raw;
 - storage conversion materializes economic outcomes: **false**;
+- TASK-029 lakehouse: **80/80 Parquet files, 103,817,053 rows**;
+- lakehouse manifest SHA-256:
+  `c5032eda1f33421a6d71560e42e0f3e042b1ccd78647e358ea8b0390b4fc0e5f`;
+- Parquet-set SHA-256:
+  `4d451076c74fa706d57b3565a16cc5aa78875664c68fb934ab72c687257a7a2b`;
 - TASK-027 may not be repurposed as future SELECTION;
 - TASK-026 artifact SHA-256:
   `4c90657accb99a0caff44336bbca091b887f99cd9caedada01fd15364b77b39b`;

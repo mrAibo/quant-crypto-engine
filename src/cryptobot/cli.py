@@ -53,6 +53,10 @@ from cryptobot.research.tardis_historical import (
 from cryptobot.research.tardis_historical import (
     write_corpus_manifest as write_tardis_corpus_manifest,
 )
+from cryptobot.research.tardis_lakehouse import (
+    TardisLakehouseError,
+    write_lakehouse_manifest,
+)
 from cryptobot.runtime.dual_source_recorder import load_dual_source_recorder_config
 from cryptobot.runtime.frontier_segment import (
     FrontierSegmentError,
@@ -226,6 +230,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
     tardis_report.add_argument("--destination", required=True)
     tardis_report.add_argument("--output", required=True)
+
+    tardis_lakehouse = subparsers.add_parser(
+        "build-tardis-lakehouse",
+        help="Build reproducible Parquet + DuckDB views from the frozen TASK-028 corpus.",
+    )
+    tardis_lakehouse.add_argument("--source-root", required=True)
+    tardis_lakehouse.add_argument("--corpus-manifest", required=True)
+    tardis_lakehouse.add_argument("--output-root", required=True)
+    tardis_lakehouse.add_argument("--manifest-output", required=True)
     return parser
 
 
@@ -583,6 +596,32 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(
             json.dumps(
                 {"status": "SUCCESS", "report_path": str(tardis_report_path)},
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+        )
+        return 0
+
+    if args.command == "build-tardis-lakehouse":
+        try:
+            lakehouse_manifest = write_lakehouse_manifest(
+                source_root=args.source_root,
+                corpus_manifest_path=args.corpus_manifest,
+                output_root=args.output_root,
+                manifest_path=args.manifest_output,
+            )
+        except (TardisLakehouseError, OSError, ValueError) as exc:
+            print(
+                json.dumps(
+                    {"status": "FAILED", "error": str(exc)},
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+            )
+            return 2
+        print(
+            json.dumps(
+                {"status": "SUCCESS", "manifest_path": str(lakehouse_manifest)},
                 sort_keys=True,
                 separators=(",", ":"),
             )

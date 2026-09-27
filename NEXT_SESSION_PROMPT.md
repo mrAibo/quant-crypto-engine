@@ -8,7 +8,7 @@ Current state:
 - phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
 - primary task: **TASK-027 — Stage 2 Prospective Development Evidence Expansion**
 - latest completed parallel task: **TASK-028 — Tardis Historical Microstructure DEVELOPMENT Corpus**
-- next bounded historical task after closeout: **TASK-029 — freeze feature-build/training/evaluation before outcome use**
+- current parallel bounded task: **TASK-029 — Frozen Tardis Historical Feature/Training Protocol**
 - TASK-001 through TASK-026 and TASK-028 are complete; TASK-027 remains actively collecting
 - TASK-027 frozen public DEVELOPMENT capture is **COLLECTING** on Aibo
 - TASK-028 historical corpus is **COMPLETE: 80/80 verified archives, 0 missing**
@@ -26,7 +26,9 @@ Read in this order:
 5. `artifacts/stage_2/development_campaign_protocol.json`
 6. `artifacts/stage_2/tardis_historical_development_protocol.json`
 7. `artifacts/stage_2/tardis_historical_corpus_manifest.json`
-8. only then inspect implementation/evidence as needed
+8. `tasks/TASK_029.md`
+9. `artifacts/stage_2/tardis_historical_training_protocol.json`
+10. only then inspect implementation/evidence as needed
 
 Frozen TASK-027 state:
 
@@ -60,15 +62,28 @@ Frozen TASK-028 state:
 - economic outcomes consumed: **false**; model fitted: **false**
 - CryptoDataDownload is auxiliary coarse context only, not eligible for eight-feature rows
 
+Frozen TASK-029 state:
+
+- training protocol SHA-256:
+  `75fc97ab0ee68185704a06c81fd9fce06c0b1df5e32871dbac6247133ab53da1`
+- source: exact TASK-028 corpus manifest and archive-set SHA bindings
+- split: first 12 whole UTC days DEV_A / last 8 whole UTC days DEV_B
+- horizons: 50s / 300s only
+- features: exact TASK-025 eight-feature family
+- model: deterministic Decimal L2 logistic; DEV_A standardization/training/gate only
+- derived storage: Parquet ZSTD + DuckDB 1.5.5; raw TASK-028 remains source of truth
+- storage conversion materializes no labels/PnL/economic outcomes
+- DEV_B: frozen support/economic pass rules only
+- current TASK-027 cannot be repurposed as fresh SELECTION
+- historical economic outcomes are **not yet consumed**
+
 Exact next actions:
 
-1. close TASK-028 with the immutable corpus manifest and green CI;
-2. only after that closeout, create TASK-029 and freeze historical feature-build,
-   chronological split, training, and development evaluation rules before reading
-   historical economic outcomes;
-3. then build/train/evaluate only under that frozen TASK-029 protocol;
+1. require green CI and merge this exact TASK-029 protocol before outcome use;
+2. implement and merge the deterministic historical builder/trainer under that protocol;
+3. only then build/train/evaluate the fixed TASK-028 corpus;
 4. in parallel keep TASK-027 healthy until its fixed deadline;
 5. after TASK-027 deadline publish deterministic prospective coverage/support evidence.
 
-Do not alter the TASK-028 corpus based on outcomes, open old confirmation, or
-introduce private/account/maker/live execution.
+Do not alter the TASK-028 corpus or TASK-029 rules based on outcomes, open old
+confirmation, or introduce private/account/maker/live execution.

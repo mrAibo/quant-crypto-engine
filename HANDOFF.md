@@ -24,7 +24,9 @@ In this order:
 5. `artifacts/stage_2/development_campaign_protocol.json`
 6. `artifacts/stage_2/tardis_historical_development_protocol.json`
 7. `artifacts/stage_2/tardis_historical_corpus_manifest.json`
-8. only then inspect implementation/evidence files as needed
+8. `tasks/TASK_029.md`
+9. `artifacts/stage_2/tardis_historical_training_protocol.json`
+10. only then inspect implementation/evidence files as needed
 
 Do not reconstruct project state from chat memory when repository state disagrees.
 
@@ -409,9 +411,9 @@ TASK-028 historical DEVELOPMENT corpus is **COMPLETE** and remains separate from
 
 1. keep TASK-027 capture/process timers healthy until the immutable
    **2026-09-30 12:38:55.742461 CEST** deadline;
-2. close TASK-028 with its deterministic 80-archive corpus manifest;
-3. start a separate TASK-029 only after closeout and freeze historical feature-build,
-   chronological split, training, and evaluation rules **before** reading economic outcomes;
+2. merge the exact TASK-029 training protocol **before** reading TASK-028 economic outcomes;
+3. only after that merge, implement/build/train/evaluate the frozen 50s/300s
+   historical family on the fixed 12-day DEV_A / 8-day DEV_B split;
 4. use TASK-028 only as DEVELOPMENT data under that frozen protocol;
 5. after TASK-027 collection, publish its deterministic coverage/support evidence;
 6. do not use outcomes to alter duration, dates, features, horizons, thresholds, or rules.
@@ -419,7 +421,7 @@ TASK-028 historical DEVELOPMENT corpus is **COMPLETE** and remains separate from
 No private account access, AWS requester-pays credentials, wallet, capital, maker
 orders, registered SELECTION/CONFIRMATION evidence, or live trading.
 
-## Session checkpoint — TASK-027 collecting; TASK-028 corpus complete
+## Session checkpoint — TASK-027 collecting; TASK-029 protocol ready before historical outcome use
 
 This checkpoint exists specifically to start a new chat/session without reconstructing
 state from conversational history.
@@ -453,13 +455,21 @@ state from conversational history.
 - TASK-028 archive-set SHA-256:
   `8e545456b34c6d1dabdb4e31fc13a0cb174bb96fef01eb137d9c32fa1dcb37fc`;
 - TASK-028 economic outcomes consumed: **false**; model fitted: **false**;
+- TASK-029 protocol SHA-256:
+  `75fc97ab0ee68185704a06c81fd9fce06c0b1df5e32871dbac6247133ab53da1`;
+- TASK-029 state: **PROTOCOL_READY — historical economic outcomes not yet consumed**;
+- TASK-029 split: **12 whole UTC days DEV_A / 8 whole UTC days DEV_B**;
+- TASK-029 horizons: **50s / 300s only**; no sweeps;
+- TASK-029 derived storage: **Parquet ZSTD + DuckDB 1.5.5**, rebuildable from raw;
+- storage conversion materializes economic outcomes: **false**;
+- TASK-027 may not be repurposed as future SELECTION;
 - TASK-026 artifact SHA-256:
   `4c90657accb99a0caff44336bbca091b887f99cd9caedada01fd15364b77b39b`;
 - selected primary path: **PROSPECTIVE_DEVELOPMENT_EVIDENCE_EXPANSION**;
 - always verify the latest `main` before continuing;
 - primary work package: **TASK-027 — Stage 2 Prospective Development Evidence Expansion**;
 - latest completed parallel work package: **TASK-028 — Tardis Historical Microstructure DEVELOPMENT Corpus**;
-- next bounded historical package after closeout: **TASK-029 — frozen feature-build/training/evaluation protocol**;
+- current parallel bounded package: **TASK-029 — Frozen Tardis Historical Feature/Training Protocol**;
 - old Stage-2 confirmation: **UNOPENED_AND_EXCLUDED**;
 - new model/test evidence consumed during TASK-026: **none**;
 - fresh registered test evidence after TASK-026: **none**;

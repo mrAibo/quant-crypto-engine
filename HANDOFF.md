@@ -20,9 +20,11 @@ In this order:
 1. `HANDOFF.md`
 2. `STATUS.md`
 3. `tasks/TASK_027.md`
-4. `artifacts/stage_2/development_campaign_protocol.json`
-5. `artifacts/stage_2/economic_bottleneck_adjudication.json`
-6. only then inspect implementation/evidence files as needed
+4. `tasks/TASK_028.md`
+5. `artifacts/stage_2/development_campaign_protocol.json`
+6. `artifacts/stage_2/tardis_historical_development_protocol.json`
+7. `artifacts/stage_2/tardis_historical_corpus_manifest.json`
+8. only then inspect implementation/evidence files as needed
 
 Do not reconstruct project state from chat memory when repository state disagrees.
 
@@ -403,27 +405,26 @@ Complete.
 ## Exact next action
 
 TASK-027 frozen capture is **COLLECTING** on Aibo and its fixed window is established.
-TASK-028 is a parallel historical DEVELOPMENT import that must not alter TASK-027.
+TASK-028 historical DEVELOPMENT corpus is **COMPLETE** and remains separate from TASK-027.
 
 1. keep TASK-027 capture/process timers healthy until the immutable
    **2026-09-30 12:38:55.742461 CEST** deadline;
-2. merge the frozen TASK-028 Tardis protocol before bulk historical download;
-3. download exactly 80 archives covering 20 first-of-month days / 480 hours;
-4. verify gzip/schema/SHA provenance for every TASK-028 archive;
-5. freeze a later historical feature-build/training/evaluation task before consuming
-   TASK-028 outcomes for model adjudication;
-6. after TASK-027 collection, publish its deterministic coverage/support evidence;
-7. do not use outcomes to alter duration, dates, features, horizons, thresholds, or rules.
+2. close TASK-028 with its deterministic 80-archive corpus manifest;
+3. start a separate TASK-029 only after closeout and freeze historical feature-build,
+   chronological split, training, and evaluation rules **before** reading economic outcomes;
+4. use TASK-028 only as DEVELOPMENT data under that frozen protocol;
+5. after TASK-027 collection, publish its deterministic coverage/support evidence;
+6. do not use outcomes to alter duration, dates, features, horizons, thresholds, or rules.
 
 No private account access, AWS requester-pays credentials, wallet, capital, maker
 orders, registered SELECTION/CONFIRMATION evidence, or live trading.
 
-## Session checkpoint — TASK-027 collecting; TASK-028 protocol prepared
+## Session checkpoint — TASK-027 collecting; TASK-028 corpus complete
 
 This checkpoint exists specifically to start a new chat/session without reconstructing
 state from conversational history.
 
-- latest completed work package: **TASK-026**;
+- latest completed work package: **TASK-028**;
 - TASK-027 protocol SHA-256:
   `1ab9a735f512dd301392ba568b49ebd0f1e80d676f073b3d502bf73d111bc1d3`;
 - TASK-027 runtime profile SHA-256:
@@ -439,19 +440,26 @@ state from conversational history.
 - fixed deadline: `1790764735742461344`
   (**2026-09-30 12:38:55.742461 CEST**);
 - capture/process timers: **ACTIVE**;
-- checkpoint: 3 published/bound segments, fourth capture attempt in progress,
+- checkpoint: 4 published/bound segments, fifth capture attempt in progress,
   pending/incomplete processing = 0;
 - TASK-028 protocol SHA-256:
   `8d08ffa54eb64a3ecf11b9a73e3eea5d815f60560e7a93ad6796c63d2760b735`;
 - TASK-028: 20 first-of-month days / 480 hours / 80 Tardis archives,
   **DEVELOPMENT_ONLY_EXTERNAL_RECEIVE_TIME**;
-- TASK-028 bulk download: **NOT_STARTED — merge protocol first**;
+- TASK-028 download/verification: **COMPLETE — 80/80 archives, 0 missing**;
+- TASK-028 total compressed bytes: **1,180,336,813**;
+- TASK-028 corpus artifact SHA-256:
+  `9696dca5f57fe160a8438236f1af82947a1588d2476a882fdf627f4cbd26e5e8`;
+- TASK-028 archive-set SHA-256:
+  `8e545456b34c6d1dabdb4e31fc13a0cb174bb96fef01eb137d9c32fa1dcb37fc`;
+- TASK-028 economic outcomes consumed: **false**; model fitted: **false**;
 - TASK-026 artifact SHA-256:
   `4c90657accb99a0caff44336bbca091b887f99cd9caedada01fd15364b77b39b`;
 - selected primary path: **PROSPECTIVE_DEVELOPMENT_EVIDENCE_EXPANSION**;
 - always verify the latest `main` before continuing;
 - primary work package: **TASK-027 — Stage 2 Prospective Development Evidence Expansion**;
-- parallel work package: **TASK-028 — Tardis Historical Microstructure DEVELOPMENT Corpus**;
+- latest completed parallel work package: **TASK-028 — Tardis Historical Microstructure DEVELOPMENT Corpus**;
+- next bounded historical package after closeout: **TASK-029 — frozen feature-build/training/evaluation protocol**;
 - old Stage-2 confirmation: **UNOPENED_AND_EXCLUDED**;
 - new model/test evidence consumed during TASK-026: **none**;
 - fresh registered test evidence after TASK-026: **none**;

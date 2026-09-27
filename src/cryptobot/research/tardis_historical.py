@@ -294,6 +294,54 @@ def historical_status(destination_root: str | Path) -> dict[str, object]:
     }
 
 
+def build_corpus_manifest(destination_root: str | Path) -> dict[str, object]:
+    root = Path(destination_root)
+    _reject_campaign_destination(root)
+    archives: list[dict[str, object]] = []
+    total_bytes = 0
+    for spec in frozen_specs():
+        archive_path = root / spec.relative_path
+        manifest_path = archive_path.with_suffix(archive_path.suffix + ".manifest.json")
+        existing = _load_existing(spec, archive_path, manifest_path)
+        total_bytes += existing.size_bytes
+        archives.append(
+            {
+                "relative_path": spec.relative_path.as_posix(),
+                "manifest_relative_path": manifest_path.relative_to(root).as_posix(),
+                "archive_sha256": existing.sha256,
+                "manifest_sha256": _sha256_file(manifest_path),
+                "archive_size_bytes": existing.size_bytes,
+                "source": spec.as_dict(),
+            }
+        )
+    archive_set_bytes = _json_bytes({"archives": archives})
+    return {
+        "schema_version": 1,
+        "report_version": "stage2-task028-tardis-corpus-v1",
+        "protocol_sha256": protocol_sha256(),
+        "evidence_role": EVIDENCE_ROLE,
+        "complete": True,
+        "archive_count": len(archives),
+        "total_compressed_bytes": total_bytes,
+        "archive_set_sha256": hashlib.sha256(archive_set_bytes).hexdigest(),
+        "archives": archives,
+        "economic_outcomes_consumed": False,
+        "model_fitted": False,
+        "old_confirmation_status": "UNOPENED_AND_EXCLUDED",
+        "task027_replaced": False,
+    }
+
+
+def write_corpus_manifest(
+    path: str | Path,
+    destination_root: str | Path,
+) -> Path:
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    _write_immutable(target, _json_bytes(build_corpus_manifest(destination_root)))
+    return target
+
+
 def _load_existing(
     spec: TardisArchiveSpec,
     archive_path: Path,

@@ -7,10 +7,11 @@ Current state:
 
 - phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
 - primary task: **TASK-027 — Stage 2 Prospective Development Evidence Expansion**
-- parallel bounded task: **TASK-028 — Tardis Historical Microstructure DEVELOPMENT Corpus**
-- TASK-001 through TASK-026 are complete
+- latest completed parallel task: **TASK-028 — Tardis Historical Microstructure DEVELOPMENT Corpus**
+- next bounded historical task after closeout: **TASK-029 — freeze feature-build/training/evaluation before outcome use**
+- TASK-001 through TASK-026 and TASK-028 are complete; TASK-027 remains actively collecting
 - TASK-027 frozen public DEVELOPMENT capture is **COLLECTING** on Aibo
-- TASK-028 protocol is frozen locally; bulk download must wait for protocol merge
+- TASK-028 historical corpus is **COMPLETE: 80/80 verified archives, 0 missing**
 - old Stage-2 confirmation: **UNOPENED_AND_EXCLUDED**
 - live trading / OMS / signing / capital deployment: **FORBIDDEN**
 - no private account/API key/wallet/AWS requester-pays access is required
@@ -24,7 +25,8 @@ Read in this order:
 4. `tasks/TASK_028.md`
 5. `artifacts/stage_2/development_campaign_protocol.json`
 6. `artifacts/stage_2/tardis_historical_development_protocol.json`
-7. only then inspect implementation/evidence as needed
+7. `artifacts/stage_2/tardis_historical_corpus_manifest.json`
+8. only then inspect implementation/evidence as needed
 
 Frozen TASK-027 state:
 
@@ -42,7 +44,7 @@ Frozen TASK-028 state:
   `8d08ffa54eb64a3ecf11b9a73e3eea5d815f60560e7a93ad6796c63d2760b735`
 - provider: Tardis.dev free first-of-month CSV datasets
 - dates: **2024-11-01 through 2026-06-01**, first day of each month only
-- 20 days / 480 hours / 80 expected archives
+- 20 days / 480 hours / **80/80 verified archives**, 0 missing
 - per day: Hyperliquid BTC book_snapshot_5 + trades; Binance Futures BTCUSDT quotes + trades
 - primary historical ordering field: Tardis `local_timestamp`
 - Hyperliquid and Binance Futures Tardis recorders are both in Tokyo
@@ -50,19 +52,23 @@ Frozen TASK-028 state:
 - TASK-025 eight-feature family unchanged
 - horizons 50s / 300s only
 - evidence role: **DEVELOPMENT_ONLY_EXTERNAL_RECEIVE_TIME**
+- total compressed bytes: **1,180,336,813**
+- corpus artifact SHA-256:
+  `9696dca5f57fe160a8438236f1af82947a1588d2476a882fdf627f4cbd26e5e8`
+- archive-set SHA-256:
+  `8e545456b34c6d1dabdb4e31fc13a0cb174bb96fef01eb137d9c32fa1dcb37fc`
+- economic outcomes consumed: **false**; model fitted: **false**
 - CryptoDataDownload is auxiliary coarse context only, not eligible for eight-feature rows
 
 Exact next actions:
 
-1. require green CI and merge the exact TASK-028 protocol/downloader implementation;
-2. deploy merged `main` to Aibo;
-3. download and verify exactly 80 TASK-028 archives into
-   `/var/lib/quant-crypto-engine/tardis-historical-development`;
-4. commit the immutable download/status checkpoint;
-5. freeze a separate feature-build/training/evaluation protocol before consuming
-   historical outcomes for model adjudication;
-6. in parallel keep TASK-027 healthy until its fixed deadline;
-7. after TASK-027 deadline publish deterministic prospective coverage/support evidence.
+1. close TASK-028 with the immutable corpus manifest and green CI;
+2. only after that closeout, create TASK-029 and freeze historical feature-build,
+   chronological split, training, and development evaluation rules before reading
+   historical economic outcomes;
+3. then build/train/evaluate only under that frozen TASK-029 protocol;
+4. in parallel keep TASK-027 healthy until its fixed deadline;
+5. after TASK-027 deadline publish deterministic prospective coverage/support evidence.
 
-Do not fit/tune a model inside TASK-028, change dates/features/horizons based on
-outcomes, open old confirmation, or introduce private/account/maker/live execution.
+Do not alter the TASK-028 corpus based on outcomes, open old confirmation, or
+introduce private/account/maker/live execution.

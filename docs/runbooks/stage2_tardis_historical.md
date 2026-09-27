@@ -78,6 +78,23 @@ python -m cryptobot.cli status-tardis-historical \
 
 Completion requires 80/80 verified archives.
 
+## Completion checkpoint
+
+TASK-028 completed with:
+
+- 80/80 verified archives;
+- 0 missing archives;
+- 1,180,336,813 compressed bytes;
+- corpus manifest:
+  `artifacts/stage_2/tardis_historical_corpus_manifest.json`;
+- corpus manifest SHA-256:
+  `9696dca5f57fe160a8438236f1af82947a1588d2476a882fdf627f4cbd26e5e8`;
+- archive-set SHA-256:
+  `8e545456b34c6d1dabdb4e31fc13a0cb174bb96fef01eb137d9c32fa1dcb37fc`.
+
+The corpus report binds every archive SHA and every local immutable manifest SHA.
+It records `economic_outcomes_consumed=false` and `model_fitted=false`.
+
 ## Analysis boundary
 
 TASK-028 does not fit a model and does not inspect outcomes to change the corpus.

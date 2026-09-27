@@ -10,15 +10,16 @@
 - Current branch: `main`
 - Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
 - Current primary work package: **TASK-027 — Stage 2 Prospective Development Evidence Expansion**
-- Parallel bounded work package: **TASK-028 — Tardis Historical Microstructure DEVELOPMENT Corpus**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019, TASK-020, TASK-021, TASK-022, TASK-023, TASK-024, TASK-025, TASK-026**
+- Latest completed parallel work package: **TASK-028 — Tardis Historical Microstructure DEVELOPMENT Corpus**
+- Next bounded historical work package after TASK-028 closeout: **TASK-029 — freeze feature-build/training/evaluation before outcome use**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019, TASK-020, TASK-021, TASK-022, TASK-023, TASK-024, TASK-025, TASK-026, TASK-028**
 - Economic status: **Frontier Gate PASS_FEASIBILITY; bounded 50s, 300s, and microstructure families STOPPED; TASK-026 selected prospective DEVELOPMENT evidence expansion; net edge UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
 
-## New-session checkpoint — TASK-027 collecting; TASK-028 protocol frozen locally
+## New-session checkpoint — TASK-027 collecting; TASK-028 historical corpus complete
 
-- latest completed work package: **TASK-026**;
+- latest completed work package: **TASK-028**;
 - TASK-027 protocol package: PR #45 merged as
   `b3de5b4c15138ccc1df81c9a055d04920cad237c` after CI run `36312921369` passed;
 - deployed Aibo checkout at TASK-027 launch:
@@ -35,14 +36,20 @@
 - `deadline_wall_ns = 1790764735742461344`
   (**2026-09-30 12:38:55.742461 CEST**);
 - capture/process timers: **ACTIVE**;
-- checkpoint: 3 published/bound segments, fourth capture attempt in progress,
+- checkpoint: 4 published/bound segments, fifth capture attempt in progress,
   pending processing 0, incomplete processing 0;
 - TASK-028 frozen historical protocol SHA-256:
   `8d08ffa54eb64a3ecf11b9a73e3eea5d815f60560e7a93ad6796c63d2760b735`;
 - TASK-028 corpus: 20 first-of-month days from 2024-11-01 through 2026-06-01,
   480 nominal hours, 80 Tardis archives;
 - TASK-028 evidence role: **DEVELOPMENT_ONLY_EXTERNAL_RECEIVE_TIME**;
-- TASK-028 bulk download: **NOT_STARTED — protocol must merge first**;
+- TASK-028 download/verification: **COMPLETE — 80/80 archives, 0 missing**;
+- TASK-028 total compressed bytes: **1,180,336,813**;
+- TASK-028 corpus artifact SHA-256:
+  `9696dca5f57fe160a8438236f1af82947a1588d2476a882fdf627f4cbd26e5e8`;
+- TASK-028 archive-set SHA-256:
+  `8e545456b34c6d1dabdb4e31fc13a0cb174bb96fef01eb137d9c32fa1dcb37fc`;
+- TASK-028 economic outcomes consumed: **false**; model fitted: **false**;
 - TASK-026 decision artifact SHA-256:
   `4c90657accb99a0caff44336bbca091b887f99cd9caedada01fd15364b77b39b`;
 - selected primary path: **PROSPECTIVE_DEVELOPMENT_EVIDENCE_EXPANSION**;
@@ -61,7 +68,8 @@ Fresh-session read order:
 4. `tasks/TASK_028.md`
 5. `artifacts/stage_2/development_campaign_protocol.json`
 6. `artifacts/stage_2/tardis_historical_development_protocol.json`
-7. inspect only the implementation/evidence needed for the active bounded tracks
+7. `artifacts/stage_2/tardis_historical_corpus_manifest.json`
+8. inspect only the implementation/evidence needed for the active bounded tracks
 
 Do not recover project state from old chat messages when repository state differs.
 

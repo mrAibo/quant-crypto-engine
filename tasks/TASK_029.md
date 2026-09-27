@@ -2,7 +2,7 @@
 
 ## Status
 
-**LAKEHOUSE COMPLETE — HISTORICAL ECONOMIC OUTCOMES NOT YET CONSUMED**
+**IMPLEMENTATION READY — HISTORICAL ECONOMIC OUTCOMES NOT YET CONSUMED**
 
 ## Context
 
@@ -85,6 +85,28 @@ The merged TASK-029 storage implementation built successfully on Aibo:
 
 Raw TASK-028 archives remain the source of truth. The lakehouse is rebuildable and
 may now be used by the frozen historical feature builder/trainer.
+
+### Feature/training implementation checkpoint
+
+The deterministic implementation is prepared but has **not** been run on the real
+historical corpus yet.
+
+It adds:
+
+- `build-tardis-training-features`: builds separate immutable 50s/300s caches from
+  the frozen DuckDB catalog using causal `local_timestamp` ASOF semantics;
+- a feature-build report that freezes both cache SHA-256 values before economic
+  summary/model fitting;
+- `evaluate-tardis-historical-development`: requires the exact feature-build
+  report SHA, loads only the frozen cache SHA values, fits DEV_A only, and adjudicates
+  DEV_B under the pre-registered rules;
+- exact Decimal feature/economic arithmetic;
+- no threshold/horizon/hyperparameter sweep;
+- explicit provenance from TASK-029 protocol -> lakehouse -> feature-build report
+  -> cache SHA values -> development report.
+
+The implementation must merge with green CI before the real 480-hour feature build
+or any historical economic outcome inspection.
 
 ## Historical causal semantics
 

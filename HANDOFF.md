@@ -20,8 +20,9 @@ In this order:
 1. `HANDOFF.md`
 2. `STATUS.md`
 3. `tasks/TASK_027.md`
-4. `artifacts/stage_2/economic_bottleneck_adjudication.json`
-5. only then inspect implementation/evidence files as needed
+4. `artifacts/stage_2/development_campaign_protocol.json`
+5. `artifacts/stage_2/economic_bottleneck_adjudication.json`
+6. only then inspect implementation/evidence files as needed
 
 Do not reconstruct project state from chat memory when repository state disagrees.
 
@@ -401,23 +402,29 @@ Complete.
 
 ## Exact next action
 
-Start **TASK-027 — Stage 2 Prospective Development Evidence Expansion**.
+TASK-027 protocol implementation is frozen but **capture has not started**.
 
-1. commit a machine-readable fixed 72-hour public-only DEVELOPMENT campaign protocol;
-2. use the validated immutable QCR1/segment pipeline on Aibo;
-3. preserve receive-time/host/boot causality, gaps, duplicates and missingness;
-4. do not fit a predictive model or change features/horizons during TASK-027;
-5. finish by publishing deterministic coverage/support evidence only.
+1. require green CI and merge the exact protocol/runtime implementation;
+2. deploy that merged `main` to Aibo;
+3. initialize the new campaign root and start capture/process timers;
+4. verify the first successful capture establishes an immutable start/deadline;
+5. record the operational checkpoint in the repository;
+6. continue collection until the fixed 72-hour wall deadline without using outcomes to alter collection.
 
 No private account access, AWS requester-pays credentials, wallet, capital, maker
 orders, registered SELECTION/CONFIRMATION evidence, or live trading.
 
-## Session checkpoint — post TASK-026 adjudication
+## Session checkpoint — TASK-027 protocol frozen, capture not started
 
 This checkpoint exists specifically to start a new chat/session without reconstructing
 state from conversational history.
 
 - latest completed work package: **TASK-026**;
+- TASK-027 protocol SHA-256:
+  `1ab9a735f512dd301392ba568b49ebd0f1e80d676f073b3d502bf73d111bc1d3`;
+- TASK-027 runtime profile SHA-256:
+  `8bf2a31ec634b475f1e3b559663bb35e16950c1c721ab73ddc5812cd6b1f03e1`;
+- TASK-027 capture state: **NOT_STARTED — merge before capture**;
 - TASK-026 artifact SHA-256:
   `4c90657accb99a0caff44336bbca091b887f99cd9caedada01fd15364b77b39b`;
 - selected primary path: **PROSPECTIVE_DEVELOPMENT_EVIDENCE_EXPANSION**;

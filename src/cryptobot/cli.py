@@ -21,6 +21,15 @@ from cryptobot.research.campaign_storage import (
     load_campaign_config,
     publish_campaign_report,
 )
+from cryptobot.research.development_campaign import (
+    DevelopmentCampaignError,
+    capture_development_segment_sync,
+    development_campaign_status,
+    process_development_segment_sync,
+)
+from cryptobot.research.development_campaign import (
+    initialize_campaign_root as initialize_development_campaign_root,
+)
 from cryptobot.research.retrospective import (
     GATE_ELIGIBILITY,
     RetrospectiveDataError,
@@ -154,6 +163,33 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     frontier_report.add_argument("--campaign-root", required=True)
+
+    development_init = subparsers.add_parser(
+        "init-development-campaign",
+        help="Initialize the frozen TASK-027 public DEVELOPMENT campaign.",
+    )
+    development_init.add_argument("--campaign-root", required=True)
+    development_init.add_argument("--protocol", required=True)
+    development_init.add_argument("--runtime-config", required=True)
+
+    development_capture = subparsers.add_parser(
+        "capture-development-segment",
+        help="Capture one bounded TASK-027 public DEVELOPMENT segment.",
+    )
+    development_capture.add_argument("--campaign-root", required=True)
+
+    development_process = subparsers.add_parser(
+        "process-next-development-segment",
+        help="Process and bind the next TASK-027 captured DEVELOPMENT segment.",
+    )
+    development_process.add_argument("--campaign-root", required=True)
+    development_process.add_argument("--registry", default="config/instruments.yaml")
+
+    development_status = subparsers.add_parser(
+        "status-development-campaign",
+        help="Report operational TASK-027 campaign state without model evaluation.",
+    )
+    development_status.add_argument("--campaign-root", required=True)
     return parser
 
 
@@ -390,6 +426,79 @@ def main(argv: Sequence[str] | None = None) -> int:
                 separators=(",", ":"),
             )
         )
+        return 0
+
+    if args.command == "init-development-campaign":
+        try:
+            init_result = initialize_development_campaign_root(
+                args.campaign_root,
+                protocol_path=args.protocol,
+                runtime_config_path=args.runtime_config,
+            )
+        except (DevelopmentCampaignError, OSError, ValueError) as exc:
+            print(
+                json.dumps(
+                    {"status": "FAILED", "error": str(exc)}, sort_keys=True, separators=(",", ":")
+                )
+            )
+            return 2
+        print(
+            json.dumps({"status": "SUCCESS", **init_result}, sort_keys=True, separators=(",", ":"))
+        )
+        return 0
+
+    if args.command == "capture-development-segment":
+        try:
+            development_capture_result = capture_development_segment_sync(args.campaign_root)
+        except (DevelopmentCampaignError, FrontierSegmentError, OSError, ValueError) as exc:
+            print(
+                json.dumps(
+                    {"status": "FAILED", "error": str(exc)}, sort_keys=True, separators=(",", ":")
+                )
+            )
+            return 2
+        print(
+            json.dumps(
+                development_capture_result.as_dict(),
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+        )
+        return 0
+
+    if args.command == "process-next-development-segment":
+        try:
+            development_process_result = process_development_segment_sync(
+                args.campaign_root,
+                registry_path=args.registry,
+            )
+        except (DevelopmentCampaignError, FrontierSegmentError, OSError, ValueError) as exc:
+            print(
+                json.dumps(
+                    {"status": "FAILED", "error": str(exc)}, sort_keys=True, separators=(",", ":")
+                )
+            )
+            return 2
+        print(
+            json.dumps(
+                development_process_result.as_dict(),
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+        )
+        return 0
+
+    if args.command == "status-development-campaign":
+        try:
+            development_status_result = development_campaign_status(args.campaign_root)
+        except (DevelopmentCampaignError, OSError, ValueError) as exc:
+            print(
+                json.dumps(
+                    {"status": "FAILED", "error": str(exc)}, sort_keys=True, separators=(",", ":")
+                )
+            )
+            return 2
+        print(json.dumps(development_status_result, sort_keys=True, separators=(",", ":")))
         return 0
 
     if args.command != "validate-recorder-runtime":

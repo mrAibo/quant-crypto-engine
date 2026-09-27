@@ -1,0 +1,22 @@
+[Unit]
+Description=Quant Crypto Engine Stage-2 DEVELOPMENT raw capture
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=/var/lib/quant-crypto-engine/stage2-development-campaign/campaign-protocol.json
+
+[Service]
+Type=oneshot
+User=quantcrypto
+Group=quantcrypto
+WorkingDirectory=/opt/quant-crypto-engine
+ExecStart=/opt/quant-crypto-engine/.venv/bin/python -m cryptobot.cli capture-development-segment --campaign-root /var/lib/quant-crypto-engine/stage2-development-campaign
+TimeoutStartSec=infinity
+TimeoutStopSec=60s
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/quant-crypto-engine/stage2-development-campaign
+StandardOutput=journal
+StandardError=journal

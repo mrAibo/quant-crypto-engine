@@ -2,7 +2,7 @@
 
 ## Status
 
-**READY TO START**
+**IMPLEMENTATION READY — CAPTURE NOT STARTED**
 
 ## Context
 
@@ -115,3 +115,33 @@ rather than substituting private data or weakening provenance rules.
 - OMS/signing/order execution;
 - capital deployment;
 - retrospective extension of collection based on observed results.
+
+
+## Protocol implementation checkpoint
+
+The capture protocol and orchestration are implemented but **capture must not start
+until this exact commit has passed CI and merged to main**.
+
+Frozen protocol artifact:
+
+- `artifacts/stage_2/development_campaign_protocol.json`
+- SHA-256 `1ab9a735f512dd301392ba568b49ebd0f1e80d676f073b3d502bf73d111bc1d3`
+
+Frozen public transport profile:
+
+- `config/runtime/stage2-development-public.json`
+- SHA-256 `8bf2a31ec634b475f1e3b559663bb35e16950c1c721ab73ddc5812cd6b1f03e1`
+
+The network capture intentionally reuses the validated Stage-0 public dual-source
+transport as a superset. ETH and Hyperliquid `activeAssetCtx` frames are preserved
+raw because the validated adapter captures them, but TASK-027 eligibility is frozen
+to Hyperliquid BTC L2/BBO/trades and Binance BTCUSDT bookTicker/aggTrade only.
+
+Campaign root after merge:
+
+`/var/lib/quant-crypto-engine/stage2-development-campaign`
+
+The first failed capture attempt does not start the 72-hour clock. The immutable
+campaign start/deadline is derived from the earliest attempt that successfully
+publishes `capture-ready.json`. No model is fitted and no outcome statistic is
+used by the collection/status code.

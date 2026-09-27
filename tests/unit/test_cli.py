@@ -71,3 +71,34 @@ def test_plan_retrospective_data_cli_is_non_gating(
     assert payload["status"] == "SUCCESS"
     assert payload["task_018_gate_eligibility"] == "EXCLUDED_FROM_TASK_018_FRONTIER_GATE"
     assert plan["task_018_gate_eligibility"] == "EXCLUDED_FROM_TASK_018_FRONTIER_GATE"
+
+
+def test_development_campaign_cli_initializes_without_network(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    root = tmp_path / "development"
+    result = main(
+        [
+            "init-development-campaign",
+            "--campaign-root",
+            str(root),
+            "--protocol",
+            "artifacts/stage_2/development_campaign_protocol.json",
+            "--runtime-config",
+            "config/runtime/stage2-development-public.json",
+        ]
+    )
+    payload = json.loads(capsys.readouterr().out)
+
+    assert result == 0
+    assert payload["status"] == "SUCCESS"
+    assert payload["protocol_sha256"] == (
+        "1ab9a735f512dd301392ba568b49ebd0f1e80d676f073b3d502bf73d111bc1d3"
+    )
+
+    result = main(["status-development-campaign", "--campaign-root", str(root)])
+    status = json.loads(capsys.readouterr().out)
+    assert result == 0
+    assert status["campaign_state"] == "PRESTART"
+    assert status["model_fitted"] is False

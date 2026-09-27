@@ -2,7 +2,7 @@
 
 ## Status
 
-**CAPTURE STARTED — FIRST SEGMENT IN PROGRESS**
+**COLLECTING — FIXED 72-HOUR WINDOW ACTIVE**
 
 ## Context
 
@@ -124,7 +124,8 @@ PR #45 merged as `b3de5b4c15138ccc1df81c9a055d04920cad237c`; pre-merge CI run
 `36312921369` passed both `quality` and `test-python-313`.
 
 The exact merged commit is deployed on Aibo. The dedicated capture/process timers are
-active and the first public capture attempt is in progress:
+active and the first accepted segment successfully sealed. The fixed campaign window is
+now immutable:
 
 Frozen protocol artifact:
 
@@ -145,15 +146,19 @@ Campaign root:
 
 `/var/lib/quant-crypto-engine/stage2-development-campaign`
 
-Current first attempt:
+Immutable window:
 
-- run ID: `run-1790505535742461344-86b3a1307196c582cdde`;
-- `capture_attempt_count = 1`;
-- first QCR1 `.raw.open` is growing, confirming live public evidence arrival;
-- campaign state remains `PRESTART` until this segment seals successfully;
-- `started_wall_ns` and `deadline_wall_ns` therefore remain null for now.
+- first accepted run ID: `run-1790505535742461344-86b3a1307196c582cdde`;
+- `started_wall_ns = 1790505535742461344`;
+- start UTC: **2026-09-27 10:38:55.742461**;
+- start Europe/Berlin: **2026-09-27 12:38:55.742461 CEST**;
+- `deadline_wall_ns = 1790764735742461344`;
+- deadline UTC: **2026-09-30 10:38:55.742461**;
+- deadline Europe/Berlin: **2026-09-30 12:38:55.742461 CEST**;
+- campaign state: **COLLECTING**.
 
-The first failed capture attempt does not start the 72-hour clock. The immutable
-campaign start/deadline is derived from the earliest attempt that successfully
-publishes `capture-ready.json`. No model is fitted and no outcome statistic is
-used by the collection/status code.
+At this checkpoint 3 segments were fully published/bound and a fourth capture attempt
+was in progress, with no pending or incomplete processing. These counts are operational
+and will change; the start/deadline above will not.
+
+No model is fitted and no outcome statistic is used by the collection/status code.

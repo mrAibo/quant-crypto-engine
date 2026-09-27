@@ -38,6 +38,18 @@ from cryptobot.research.retrospective import (
     write_binance_retrospective_50s_report,
     write_retrospective_plan,
 )
+from cryptobot.research.tardis_historical import (
+    TardisHistoricalError,
+)
+from cryptobot.research.tardis_historical import (
+    download_all as download_tardis_historical,
+)
+from cryptobot.research.tardis_historical import (
+    historical_status as tardis_historical_status,
+)
+from cryptobot.research.tardis_historical import (
+    load_protocol as load_tardis_historical_protocol,
+)
 from cryptobot.runtime.dual_source_recorder import load_dual_source_recorder_config
 from cryptobot.runtime.frontier_segment import (
     FrontierSegmentError,
@@ -190,6 +202,20 @@ def build_parser() -> argparse.ArgumentParser:
         help="Report operational TASK-027 campaign state without model evaluation.",
     )
     development_status.add_argument("--campaign-root", required=True)
+
+    tardis_download = subparsers.add_parser(
+        "download-tardis-historical",
+        help="Download the frozen TASK-028 Tardis DEVELOPMENT corpus.",
+    )
+    tardis_download.add_argument("--protocol", required=True)
+    tardis_download.add_argument("--destination", required=True)
+    tardis_download.add_argument("--workers", type=int, default=4)
+
+    tardis_status = subparsers.add_parser(
+        "status-tardis-historical",
+        help="Verify frozen TASK-028 Tardis DEVELOPMENT archives.",
+    )
+    tardis_status.add_argument("--destination", required=True)
     return parser
 
 
@@ -499,6 +525,36 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
             return 2
         print(json.dumps(development_status_result, sort_keys=True, separators=(",", ":")))
+        return 0
+
+    if args.command == "download-tardis-historical":
+        try:
+            load_tardis_historical_protocol(args.protocol)
+            tardis_download_result = download_tardis_historical(
+                args.destination,
+                workers=args.workers,
+            )
+        except (TardisHistoricalError, OSError, ValueError) as exc:
+            print(
+                json.dumps(
+                    {"status": "FAILED", "error": str(exc)}, sort_keys=True, separators=(",", ":")
+                )
+            )
+            return 2
+        print(json.dumps(tardis_download_result, sort_keys=True, separators=(",", ":")))
+        return 0
+
+    if args.command == "status-tardis-historical":
+        try:
+            tardis_status_result = tardis_historical_status(args.destination)
+        except (TardisHistoricalError, OSError, ValueError) as exc:
+            print(
+                json.dumps(
+                    {"status": "FAILED", "error": str(exc)}, sort_keys=True, separators=(",", ":")
+                )
+            )
+            return 2
+        print(json.dumps(tardis_status_result, sort_keys=True, separators=(",", ":")))
         return 0
 
     if args.command != "validate-recorder-runtime":

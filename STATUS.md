@@ -9,29 +9,40 @@
 - Repository: `mrAibo/quant-crypto-engine`
 - Current branch: `main`
 - Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
-- Current work package: **TASK-027 — Stage 2 Prospective Development Evidence Expansion**
+- Current primary work package: **TASK-027 — Stage 2 Prospective Development Evidence Expansion**
+- Parallel bounded work package: **TASK-028 — Tardis Historical Microstructure DEVELOPMENT Corpus**
 - Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019, TASK-020, TASK-021, TASK-022, TASK-023, TASK-024, TASK-025, TASK-026**
 - Economic status: **Frontier Gate PASS_FEASIBILITY; bounded 50s, 300s, and microstructure families STOPPED; TASK-026 selected prospective DEVELOPMENT evidence expansion; net edge UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
 
-## New-session checkpoint — TASK-027 first capture in progress
+## New-session checkpoint — TASK-027 collecting; TASK-028 protocol frozen locally
 
 - latest completed work package: **TASK-026**;
 - TASK-027 protocol package: PR #45 merged as
   `b3de5b4c15138ccc1df81c9a055d04920cad237c` after CI run `36312921369` passed;
-- deployed Aibo checkout: `b3de5b4c15138ccc1df81c9a055d04920cad237c`;
+- deployed Aibo checkout at TASK-027 launch:
+  `b3de5b4c15138ccc1df81c9a055d04920cad237c`;
 - TASK-027 protocol artifact SHA-256:
   `1ab9a735f512dd301392ba568b49ebd0f1e80d676f073b3d502bf73d111bc1d3`;
 - TASK-027 runtime profile SHA-256:
   `8bf2a31ec634b475f1e3b559663bb35e16950c1c721ab73ddc5812cd6b1f03e1`;
-- TASK-027 capture state: **FIRST_CAPTURE_IN_PROGRESS**;
-- first attempt run ID:
+- TASK-027 capture state: **COLLECTING**;
+- first accepted run ID:
   `run-1790505535742461344-86b3a1307196c582cdde`;
+- `started_wall_ns = 1790505535742461344`
+  (**2026-09-27 12:38:55.742461 CEST**);
+- `deadline_wall_ns = 1790764735742461344`
+  (**2026-09-30 12:38:55.742461 CEST**);
 - capture/process timers: **ACTIVE**;
-- QCR1 raw evidence is growing;
-- `campaign_state = PRESTART`, `started_wall_ns = null`, `deadline_wall_ns = null`
-  until the first segment successfully seals;
+- checkpoint: 3 published/bound segments, fourth capture attempt in progress,
+  pending processing 0, incomplete processing 0;
+- TASK-028 frozen historical protocol SHA-256:
+  `8d08ffa54eb64a3ecf11b9a73e3eea5d815f60560e7a93ad6796c63d2760b735`;
+- TASK-028 corpus: 20 first-of-month days from 2024-11-01 through 2026-06-01,
+  480 nominal hours, 80 Tardis archives;
+- TASK-028 evidence role: **DEVELOPMENT_ONLY_EXTERNAL_RECEIVE_TIME**;
+- TASK-028 bulk download: **NOT_STARTED — protocol must merge first**;
 - TASK-026 decision artifact SHA-256:
   `4c90657accb99a0caff44336bbca091b887f99cd9caedada01fd15364b77b39b`;
 - selected primary path: **PROSPECTIVE_DEVELOPMENT_EVIDENCE_EXPANSION**;
@@ -47,9 +58,10 @@ Fresh-session read order:
 1. `HANDOFF.md`
 2. `STATUS.md`
 3. `tasks/TASK_027.md`
-4. `artifacts/stage_2/development_campaign_protocol.json`
-5. `artifacts/stage_2/economic_bottleneck_adjudication.json`
-6. inspect only the implementation/evidence needed for TASK-027
+4. `tasks/TASK_028.md`
+5. `artifacts/stage_2/development_campaign_protocol.json`
+6. `artifacts/stage_2/tardis_historical_development_protocol.json`
+7. inspect only the implementation/evidence needed for the active bounded tracks
 
 Do not recover project state from old chat messages when repository state differs.
 

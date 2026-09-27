@@ -7,9 +7,9 @@ Current state:
 
 - phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
 - primary task: **TASK-027 — Stage 2 Prospective Development Evidence Expansion**
-- latest completed parallel task: **TASK-028 — Tardis Historical Microstructure DEVELOPMENT Corpus**
-- current parallel bounded task: **TASK-029 — Frozen Tardis Historical Feature/Training Protocol**
-- TASK-001 through TASK-026 and TASK-028 are complete; TASK-027 remains actively collecting
+- latest completed parallel task: **TASK-029 — Frozen Tardis Historical Feature/Training Protocol**
+- current parallel bounded task: **none — do not open a new predictive family before TASK-027 closeout**
+- TASK-001 through TASK-026, TASK-028, and TASK-029 are complete; TASK-027 remains actively collecting
 - TASK-027 frozen public DEVELOPMENT capture is **COLLECTING** on Aibo
 - TASK-028 historical corpus is **COMPLETE: 80/80 verified archives, 0 missing**
 - old Stage-2 confirmation: **UNOPENED_AND_EXCLUDED**
@@ -30,7 +30,8 @@ Read in this order:
 9. `artifacts/stage_2/tardis_historical_training_protocol.json`
 10. `artifacts/stage_2/tardis_lakehouse_manifest.json`
 11. `artifacts/stage_2/tardis_historical_feature_build_report.json`
-12. only then inspect implementation/evidence as needed
+12. `artifacts/stage_2/tardis_historical_development_report.json`
+13. only then inspect implementation/evidence as needed
 
 Frozen TASK-027 state:
 
@@ -90,17 +91,26 @@ Frozen TASK-029 state:
   `409ef9c60bfcbb048b593fc16f1d34cc84da1f0087ea372b7c4c799d3d030640`
 - 300s cache SHA-256:
   `49fea618533a359727cfce3d95d2b50ee876c6fa2d75931f4b4e305e3938b3b3`
-- economic summary computed: **false**; model fitted: **false**
-- evaluation requires the exact feature-build report SHA
+- development report SHA-256:
+  `fec2e2c9a081b4edb5e84e4bcc04fdd569d5e3746daa93befbf9f23e7d6b2fe7`
+- decision: **STOP_HISTORICAL_MICROSTRUCTURE_DEVELOPMENT**
+- 50s DEV_A support: **18,974 valid; 729 positive / 18,245 nonpositive**
+- 50s DEV_B: **15 selected; mean -27.12707 quote; median -12.2326972833 bps**
+- 300s DEV_A support: **3,214 valid; 570 positive / 2,644 nonpositive**
+- 300s DEV_B: **1 selected; mean -212.5421 quote; median -31.5601900661 bps**
+- selected historical horizon: **none**
+- fresh SELECTION/CONFIRMATION started: **false / false**
 
 Exact next actions:
 
-1. merge the TASK-029 feature-build checkpoint with the exact report/cache SHA values;
-2. only after that merge, fit DEV_A and adjudicate DEV_B using the exact frozen
-   feature-build report SHA;
-3. do not rebuild/replace the frozen feature caches based on evaluation results;
-4. in parallel keep TASK-027 healthy until its fixed deadline;
-5. after TASK-027 deadline publish deterministic prospective coverage/support evidence.
+1. merge the TASK-029 closeout artifact recording the frozen historical STOP;
+2. keep TASK-027 healthy until its fixed deadline;
+3. do not open a new predictive family before TASK-027 closeout;
+4. after TASK-027 deadline publish deterministic prospective coverage/support evidence;
+5. then run a new bounded economic-bottleneck adjudication using both TASK-027
+   closeout and the completed TASK-029 STOP.
+
+Do not repurpose TASK-027 as SELECTION and do not open old confirmation.
 
 Do not alter the TASK-028 corpus or TASK-029 rules based on outcomes, open old
 confirmation, or introduce private/account/maker/live execution.

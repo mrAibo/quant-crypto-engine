@@ -8,7 +8,7 @@
 - GitHub: `mrAibo/quant-crypto-engine`
 - Branch to start from: `main`
 - Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
-- Current task: **TASK-026 — Stage 2 Economic Bottleneck Adjudication**
+- Current task: **TASK-027 — Stage 2 Prospective Development Evidence Expansion**
 - Frontier Gate: **PASS_FEASIBILITY**
 - Economic edge / predictability: **UNPROVEN**
 - Live trading: **FORBIDDEN**
@@ -19,8 +19,8 @@ In this order:
 
 1. `HANDOFF.md`
 2. `STATUS.md`
-3. `tasks/TASK_026.md`
-4. `artifacts/stage_2/microstructure_decision.json`
+3. `tasks/TASK_027.md`
+4. `artifacts/stage_2/economic_bottleneck_adjudication.json`
 5. only then inspect implementation/evidence files as needed
 
 Do not reconstruct project state from chat memory when repository state disagrees.
@@ -383,42 +383,59 @@ Complete.
 A prior six-feature DEV_B result predated the full eight-feature registry, so all
 pre-cutoff microstructure evidence is treated as exposed development only.
 
+## TASK-026 result
+
+Complete.
+
+- selected path: **PROSPECTIVE_DEVELOPMENT_EVIDENCE_EXPANSION**;
+- decision artifact:
+  `artifacts/stage_2/economic_bottleneck_adjudication.json`;
+- SHA-256:
+  `4c90657accb99a0caff44336bbca091b887f99cd9caedada01fd15364b77b39b`;
+- E3 50s implied mean break-even taker fee: about **0.758 bps/side**;
+- published tier-6 plus Diamond schedule context: **1.44 bps/side**;
+- E3 mean at that documented fee context remains negative before UNKNOWN costs;
+- old confirmation: **UNOPENED_AND_EXCLUDED**;
+- new model/test evidence consumed: **false**;
+- user action required now: **none**.
+
 ## Exact next action
 
-Start **TASK-026 — Stage 2 Economic Bottleneck Adjudication**.
+Start **TASK-027 — Stage 2 Prospective Development Evidence Expansion**.
 
-1. quantify the repeated taker-economics bottleneck from completed artifacts;
-2. compare three bounded next paths: development-evidence expansion, actual
-   account-specific fee resolution, or separately gated maker research;
-3. select exactly one primary path before any new predictive family;
-4. keep old confirmation unopened/excluded;
-5. state any real user/external dependency explicitly.
+1. commit a machine-readable fixed 72-hour public-only DEVELOPMENT campaign protocol;
+2. use the validated immutable QCR1/segment pipeline on Aibo;
+3. preserve receive-time/host/boot causality, gaps, duplicates and missingness;
+4. do not fit a predictive model or change features/horizons during TASK-027;
+5. finish by publishing deterministic coverage/support evidence only.
 
-No broad signal mining, LightGBM, Jev/GPT runtime, OMS/signing/orders, private
-capture, or live trading.
+No private account access, AWS requester-pays credentials, wallet, capital, maker
+orders, registered SELECTION/CONFIRMATION evidence, or live trading.
 
-## Session checkpoint — post TASK-025 closeout
+## Session checkpoint — post TASK-026 adjudication
 
 This checkpoint exists specifically to start a new chat/session without reconstructing
 state from conversational history.
 
-- TASK-025 closeout merged by PR #41 at `37456e497cb0ab856ece48b384b8cbea1c9f856f`;
-- PR #41 pre-merge CI run `36278783155`: **SUCCESS**;
+- latest completed work package: **TASK-026**;
+- TASK-026 artifact SHA-256:
+  `4c90657accb99a0caff44336bbca091b887f99cd9caedada01fd15364b77b39b`;
+- selected primary path: **PROSPECTIVE_DEVELOPMENT_EVIDENCE_EXPANSION**;
 - always verify the latest `main` before continuing;
-- current work package: **TASK-026 — Stage 2 Economic Bottleneck Adjudication**;
+- current work package: **TASK-027 — Stage 2 Prospective Development Evidence Expansion**;
 - old Stage-2 confirmation: **UNOPENED_AND_EXCLUDED**;
-- fresh development validation after TASK-025: **none**;
-- fresh registered test evidence after TASK-025: **none**;
+- new model/test evidence consumed during TASK-026: **none**;
+- fresh registered test evidence after TASK-026: **none**;
 - live trading / OMS / signing / private account capture: **FORBIDDEN**;
 - user action required now: **none**.
 
 For a fresh session, trust repository state over chat memory. Read
-`HANDOFF.md` → `STATUS.md` → `tasks/TASK_026.md`, then continue TASK-026
+`HANDOFF.md` → `STATUS.md` → `tasks/TASK_027.md`, then continue TASK-027
 autonomously until a real external blocker or human gate is reached.
 
 ## Historical Frontier Gate outcomes
 
-The section below is retained as historical gate context only. It is **not** the current next action; current work is TASK-026.
+The section below is retained as historical gate context only. It is **not** the current next action; current work is TASK-027.
 
 
 Only three decisions are allowed:
@@ -468,8 +485,9 @@ Do **not**:
 - compare cross-boot monotonic timestamps.
 
 The bounded logistic baselines used in TASK-023/TASK-024 and the bounded
-microstructure family in TASK-025 are completed experiments. TASK-026 must select
-one next evidence/economics path before any new predictive model search.
+microstructure family in TASK-025 are completed experiments. TASK-026 selected the
+next evidence path; TASK-027 must collect only the frozen prospective DEVELOPMENT
+evidence and must not expand the predictive family.
 
 Preserve failed/incomplete segments and negative experiments for diagnostics.
 

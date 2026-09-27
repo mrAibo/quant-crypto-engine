@@ -10,16 +10,16 @@
 - Current branch: `main`
 - Current phase: **Stage 2 — Signal-Existence Dataset and Falsification Protocol**
 - Current primary work package: **TASK-027 — Stage 2 Prospective Development Evidence Expansion**
-- Latest completed parallel work package: **TASK-028 — Tardis Historical Microstructure DEVELOPMENT Corpus**
-- Current parallel bounded work package: **TASK-029 — Frozen Tardis Historical Feature/Training Protocol**
-- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019, TASK-020, TASK-021, TASK-022, TASK-023, TASK-024, TASK-025, TASK-026, TASK-028**
-- Economic status: **Frontier Gate PASS_FEASIBILITY; bounded 50s, 300s, and microstructure families STOPPED; TASK-026 selected prospective DEVELOPMENT evidence expansion; net edge UNPROVEN**
+- Latest completed parallel work package: **TASK-029 — Frozen Tardis Historical Feature/Training Protocol**
+- Current parallel bounded work package: **none — do not open a new predictive family before TASK-027 closeout**
+- Completed: **TASK-001, TASK-002, TASK-003, TASK-004, TASK-005, TASK-006, TASK-007, TASK-008, TASK-009, TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-015, TASK-016, TASK-017, TASK-018, TASK-019, TASK-020, TASK-021, TASK-022, TASK-023, TASK-024, TASK-025, TASK-026, TASK-028, TASK-029**
+- Economic status: **Frontier Gate PASS_FEASIBILITY; prior bounded families STOPPED; TASK-029 historical 8-feature microstructure family STOPPED on DEV_B; TASK-027 prospective DEVELOPMENT still collecting; net edge UNPROVEN**
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
 
-## New-session checkpoint — TASK-027 collecting; TASK-029 feature caches frozen before economic evaluation
+## New-session checkpoint — TASK-027 collecting; TASK-029 complete with historical microstructure STOP
 
-- latest completed work package: **TASK-028**;
+- latest completed work package: **TASK-029**;
 - TASK-027 protocol package: PR #45 merged as
   `b3de5b4c15138ccc1df81c9a055d04920cad237c` after CI run `36312921369` passed;
 - deployed Aibo checkout at TASK-027 launch:
@@ -36,7 +36,7 @@
 - `deadline_wall_ns = 1790764735742461344`
   (**2026-09-30 12:38:55.742461 CEST**);
 - capture/process timers: **ACTIVE**;
-- checkpoint: 12 published/bound segments, thirteenth capture attempt in progress,
+- checkpoint: 18 published/bound segments, nineteenth capture attempt in progress,
   pending processing 0, incomplete processing 0;
 - TASK-028 frozen historical protocol SHA-256:
   `8d08ffa54eb64a3ecf11b9a73e3eea5d815f60560e7a93ad6796c63d2760b735`;
@@ -52,7 +52,7 @@
 - TASK-028 economic outcomes consumed: **false**; model fitted: **false**;
 - TASK-029 training protocol SHA-256:
   `75fc97ab0ee68185704a06c81fd9fce06c0b1df5e32871dbac6247133ab53da1`;
-- TASK-029 state: **FEATURE_CACHES_FROZEN — DEV_A/DEV_B economic evaluation not yet run**;
+- TASK-029 state: **COMPLETE — STOP_HISTORICAL_MICROSTRUCTURE_DEVELOPMENT**;
 - TASK-029 frozen split: **12 whole UTC days DEV_A / 8 whole UTC days DEV_B**;
 - TASK-029 horizons: **50s / 300s only**; no feature/threshold/hyperparameter sweep;
 - TASK-029 derived storage: **Parquet ZSTD + DuckDB 1.5.5**, rebuildable from TASK-028 raw;
@@ -72,6 +72,15 @@
   `49fea618533a359727cfce3d95d2b50ee876c6fa2d75931f4b4e305e3938b3b3`;
 - TASK-029 economic summary computed: **false**; model fitted: **false**;
 - TASK-029 evaluation: exact feature-build report SHA required before DEV_A fit / DEV_B adjudication;
+- TASK-029 development report SHA-256:
+  `fec2e2c9a081b4edb5e84e4bcc04fdd569d5e3746daa93befbf9f23e7d6b2fe7`;
+- TASK-029 decision: **STOP_HISTORICAL_MICROSTRUCTURE_DEVELOPMENT**;
+- TASK-029 50s DEV_A support: **18,974 valid targets; 729 positive / 18,245 nonpositive**;
+- TASK-029 50s DEV_B: **15 selected; mean -27.12707 quote; median -12.2326972833 bps; cumulative -406.90605 quote**;
+- TASK-029 300s DEV_A support: **3,214 valid targets; 570 positive / 2,644 nonpositive**;
+- TASK-029 300s DEV_B: **1 selected; mean -212.5421 quote; median -31.5601900661 bps**;
+- TASK-029 selected horizon: **none**;
+- TASK-029 fresh SELECTION/CONFIRMATION started: **false / false**;
 - TASK-029 current TASK-027 repurposing as SELECTION: **forbidden**;
 - TASK-026 decision artifact SHA-256:
   `4c90657accb99a0caff44336bbca091b887f99cd9caedada01fd15364b77b39b`;
@@ -96,7 +105,8 @@ Fresh-session read order:
 9. `artifacts/stage_2/tardis_historical_training_protocol.json`
 10. `artifacts/stage_2/tardis_lakehouse_manifest.json`
 11. `artifacts/stage_2/tardis_historical_feature_build_report.json`
-12. inspect only the implementation/evidence needed for the active bounded tracks
+12. `artifacts/stage_2/tardis_historical_development_report.json`
+13. inspect only the implementation/evidence needed for the active bounded tracks
 
 Do not recover project state from old chat messages when repository state differs.
 

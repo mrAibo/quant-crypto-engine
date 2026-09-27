@@ -2,7 +2,7 @@
 
 ## Status
 
-**FEATURE CACHES FROZEN — DEV_A/DEV_B ECONOMIC EVALUATION NOT YET RUN**
+**COMPLETE — STOP_HISTORICAL_MICROSTRUCTURE_DEVELOPMENT**
 
 ## Context
 
@@ -256,6 +256,80 @@ TASK-027 may **not** be relabeled or repurposed as fresh SELECTION because its
 collection began before any TASK-029 candidate could be frozen.
 
 Old confirmation remains **UNOPENED_AND_EXCLUDED**.
+
+## Closeout result
+
+The exact frozen feature-build report was evaluated once under the pre-registered
+TASK-029 rules.
+
+Immutable result artifact:
+
+`artifacts/stage_2/tardis_historical_development_report.json`
+
+SHA-256:
+
+`fec2e2c9a081b4edb5e84e4bcc04fdd569d5e3746daa93befbf9f23e7d6b2fe7`
+
+Decision:
+
+`STOP_HISTORICAL_MICROSTRUCTURE_DEVELOPMENT`
+
+No horizon was selected.
+
+### 50-second result
+
+DEV_A support passed:
+
+- DEV_A rows: **20,370**;
+- full-feature rows: **18,987**;
+- valid economic targets: **18,974**;
+- positive targets: **729**;
+- nonpositive targets: **18,245**.
+
+DEV_B failed the frozen gate:
+
+- DEV_B rows: **13,595**;
+- eligible full-feature rows: **13,380**;
+- selected trades: **15** vs required >=50;
+- positive selected trades: **5**;
+- mean partial-known-cost PnL: **-27.12707 quote**;
+- cumulative partial-known-cost PnL: **-406.90605 quote**;
+- median known-net: **-12.2326972833 bps**;
+- early half: 7 trades, mean **-65.8208642857 quote**;
+- late half: 8 trades, mean **+6.73 quote**.
+
+### 300-second result
+
+DEV_A support passed:
+
+- DEV_A rows: **3,454**;
+- full-feature rows: **3,224**;
+- valid economic targets: **3,214**;
+- positive targets: **570**;
+- nonpositive targets: **2,644**.
+
+DEV_B failed the frozen gate:
+
+- DEV_B rows: **2,302**;
+- eligible full-feature rows: **2,259**;
+- selected trades: **1** vs required >=30;
+- positive selected trades: **0**;
+- mean/cumulative partial-known-cost PnL: **-212.5421 quote**;
+- median known-net: **-31.5601900661 bps**.
+
+Interpretation boundary:
+
+- support insufficiency is **not** the reason for this STOP;
+- under the frozen 4.5 bps/side fee scenario, the fitted historical family did not
+  produce a sufficiently supported positive DEV_B region;
+- latency, impact, funding, and actual account fee remain UNKNOWN;
+- this result does not convert TASK-027 into SELECTION and does not open old
+  confirmation;
+- no fresh SELECTION or CONFIRMATION evidence has started.
+
+TASK-027 must continue unchanged to its fixed deadline. No new predictive family
+should be opened before that prospective DEVELOPMENT campaign is closed and its
+pre-registered coverage/support evidence is published.
 
 ## Definition of Done
 

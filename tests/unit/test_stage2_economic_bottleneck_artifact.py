@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from decimal import Decimal
 from pathlib import Path
 
 
@@ -22,8 +23,15 @@ def test_task026_economic_bottleneck_artifact_is_frozen() -> None:
     assert payload["source_sha256"]["signal_protocol"] == (
         "2e2404b93e82ad8ac6ff27b10b5f4d22cd7ac624be69a277c6aed75a3b9c9843"
     )
+
     plan = payload["evidence_expansion_plan"]
     assert plan["fixed_duration_hours"] == 72
     assert plan["nominal_decision_intervals"] == 5184
-    assert plan["projected_valid_targets_at_observed_rate"].startswith("1186.")
-    assert plan["projected_positive_targets_at_observed_rate"].startswith("69.")
+    assert (
+        Decimal("1186")
+        < Decimal(plan["projected_valid_targets_at_observed_rate"])
+        < Decimal("1187")
+    )
+    assert (
+        Decimal("69") < Decimal(plan["projected_positive_targets_at_observed_rate"]) < Decimal("70")
+    )

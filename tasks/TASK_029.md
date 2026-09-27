@@ -2,7 +2,7 @@
 
 ## Status
 
-**IMPLEMENTATION READY — HISTORICAL ECONOMIC OUTCOMES NOT YET CONSUMED**
+**FEATURE CACHES FROZEN — DEV_A/DEV_B ECONOMIC EVALUATION NOT YET RUN**
 
 ## Context
 
@@ -105,8 +105,31 @@ It adds:
 - explicit provenance from TASK-029 protocol -> lakehouse -> feature-build report
   -> cache SHA values -> development report.
 
-The implementation must merge with green CI before the real 480-hour feature build
-or any historical economic outcome inspection.
+The implementation merged with green CI before the real 480-hour feature build.
+
+### Real feature-build checkpoint
+
+The merged implementation completed the real 20-day / 480-hour feature build on Aibo.
+
+Frozen checkpoint:
+
+- feature-build report:
+  `artifacts/stage_2/tardis_historical_feature_build_report.json`;
+- feature-build report SHA-256:
+  `645e247ea9589935f4b7a09cb98559d0df704ebc6c60287863d72303f6e68195`;
+- 50s cache rows: **33,965**;
+- 50s cache SHA-256:
+  `409ef9c60bfcbb048b593fc16f1d34cc84da1f0087ea372b7c4c799d3d030640`;
+- 300s cache rows: **5,756**;
+- 300s cache SHA-256:
+  `49fea618533a359727cfce3d95d2b50ee876c6fa2d75931f4b4e305e3938b3b3`;
+- exact 20 frozen UTC days represented in both caches;
+- economic summary computed: **false**;
+- model fitted: **false**.
+
+The caches contain the pre-registered entry/exit and feature fields required for the
+later economic evaluation, but no DEV_A/DEV_B economic summary or fitted model has
+yet been produced. The exact feature-build report SHA must merge before evaluation.
 
 ## Historical causal semantics
 

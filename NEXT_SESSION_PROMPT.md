@@ -29,7 +29,8 @@ Read in this order:
 8. `tasks/TASK_029.md`
 9. `artifacts/stage_2/tardis_historical_training_protocol.json`
 10. `artifacts/stage_2/tardis_lakehouse_manifest.json`
-11. only then inspect implementation/evidence as needed
+11. `artifacts/stage_2/tardis_historical_feature_build_report.json`
+12. only then inspect implementation/evidence as needed
 
 Frozen TASK-027 state:
 
@@ -81,17 +82,23 @@ Frozen TASK-029 state:
 - storage conversion materializes no labels/PnL/economic outcomes
 - DEV_B: frozen support/economic pass rules only
 - current TASK-027 cannot be repurposed as fresh SELECTION
-- feature/training implementation is **READY FOR PR**, but has not run on the real 480h corpus
-- feature build freezes 50s/300s cache SHA values before evaluation
+- feature/training implementation is **MERGED**
+- real feature build is **COMPLETE: 33,965 rows at 50s; 5,756 rows at 300s**
+- feature-build report SHA-256:
+  `645e247ea9589935f4b7a09cb98559d0df704ebc6c60287863d72303f6e68195`
+- 50s cache SHA-256:
+  `409ef9c60bfcbb048b593fc16f1d34cc84da1f0087ea372b7c4c799d3d030640`
+- 300s cache SHA-256:
+  `49fea618533a359727cfce3d95d2b50ee876c6fa2d75931f4b4e305e3938b3b3`
+- economic summary computed: **false**; model fitted: **false**
 - evaluation requires the exact feature-build report SHA
-- historical economic outcomes are **not yet consumed**
 
 Exact next actions:
 
-1. merge the prepared TASK-029 feature builder/trainer with green CI before real outcome use;
-2. build the immutable real 50s/300s feature caches and freeze their SHA values in
-   the feature-build report;
-3. only then fit DEV_A and adjudicate DEV_B using the exact feature-build report SHA;
+1. merge the TASK-029 feature-build checkpoint with the exact report/cache SHA values;
+2. only after that merge, fit DEV_A and adjudicate DEV_B using the exact frozen
+   feature-build report SHA;
+3. do not rebuild/replace the frozen feature caches based on evaluation results;
 4. in parallel keep TASK-027 healthy until its fixed deadline;
 5. after TASK-027 deadline publish deterministic prospective coverage/support evidence.
 

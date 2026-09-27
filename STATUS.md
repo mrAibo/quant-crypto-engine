@@ -15,14 +15,23 @@
 - Live trading: **FORBIDDEN**
 - Production signer/OMS/watchdog before Gate 1: **FORBIDDEN**
 
-## New-session checkpoint — TASK-027 protocol frozen, capture not started
+## New-session checkpoint — TASK-027 first capture in progress
 
 - latest completed work package: **TASK-026**;
+- TASK-027 protocol package: PR #45 merged as
+  `b3de5b4c15138ccc1df81c9a055d04920cad237c` after CI run `36312921369` passed;
+- deployed Aibo checkout: `b3de5b4c15138ccc1df81c9a055d04920cad237c`;
 - TASK-027 protocol artifact SHA-256:
   `1ab9a735f512dd301392ba568b49ebd0f1e80d676f073b3d502bf73d111bc1d3`;
 - TASK-027 runtime profile SHA-256:
   `8bf2a31ec634b475f1e3b559663bb35e16950c1c721ab73ddc5812cd6b1f03e1`;
-- TASK-027 capture state: **NOT_STARTED — protocol must merge before capture**;
+- TASK-027 capture state: **FIRST_CAPTURE_IN_PROGRESS**;
+- first attempt run ID:
+  `run-1790505535742461344-86b3a1307196c582cdde`;
+- capture/process timers: **ACTIVE**;
+- QCR1 raw evidence is growing;
+- `campaign_state = PRESTART`, `started_wall_ns = null`, `deadline_wall_ns = null`
+  until the first segment successfully seals;
 - TASK-026 decision artifact SHA-256:
   `4c90657accb99a0caff44336bbca091b887f99cd9caedada01fd15364b77b39b`;
 - selected primary path: **PROSPECTIVE_DEVELOPMENT_EVIDENCE_EXPANSION**;

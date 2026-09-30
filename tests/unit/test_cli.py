@@ -203,3 +203,43 @@ def test_tardis_evaluate_cli_binds_feature_build_report_sha(
     assert captured["expected_cache_300s_sha256"] == "b" * 64
     assert payload["feature_build_report_sha256"] == "f" * 64
     assert payload["decision"] == "STOP_HISTORICAL_MICROSTRUCTURE_DEVELOPMENT"
+
+
+def test_development_closeout_cli_is_support_only(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    output = tmp_path / "closeout"
+    monkeypatch.setattr(
+        cli,
+        "closeout_development_campaign",
+        lambda *args, **kwargs: {
+            "report_path": str(output / "development-closeout-report.json"),
+            "report_sha256": "r" * 64,
+            "cache_50s_sha256": "a" * 64,
+            "cache_300s_sha256": "b" * 64,
+            "report": {
+                "published_capture_coverage_fraction": "0.5",
+                "published_segment_count": 100,
+                "model_fitted": False,
+            },
+        },
+    )
+
+    result = main(
+        [
+            "closeout-development-campaign",
+            "--campaign-root",
+            str(tmp_path / "campaign"),
+            "--output-root",
+            str(output),
+        ]
+    )
+    payload = json.loads(capsys.readouterr().out)
+
+    assert result == 0
+    assert payload["status"] == "SUCCESS"
+    assert payload["published_capture_coverage_fraction"] == "0.5"
+    assert payload["published_segment_count"] == 100
+    assert payload["model_fitted"] is False

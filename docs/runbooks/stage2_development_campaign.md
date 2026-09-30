@@ -101,6 +101,32 @@ as explicit failed/incomplete evidence, then disable it.
 Do not delete failed attempts, incomplete processing directories, reconnect evidence,
 or extra public frames.
 
+## Deterministic closeout after the deadline
+
+Closeout is forbidden until the immutable `campaign-complete.json` exists. Do not
+extend or restart capture to compensate for downtime, failed segments, or low support.
+
+Once the fixed deadline has elapsed and already accepted processing has quiesced, run:
+
+```bash
+python -m cryptobot.cli closeout-development-campaign \
+  --campaign-root /var/lib/quant-crypto-engine/stage2-development-campaign \
+  --output-root /var/lib/quant-crypto-engine/stage2-development-closeout \
+  --task025-registry /opt/quant-crypto-engine/artifacts/stage_2/microstructure_development_registry.json
+```
+
+The closeout validates the frozen protocol and TASK-025 registry digests, verifies
+bound segment evidence and dataset manifests, computes unique published wall-time
+coverage, and builds deterministic 50s/300s feature caches plus support/missingness
+counts. It explicitly reports pending and processing-incomplete segments.
+
+TASK-027 closeout is descriptive DEVELOPMENT accounting only: it keeps
+`model_fitted=false`, selects no threshold or horizon, creates no SELECTION or
+CONFIRMATION evidence, and leaves old confirmation `UNOPENED_AND_EXCLUDED`.
+
+Publish the closeout report and its exact SHA-256 values through normal repository
+review/CI before starting the next work package.
+
 
 ## Preserved boundaries
 

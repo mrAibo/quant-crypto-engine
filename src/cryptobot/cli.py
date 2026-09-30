@@ -30,6 +30,10 @@ from cryptobot.research.development_campaign import (
 from cryptobot.research.development_campaign import (
     initialize_campaign_root as initialize_development_campaign_root,
 )
+from cryptobot.research.development_closeout import (
+    DevelopmentCloseoutError,
+    closeout_development_campaign,
+)
 from cryptobot.research.retrospective import (
     GATE_ELIGIBILITY,
     RetrospectiveDataError,
@@ -217,6 +221,20 @@ def build_parser() -> argparse.ArgumentParser:
         help="Report operational TASK-027 campaign state without model evaluation.",
     )
     development_status.add_argument("--campaign-root", required=True)
+
+    development_closeout = subparsers.add_parser(
+        "closeout-development-campaign",
+        help=(
+            "Build deterministic TASK-027 DEVELOPMENT coverage/support evidence "
+            "after the frozen deadline."
+        ),
+    )
+    development_closeout.add_argument("--campaign-root", required=True)
+    development_closeout.add_argument("--output-root", required=True)
+    development_closeout.add_argument(
+        "--task025-registry",
+        default="artifacts/stage_2/microstructure_development_registry.json",
+    )
 
     tardis_download = subparsers.add_parser(
         "download-tardis-historical",
@@ -574,6 +592,44 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
             return 2
         print(json.dumps(development_status_result, sort_keys=True, separators=(",", ":")))
+        return 0
+
+    if args.command == "closeout-development-campaign":
+        try:
+            closeout_result = closeout_development_campaign(
+                args.campaign_root,
+                output_root=args.output_root,
+                task025_registry_path=args.task025_registry,
+            )
+        except (DevelopmentCloseoutError, OSError, ValueError) as exc:
+            print(
+                json.dumps(
+                    {"status": "FAILED", "error": str(exc)},
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+            )
+            return 2
+        closeout_report = closeout_result["report"]
+        assert isinstance(closeout_report, dict)
+        print(
+            json.dumps(
+                {
+                    "status": "SUCCESS",
+                    "report_path": closeout_result["report_path"],
+                    "report_sha256": closeout_result["report_sha256"],
+                    "cache_50s_sha256": closeout_result["cache_50s_sha256"],
+                    "cache_300s_sha256": closeout_result["cache_300s_sha256"],
+                    "published_capture_coverage_fraction": closeout_report[
+                        "published_capture_coverage_fraction"
+                    ],
+                    "published_segment_count": closeout_report["published_segment_count"],
+                    "model_fitted": closeout_report["model_fitted"],
+                },
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+        )
         return 0
 
     if args.command == "download-tardis-historical":

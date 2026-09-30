@@ -245,6 +245,7 @@ class BinanceReferenceAdapter:
     ) -> None:
         ingest_seq = 0
         error: Exception | None = None
+        cancelled = False
         try:
             connection_id = self._connection_id_factory(route.value.lower())
             if not connection_id.strip():
@@ -296,11 +297,13 @@ class BinanceReferenceAdapter:
                         )
                     )
         except asyncio.CancelledError:
+            cancelled = True
             raise
         except Exception as exc:
             error = exc
         finally:
-            await output.put(_RouteFailure(route=route, error=error))
+            if not cancelled:
+                await output.put(_RouteFailure(route=route, error=error))
 
 
 def subscription_request(streams: tuple[str, ...], request_id: int) -> str:

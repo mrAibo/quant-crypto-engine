@@ -5,8 +5,10 @@ import json
 from pathlib import Path
 from typing import cast
 
+import pytest
 from websockets.asyncio.server import ServerConnection, serve
 
+from cryptobot.adapters.binance import public as binance_public
 from cryptobot.adapters.binance.public import (
     MARKET_STREAMS,
     PUBLIC_STREAMS,
@@ -173,5 +175,53 @@ def test_two_route_fake_server_captures_ack_and_market_data(tmp_path: Path) -> N
         assert {frame.event_type for frame in market} == {"bookTicker", "aggTrade"}
         assert all(frame.metadata.source_id == "binance-usdm-reference-public" for frame in frames)
         assert all("LIVE_CAPTURE" in frame.metadata.capture_flags for frame in frames)
+
+    asyncio.run(scenario())
+
+
+def test_session_close_does_not_deadlock_when_route_queue_is_full(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class FakeWebSocket:
+        async def send(self, _message: str) -> None:
+            return None
+
+        async def recv(self, *, decode: bool) -> bytes:
+            assert decode is False
+            await asyncio.sleep(0)
+            return b'{"result":null,"id":1301}'
+
+    class FakeConnection:
+        async def __aenter__(self) -> FakeWebSocket:
+            return FakeWebSocket()
+
+        async def __aexit__(
+            self,
+            _exc_type: object,
+            _exc: object,
+            _tb: object,
+        ) -> None:
+            return None
+
+    def fake_connect(*_args: object, **_kwargs: object) -> FakeConnection:
+        return FakeConnection()
+
+    async def scenario() -> None:
+        monkeypatch.setattr(binance_public, "connect", fake_connect)
+        adapter = BinanceReferenceAdapter(
+            clock=SystemClock(host_id="host-test", boot_id="boot-test"),
+            transport=BinanceTransportSettings(
+                max_message_bytes=1_000_000,
+                receive_queue_high_water=1,
+                open_timeout_seconds=2,
+                close_timeout_seconds=2,
+            ),
+            connection_id_factory=lambda route: f"{route}-conn",
+        )
+        stream = adapter.session_frames()
+        await asyncio.wait_for(anext(stream), timeout=1)
+        for _ in range(10):
+            await asyncio.sleep(0)
+        await asyncio.wait_for(stream.aclose(), timeout=1)
 
     asyncio.run(scenario())
